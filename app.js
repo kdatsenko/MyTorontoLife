@@ -5,6 +5,8 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var session = require('express-session');
+var passport = require('passport')
 
 var models = require('./models/dbschema');
 var ObjectId = mongoose.Types.ObjectId;
@@ -100,7 +102,11 @@ mongoose.connect(connectionString, function(err) {
 
 
 var routes = require('./routes/index');
+<<<<<<< HEAD
 var api = require('./api/index');
+=======
+var auth = require('./routes/auth')
+>>>>>>> 8d78330d25fb88ebe46f6ddfbd4e2b6b94c30e12
 
 var app = express();
 
@@ -117,8 +123,16 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+<<<<<<< HEAD
 app.use('/api/v1/', api);
+=======
+app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+>>>>>>> 8d78330d25fb88ebe46f6ddfbd4e2b6b94c30e12
 app.use('/', routes);
+app.use('/auth', auth);
 
 
 // catch 404 and forward to error handler

@@ -1,0 +1,7 @@
+{{#if logged}}
+	<h3>Hello {{username}}</h3>
+{{else}}
+	<div class="col-sm-3">
+		<a href="/auth/github" class="btn btn-block btn-github btn-social"><i class="fa fa-github"></i>Sign in with GitHub</a>
+	</div>
+{{/if}}
