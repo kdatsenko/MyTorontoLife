@@ -78,7 +78,7 @@ mongoose.connect(connectionString, function(err) {
   interests: [interest_ids[0], interest_ids[2]]
 }];
 
-  
+
  models.Interests.collection.insert(interests, onInsert);
  models.Users.collection.insert(users, onInsert)
  models.Types.collection.insert(postTypes, onInsert);
@@ -102,11 +102,11 @@ mongoose.connect(connectionString, function(err) {
 
 
 var routes = require('./routes/index');
-<<<<<<< HEAD
+
 var api = require('./api/index');
-=======
+
 var auth = require('./routes/auth')
->>>>>>> 8d78330d25fb88ebe46f6ddfbd4e2b6b94c30e12
+
 
 var app = express();
 
@@ -123,14 +123,14 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-<<<<<<< HEAD
+
 app.use('/api/v1/', api);
-=======
+
 app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
 app.use(passport.initialize());
 app.use(passport.session());
 
->>>>>>> 8d78330d25fb88ebe46f6ddfbd4e2b6b94c30e12
+
 app.use('/', routes);
 app.use('/auth', auth);
 
@@ -172,9 +172,9 @@ module.exports = app;
 /**
 - Connection to DB, put in early data
 
-- Few statements that extract data from multiple tables. 
+- Few statements that extract data from multiple tables.
 - interest join with user
-- 
+-
 
 Person.find().populate('teamId').exec(function(err, people) {
   ...
@@ -202,9 +202,3 @@ function test () {
   console.log('Hello we are sitting with me!');
   getUser('Adele');
 }
-
-
-
-
-
-
