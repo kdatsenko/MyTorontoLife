@@ -2,8 +2,11 @@ var express = require('express');
 var router = express.Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
+
+router.use('/post', require('./post'));
+router.use('/user', require('./user'));
+router.use('/tag', require('./tag'));
+router.use('/group', require('./group'));
+router.use('/', require('./feed'));
 
 module.exports = router;

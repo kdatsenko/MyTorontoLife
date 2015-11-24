@@ -10,6 +10,7 @@ mongoose.connect('mongodb://localhost/csc309a5'); // connect to our database
 
 
 var routes = require('./routes/index');
+var api = require('./api/index');
 
 var app = express();
 
@@ -26,7 +27,9 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use('/api/v1/', api);
 app.use('/', routes);
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
