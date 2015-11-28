@@ -1,13 +1,18 @@
-var passport = require('passport')
+var passport = require('passport'),
+	User = require('mongoose').model('Users')
 
 module.exports = function() {
 	// handle user serialization here...
 	passport.serializeUser(function(user, done) {
-	  done(null, user);
+	  done(null, user.id);
 	});
 
-	passport.deserializeUser(function(obj, done) {
-	  done(null, obj);
+	passport.deserializeUser(function(id, done) {
+	  User.findById(id, function(err, user) {
+        done(err, user);
+      });
 	});
+
 	require('./social.js')()
+	require('./local.js')()
 }
