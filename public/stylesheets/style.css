@@ -6,3 +6,203 @@ body {
 a {
   color: #00B7FF;
 }
+
+body, html {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Ek Mukta', sans-serif; }
+  body h1, body h2, body h3, body h4, body ul, body li, html h1, html h2, html h3, html h4, html ul, html li {
+    font-family: 'Ek Mukta', sans-serif;
+    font-weight: 100;
+    padding: 0;
+    margin: 0;
+    list-style: none; }
+
+nav.hero {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  color: white; }
+  nav.hero h1 {
+    margin: 1em; }
+
+nav.feed{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
+  color: white;
+  background: #1097FF;
+  height: 40px; }
+  nav.feed h1 {
+    line-height: 40px; }
+
+section.hero {
+  background: #1097FF;
+  position: relative;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 800px;
+  z-index: 10; }
+  section.hero div.bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100%;
+    background: url("/images/to.jpg");
+    background-size: cover;
+    -webkit-filter: blur(2px);
+    -moz-filter: blur(2px);
+    -o-filter: blur(2px);
+    -ms-filter: blur(2px);
+    filter: blur(2px);
+    z-index: -1;
+    opacity: 0.25; }
+  section.hero div.content {
+    width: 750px;
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    margin-left: -375px; }
+    section.hero div.content h1, section.hero div.content h2 {
+      text-align: center;
+      margin: auto;
+      color: white;
+      max-width: 20em; }
+    section.hero div.content h1 {
+      font-size: 50px;
+      padding-bottom: 1em; }
+    section.hero div.content h2 {
+      padding-bottom: 1em; }
+    section.hero div.content input[type=text] {
+      width: 100%;
+      font-size: 25px;
+      padding: 15px; }
+
+section.feed {
+  padding-top: 40px;
+  position: relative;
+  top: 100%;
+  left: 0;
+  right: 0; }
+  section.feed .left {
+    top: 40px;
+    position: fixed;
+    left: 2%;
+    right: 75%; }
+  section.feed .center {
+    position: absolute;
+    left: 25%;
+    right: 30%;
+    height: 1000px; }
+  section.feed .right {
+    top: 40px;
+    position: fixed;
+    left: 70%;
+    right: 2%;
+    height: 100%; }
+
+div.box {
+  transition: all 400ms ease;
+  margin: 1em;
+  margin-bottom: .4em;
+  min-height: 58px; }
+  div.box h1 {
+    margin-left: 0.5em;
+    margin-right: 0.5em;
+    padding-top: 0.25em;
+    margin-bottom: 0em; }
+  div.box img {
+    max-width: 100%; }
+  div.box p {
+    width: 93%;
+    margin: auto;
+    margin-bottom: 0;
+    clear: both; }
+    div.box p img {
+      margin-left: -3.5%;
+      margin-right: 3.5%;
+      max-width: 40%;
+      float: left; }
+  div.box form input {
+    width: 90%;
+    box-sizing: border-box;
+    font-size: 1em;
+    padding: .4em;
+    border: 1px solid #ccc;
+    margin-left: 5%;
+    margin-right: 5%;
+    margin-bottom: 1em; }
+  div.box ul {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    justify-content: space-around;
+    box-sizing: border-box; }
+    div.box ul li {
+      list-style: none;
+      width: 100%;
+      padding: .3em;
+      box-sizing: border-box;
+      text-align: center;
+      border: 1px solid #eee; }
+    div.box ul li:hover {
+      background: #eee; }
+  div.box div.profile {
+    width: 100%;
+    padding: 4px; }
+    div.box div.profile a {
+      display: inline-block; }
+    div.box div.profile img {
+      border-radius: 50px;
+      width: 50px;
+      height: 50px;
+      float: left;
+      margin-right: 4px;}
+    div.box div.profile span.permalinks{
+      width: 100%;
+      }
+
+div.box.loading {
+  content: "loading";s
+  height: 400px; }
+
+div.box {
+  box-shadow: 0px 0px 10px -1px #ccc; }
+
+div.box:hover {
+  box-shadow: 0px 0px 10px 2px #ddd; }
+
+.footerlinks li {
+  display: inline-block;
+  padding: .1em; }
+  .footerlinks li a {
+    color: #444;
+    text-decoration: none; }
+.footerlinks li:hover a {
+  text-decoration: underline; }
+
+  .rating {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+    display: inline-block;
+    float: right;
+    padding: .2em .5em;
+  }
+  .rating > span {
+    display: inline-block;
+    position: relative;
+    width: 1.1em;
+  }
+  .rating > span:hover:before,
+  .rating > span:hover ~ span:before {
+     content: "\2605";
+     position: absolute;
+  }
