@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <base href="./../../"></base>
+	    <link rel="stylesheet" href="public/stylesheets/css/bootstrap.min.css">
+ 	 </head>
+
+ 	 <body ng-app="adminProfile" ng-controller="adminProfile">
+ 	 	<script src="node_modules/angular/angular.js"></script>
+   	 	<script src="public/javascripts/adminProfile.js"></script>
+
+ 	 	<div id="header">
+	     	<h1><a href="/admin" style="text-decoration:none; color:black; cursor:pointer">Admin Dashboard</a></h1>
+    	</div>
+
+ 	 	<div id="edit" style="margin-left: 40px">
+ 	 		<form>
+ 	 			Current Password: 
+ 	 			<input ng-model="currentPwd" type="password" name="currentPwd" placeholder="Enter current password"></br></br>
+ 	 			New Password: 
+ 	 			<input ng-model="newPwd" type="password" name="newPwd" placeholder="Enter new password"></br></br>
+ 	 			Confirm Password: 
+ 	 			<input ng-model="confirmPwd" type="password" name="confirmPwd" placeholder="Confirm new password"></br></br>
+ 	 			<input type="submit" value="Submit" ng-click="submit()">
+ 	 		</form>
+ 	 	</div>
+
+ 	 	<div id="msg" ng-show="showMsg" style="margin-left:40px;margin-top:20px;color:red;">
+ 	 		{{msg}}
+ 	 	</div>
+ 	 </body>
+
+ 	 
+</html>

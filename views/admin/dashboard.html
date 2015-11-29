@@ -4,6 +4,7 @@
   <head>
     <base href="./../../"></base>
     <link rel="stylesheet" href="public/stylesheets/css/bootstrap.min.css">
+    <style>.btn-like:hover{background-color:#99FFFF;cursor:pointer;}</style>
   </head>
 
   <body ng-app="admin" ng-controller="admin">
@@ -11,8 +12,11 @@
     <script src="public/javascripts/admin.js"></script>
 
     <div id="header">
-      <h1>Admin Dashboard</h1>
-      <h2></h2>
+      <h1>Admin Dashboard
+        <span style="margin-left: 20px">
+          <a href="/adminProfile" style="font-size:10pt">(Change password)</a>
+        </span>
+        </h1>
     </div>
     
     <div id="tabs" style="display:flex; margin-left: 50px">
@@ -25,7 +29,7 @@
 
       <tbody>
         <tr ng-repeat='user in userList'>
-          <td ng-click='getUser(user.email)'>{{user.email}}</td>
+          <td ng-click='getUser(user.email)' class="btn-like">{{user.email}}</td>
         </tr>
       </tbody>
       </table>
@@ -39,7 +43,7 @@
 
       <tbody>
         <tr ng-repeat='post in postList'>
-          <td ng-click='getPost(post._id)'>{{post.name}}</td>
+          <td ng-click='getPost(post._id)' class="btn-like">{{post.name}}</td>
         </tr>
       </tbody>
       </table>
@@ -53,7 +57,7 @@
 
       <tbody>
         <tr ng-repeat='interest in interestList'>
-          <td>{{interest.name}}
+          <td class="btn-like">{{interest.name}}
             <a ng-click='deleteInterest(interest._id)'>
               <strong style="margin-left:10px">(DELETE)</strong>
             </a>
@@ -73,7 +77,7 @@
 
       <tbody>
         <tr ng-repeat='group in groupList'>
-          <td>{{group.name}}
+          <td class="btn-like">{{group.name}}
             <a ng-click='deleteGroup(group._id)'>
               <strong style="margin-left:10px">(DELETE)</strong>
             </a>

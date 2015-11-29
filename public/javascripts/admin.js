@@ -1,6 +1,6 @@
 var admin = angular.module('admin', []);
 
-admin.controller('admin', function ($scope, $http) {
+admin.controller('admin', function ($scope, $http, $location) {
 
 	// $http({
 	// 	method:'GET',
