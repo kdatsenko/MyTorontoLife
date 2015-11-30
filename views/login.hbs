@@ -1,7 +1,38 @@
-{{#if logged}}
-	<h3>Hello {{username}}</h3>
-{{else}}
-	<div class="col-sm-3">
-		<a href="/auth/github" class="btn btn-block btn-github btn-social"><i class="fa fa-github"></i>Sign in with GitHub</a>
-	</div>
-{{/if}}
+<div class="jumbotron">
+	{{>loginbar}}
+	<h1>Login Test Page</h1>
+	<p>Hello! This page is used as a test for the login import!</p>
+	<p>By reading the code for this page, you can see that at the top
+	we import the <b>loginbar</b> partial by importing <b>>loginbar</b> through
+	handlebars. The login partial requires a <b>logged</b> (boolean) variable to
+	be rendered along with a <b>username</b> (string). These are use to
+	distinguish between a logged user and not logged in user, and to fetch
+	the username for the profile link, respectively.</p>
+	<p>The login partial can be imported in any page in any part of the HTML,
+	it contains only two side-by-side buttons at anytime. The associated
+	modals are added to the bottom of the body via jQuery to ensure
+	they show up properly.</p>
+	<p>As a basic example, the code for rendering page containing the login
+	import can be handled via:</p>
+	<pre>
+	router.get('/login', function(req, res, next){
+		if(req.session.user){
+			res.render('login', {logged: true, username: req.session.user.username})
+		}else{
+			res.render('login')
+		}
+	})
+	</pre>
+	<p>This, of course, assumes the user is stored via </p>
+	<pre>req.session.user</pre>
+	<p>However, this may not be the case in future builds.</p>
+	<p>As it stands now, logging in with GitHub redirects straight to 
+	<b>'/'</b> but this could surely be changed to redirect to the calling
+	page in the future!</p>
+	<p>Try logging in and registering now! If you encounter any errors,
+	or think of possible improvements, be sure to create some new issues
+	with the relevant labels in the GitHub repo!</p>
+	<p>Also, as it stands now (<b>Nov 28th 2015</b>) the profile page is
+	unimplemented, so clicking the button that says your username won't
+	do anything, but in the future it should redirect to a profile page!</p>
+</div>

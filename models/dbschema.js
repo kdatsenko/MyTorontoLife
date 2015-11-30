@@ -124,7 +124,6 @@ var postsRatings = new Schema({
 postsSchema.pre('remove', function(next) {
     // 'this' is the client being removed. Provide callbacks here if you want
     // to be notified of the calls' result.
-    console.log('Hello, I thought a bird flew by!');
     PostRatings.remove({postid: this._id}).exec();
     next();
 });
@@ -133,7 +132,6 @@ postsSchema.pre('remove', function(next) {
 userSchema.pre('remove', function(next) {
     // 'this' is the client being removed. Provide callbacks here if you want
     // to be notified of the calls' result.
-    console.log('here!');
     PostRatings.remove({userid: this._id}).exec();
     Posts.find({userid: this._id}, function(err, posts) {
       for (var i = 0; i < posts.length; i++){
@@ -165,7 +163,6 @@ postsSchema.pre('remove', function(next) {
 });
 
 postsSchema.pre('save', function (next) {
-  console.log('hello!!11');
   this.short_text = this.text.substring(0, 200);
   next();
 });

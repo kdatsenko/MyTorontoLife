@@ -18,8 +18,11 @@ var models = require('./models/dbschema');
 var ObjectId = mongoose.Types.ObjectId;
 var routes = require('./routes/index');
 var auth = require('./routes/auth')
-
 var app = express();
+app.use('/', routes);
+app.use('/auth', auth);
+
+
 
 // view engine setup
 var exphbs = require('express-handlebars');
@@ -34,12 +37,30 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+//app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+//=======
+app.use('/api/v1/', api);
 app.use(passport.initialize());
 app.use(passport.session());
+//>>>>>>> origin/adam
 
-app.use('/', routes);
-app.use('/auth', auth);
+  //SESSION CODE ---------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+var routes = require('./routes/index');
+var api = require('./api/index');
+var auth = require('./routes/auth')
+
+
+app.use(session({
+  cookieName: 'session',
+  secret: 'blargadeeblargblarg', // should be a large unguessable string
+  resave: true, 
+  saveUninitialized: true, 
+  cookie: { maxAge: null}
+
+}));
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -71,6 +92,9 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
+
+
+
 
 
 module.exports = app;
@@ -243,14 +267,9 @@ post.save(function(){
   }
 
 
-//SESSION CODE ---------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
 
-app.use(session({
-  cookieName: 'session',
-  secret: 'blargadeeblargblarg' // should be a large unguessable string
-}));
+
+
 
 
 /**
@@ -271,9 +290,16 @@ app.use(session({
   } else {
     next();
   }
-
-
  });
+
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
 
  /**
  * Given a user object:
@@ -348,19 +374,25 @@ app.post('/signup', function(req, res) {
 
 */
 
-//PROFILE TODO: send to RESPONSE //RequireLogin
-var getUserProfile = function (username){
-      models.Users.findOne({ username: username }, '-password')
+/* Get user profile */
+app.get('/users/profile', requireLogin, function(req, res) {
+      models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
-        console.log(err);
-        console.log(user);
-        //send as res
+        if (err) {
+          return res.send(err);
+        }
+        if (!user){
+          return res.status(404).send({error: 'User not found'});
+        }
+        res.json(user);
       });
-};
+});
+
+
 
 /* Register this user and their profile. Profile must have some INTERESTS. Interest are ids. */
 var createUser = function (user){
@@ -439,17 +471,14 @@ var loginUser = function (user){
 
 
 /* Edit the user's profile */
-var updateUser = function (user){ //requireLogin
+app.put('/users/profile', requireLogin, function(req, res){
   //Action allowed only for Admins, or the user's own profile (session check)
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.email == user.email)){
-    console.log('Unauthorized account type');
-    return;// res.status(403).send({error: 'Unauthorized account type'});
+  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user._id == req.body._id)){
+    return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Users.findOne({ _id: user._id }, function(err, user) {
+  models.Users.findOne({ _id: req.body._id }, function(err, user) {
     if (err) {
-      console.log(err);
-      return;
-      //return res.send(err);
+      return res.send(err);
     }
 
     for (property in req.body) {
@@ -459,75 +488,64 @@ var updateUser = function (user){ //requireLogin
     // save the user profile details
     user.save(function(err) {
       if (err) {
-        console.log(err);
-        return;
-        //return res.send(err);
+        return res.send(err);
       }
-      console.log('User profile updated!');
-      //res.json({ message: 'User profile updated!' });
+      res.json({ message: 'User profile updated!' });
     });
 
   });
-};
+});
 
 
-var changePassword = function (user){ //Require login
+
+/* Update the user's password. */
+app.put('/users/profile/passwordchange', requireLogin, function(req,res){
+//var changePassword = function (user){ //Require login
   if (checkAdmin(req, res, 1) | checkAdmin(req, res, 0)){
-    changePasswordRegular(user); //req, res
-  } else if (req.session.user.email == user.email){
-    changePasswordAdmin(user); //req, res
+    changePasswordRegular(req.body, res); //req, res
+  } else if (req.session.user._id == req.body._id){
+    changePasswordAdmin(req.body, res); //req, res
   } else {
-    console.log('Unauthorized account type');
-    return;// res.status(403).send({error: 'Unauthorized account type'});
+    return res.status(403).send({error: 'Unauthorized account type'});
   }
-}
+});
 
-//Can expect a old password confirmation check
-var changePasswordRegular = function (user){
+
+//Can bypass old password confirmation and change password directly
+var changePasswordAdmin = function (user, res){
   //Action allowed only the user's own profile (session check)
   models.Users.findOne({ _id: user._id }, function(err, update_user) {
     if (err) {
-      //return res.send(err);
-      console.log(err);
-      return;
+      return res.send(err);
     }
-    update_user.password = user.password;
-    // save the user profile details
+    update_user.password = user.new_password;
+    // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
-        console.log(err);
-        return;
-        //return res.send(err);
+        return res.send(err);
       }
-      console.log('User profile updated!');
-      //res.json({ message: 'User profile updated!' });
+      res.json({message: "Password successfully updated." });
     });
   });
 };
 
-//Can bypass old password confirmation and change password directly
-var changePasswordAdmin = function (user){
+//Can expect a old password confirmation check
+var changePasswordRegular = function (user, res){
   //Action allowed only for Admins
   models.Users.findOne({ _id: user._id }, function(err, update_user) {
     if (err) {
-      //return res.send(err);
-      console.log(err);
-      return;
+      return res.send(err);
     }
     if (update_user.password != user.old_password){
-      console.log('Incorrect password submission.');
-      return;// res.status(422).send({error: 'Incorrect password submission.'});
+      return res.status(422).send({error: 'Incorrect password submission.'});
     }
-    update_user.password = user.password;
-    // save the user profile details
+    update_user.password = user.new_password;
+    // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
-        console.log(err);
-        return;
-        //return res.send(err);
+        return res.send(err);
       }
-      console.log('User profile updated!');
-      //res.json({ message: 'User profile updated!' });
+      res.json({message: "Password successfully updated." });
     });
   });
 };
@@ -580,95 +598,78 @@ var changePasswordAdmin = function (user){
 
 });*/
 
-
-var getUsers = function(){ //requireLogin
+/* Get all a list of all users' email, username (for Admin) */
+ app.get('/users', requireLogin, function(req, res) {
   //Retrieve entire list from DB
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
-    console.log('Unauthorized account type');
-    return;// res.status(403).send({error: 'Unauthorized account type'});
+    return res.status(403).send({error: 'Unauthorized account type'});
   }
   models.Users.find({}, '_id email username', function(err, users) {
     if (err) {
-      console.log(err);
-      return;
-      //return res.send(err);
+      return res.send(err);
     }
-    // ONLY RETURN THE EMAIL AND DISPLAY NAME - empty or not!!!
-    console.log(users);
-    //res.json(users);
+    res.json(users);
     });
-};
+});
 
-
-var getGroupByID = function(group){ //requireLogin, replace console.log with ...
+/* getGroupByID */
+app.get('/groups/group', requireLogin, function(req, res) {
   //if admin, go ahead
   //Check group privacy, and members of the group => if user included, display
-  models.Groups.findOne({ _id: group._id }, function(err, found_group) {
+  models.Groups.findOne({ _id: req.query._id }, function(err, found_group) {
     if (err) {
-      //return res.send(err);
-      console.log(err);
-      return;
+      return res.send(err);
     } else if (!found_group){
-      console.log('The group with id ' + group._id + ' does not exist');
-      return;
+      return res.status(404).send({error: 'The group with id ' + req.query._id + ' does not exist'});
     }
-    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & (group.private_type == true)){
-
-      models.GroupMembers.findOne({user: req.session.user.id, group: group._id}, function(err, usergroup) {
+    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & (found_group.private_type == true)){
+      models.GroupMembers.findOne({user: req.session.user.id, group: req.query._id}, function(err, usergroup) {
         if (err) {
-          //return res.send(err);
-          console.log(err);
-          return;
+          return res.send(err);
         }
         if (!usergroup){
-          console.log('Group access for this user is unauthorized');
-          return;
+          return res.status(403).send({error: 'Group access for this user is unauthorized'});
         } else {
-          console.log(found_group);
+          res.json(found_group);
         }
       });
 
     } else {
-      console.log(found_group);
+      res.json(found_group);
     }
 
   });  
-};
+});
 
 
-//TODO: authenticate which user for private and non-private groups
-var getAllGroups = function(){
-/* 
+/* getAllGroups */
+ app.get('/groups', requireLogin, function(req, res) {
+/*
 1. If user is admin, get all
-2. If user is not admin, get only public & those they signed up for
-CANNOT: "those they signed up for"
+2. If user is not admin, get only public & those they signed up for (private - todo)
 */
   //Retrieve entire list from DB
   //Authenticate the current user for Admin Status
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
-    models.Groups.find({private_type: false}, '_id name short_description', function(err, groups) {
-      if (err) {
-        console.log(err);
-        return;
-      }
-      console.log(groups);
-          // ONLY RETURN THE EMAIL AND DISPLAY NAME - empty or not!!!
-         // res.json(users);
-    });
-
-  } else {
-    models.Groups.aggregate(
+      models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
       {$match: {private_type: false}},
       function(err, groups) {
-        console.log(groups);
+        if (err) { return res.send(err); }
+        res.json(groups);
+      });
+  } else { //Get only those that are non-private
+      models.Groups.aggregate(
+      {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
+      function(err, groups) {
+        if (err) { return res.send(err); }
+        res.json(groups);
       });
   }
+});
 
-};
-
-
-var getUserGroups = function(){
+/* Get all this user's groups */
+ app.get('/users/user/groups', requireLogin, function(req, res) {
   //get groups related to this user 
   /* 
 1. Get all thi's user's group 
@@ -681,292 +682,247 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
       .populate('group', 'name')
       .exec(function(err, groups) {
         if (err){
-          console.log(err);
-          return;
+          return res.send(err);
         }
-        console.log(groups);
+        res.json(groups);
         //send as res
       });
 };
 
-//GROUPS update, create, admin create 
-// who has right to update group? 
-//Group creator? yes!
-
-//create group 
-var createGroup = function(group){ //requireLogin
-  var group = new models.Group(group); //create new  
+/* Create a new group */
+app.post('/groups/addnew', requireLogin, function(req, res) {
+  var group = new models.Group(req.body.group); //create new  
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
-          if (!found_group) { //THERE Couldn't be found a user with this group name
-
+          if (!found_group) { //There couldn't be found an Existing Group with this name
               group.group_creator = req.session.user.id; //this user
               group.save(function(err) {
                   if (err) {
-                      console.log(err);
-                      return;// res.send(err); //ERROR
+                      res.send(err); //ERROR
                   }
-                  console.log(group);
+                  res.status(200).send({message: 'Created group successfully'});
 
               });
-                
- 
-
-              } else { 
-              //THERE EXISTS A USER WITH THIS EMAIL
-              //return res.status(401).send({error: "That email is already taken, please try another."});
-                console.log('That group name is already taken.');
-              }   
+          } else { 
+            return res.status(401).send({error: "That group name is already taken."});
+          }   
       }); //FINDONE
-};
+});
 
-// who has right to update group? 
-//Group creator? yes!
-var updateGroup = function (group){ //requireLogin
-
-  models.Groups.findOne({ _id: group._id }, function(err, group) {
+/* Update group - only group creator can do this. */
+app.put('/groups/group', requireLogin, function(req, res){
+  models.Groups.findOne({ _id: req.body._id }, function(err, group) {
     if (err) {
-      console.log(err);
-      return; //return res.send(err);
+      return res.send(err);
     }
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.id == group.group_creator)){
-      console.log('Unauthorized account type');
-      return;
-    //return res.status(403).send({error: 'Unauthorized account type'});
+      return res.status(403).send({error: 'Unauthorized account type'});
     }
 
     for (property in req.body) {
-      user[property] = req.body[property];
+      group[property] = req.body[property];
     }
 
-    // save the user profile details
-    group.save(function(err) {
-      if (err) {
-        return res.send(err);
-      }
-      res.json({ message: 'User profile updated!' });
+    //check if a group with this name already exists (cannot repeat names!)
+    models.Groups.findOne({ _id: {$ne: req.body._id}, name: group.name} , function(err, group) {
+        if (err) {res.send(err); }
+        if (!group){ //group with new does not already exist
+            // save the group details
+            group.save(function(err) {
+              if (err) {
+                return res.send(err);
+              }
+              res.json({ message: 'Group updated!' });
+            });
+        } else {
+          return res.status(401).send({error: "That Group name is already taken, please try another."});
+        }
+
     });
 
   });
 
-};
+});
 
-var joinGroup = function (group){ //requireLogin
-  // id, 
 
-  //var group = new models.Group({user: req.session.user.id, group: input._id}); //create new  
+//add Join Group ---- need
+//if group creator is not the req.id, then we know what type of request it is
 
-   models.Groups.findOne({ _id: group._id }, 'private_type', function(err, group) {
-    if (err){
-      console.log(err);
-      return;
-    }
-    if (!group.private_type){
-      models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: input._id}, {user: req.session.user.id, group: input._id}, { upsert: true }, function(err, membership){
-        console.log(membership);
-      });
-    } else {
-      console.log('Unathorized to join private group');
-    }
-   });
+
+app.post('/groups/group/addmember', requireLogin, function(req, res){
+    models.Groups.findOne({ _id: req.body.group._id }, function(err, group) {
+      if (err){
+        return res.send(err);
+      } else if (!group){
+        return res.status(404).send({error: 'The group with id ' + req.body.group._id + ' does not exist'});
+      }
+      if (group.private_type == true & group.group_creator == req.session.user.id){
+        addGroupMember(req, res, group);
+      } else if (group.private_type == false){
+        joinGroup(req, res, group);
+      } else {
+        return res.status(403).send({error: 'Private group: Unauthorized account type'});
+      }
+    });
+
+});
+
+var joinGroup = function (req, res, group){ //requireLogin
+    models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id}, 
+        {user: req.session.user.id, group: group._id}, { upsert: true }, function(err, membership){
+      res.json({ message: 'Joined group!', result: membership});
+    });
 };
 
 //group creator add member
-var addGroupMember = function (input){ //requireLogin
-  models.Groups.findOne({ _id: input.group._id }, function(err, group) {
-    if (group.private_type == true & group.group_creator == req.session.user.id){
-      models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: input._id}, {user: req.session.user.id, group: input._id}, { upsert: true }, function(err, membership){
-        console.log(membership);
-      });
-    } else {
-      console.log('Unauthorized action: Add group member');
+var addGroupMember = function (req, res, group){
+    //req.body.user._id = id of user to add in req JSON body
+    models.GroupMembers.findOneAndUpdate({user: req.body.user._id, group: group._id}, 
+      {user: req.body.user._id, group: group._id}, { upsert: true }, function(err, membership){
+      res.json({ message: 'Joined group!', result: membership});
+    });
+};
+
+
+/* Create new Interest (only Admins) */
+app.post('/interests/addnew', requireLogin, function(req, res){
+//var createInterest = function(interest){ //requireLogin
+  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
+     return res.status(403).send({error: 'Unauthorized account type'});
+  }  
+  var interest = new models.Interests(req.body.interest); //create new  
+  models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
+          if (err){
+            return res.send(err);
+          }
+          if (!found_interest) { //THERE Couldn't be found a user with this group name
+              interest.save(function(err) {
+                  if (err) {
+                      return res.send(err); //ERROR
+                  }
+                  res.json({ message: 'Interest added!' });
+              });
+          } else { 
+            return res.status(401).send({error: "That interest already exists."});
+          }   
+      }); //FINDONE
+});
+
+/* Get all Interests */
+ app.get('/interests', requireLogin, function(req, res) {
+  //Retrieve entire interest list from DB
+  models.Interests.find({}, function(err, interests) {
+    if (err) {
+      return res.send(err);
     }
+    res.json(interests);
+    });
+});
+
+/* Create Post, update hashtags */
+app.post('/posts/addnew', requireLogin, function(req, res){
+//for each new hashtag, create new entry in the hashtag schema
+    //if member is a user of that group, or an admin, then they can create the post
+    models.GroupMembers.findOne({user: req.session.user.id, group: req.body.post.group}, function(err, usergroup) {
+      if (err) {
+        return res.send(err);
+      }
+      if (!usergroup){
+        return res.status(403).send({error: 'Group access for this user is unauthorized'});
+      } else {
+        var post = new models.Posts(req.body.post); //create new 
+        post.username = req.session.user.username;
+        post.userid = req.session.user.userid;
+        var hashtags = [];
+        var time_inserted = Date.now();
+        for (tag in input.hashtags){
+          //promise with exec() for asynch behaviour
+          var tagid = models.Hashtags.findOneAndUpdate({name: tag}, {last_used: time_inserted, count: {$inc: 1}}, {'upsert': true}).exec();
+          hashtags.push({tag_id: tagid, name: tag});
+        }
+        post.hashtags = hashtags;
+        post.save(function(err) {
+            if (err) {
+                return res.send(err); //ERROR
+            }
+            res.json({ message: 'Created post!', result: post});
+
+       });
+
+    }
+  });    
+});
+
+
+
+/* Get Post by Id. While loading the post, also populate the hashtags. 
+Rights: admin, public or by private member 
+*/
+app.get('/posts/post', requireLogin, function(req, res) {
+    models.Posts.findOne({ _id: req.query._id })
+    .populate({
+    path: 'post_type'
+    //populate: { path: 'interests' }
+    })
+    .populate({
+    path: 'group',
+    select: 'name private_type'
+    //populate: { path: 'interests' }
+    })
+    .populate({
+    path: 'interest',
+    select: 'name'
+    //populate: { path: 'interests' }
+    })
+    .select('-fivestarcount -fourstarcount -threestarcount -twostarcount -onestarcount')
+    .exec(function(err, post) {
+      if (err){
+        return res.send(err);
+      } else if (!post){
+        return res.status(404).send({error: 'Post not found'});
+      }
+      //Authorization check 
+      if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.group.private_type){
+        models.GroupMembers.findOne({group: post.group, user: req.session.user.id}, function(err, user){
+          if (err){
+            return res.send(err);
+          } if (!user){
+            return res.status(403).send({error: 'Unable to authenticate. Post viewing action not allowed for this user.'});
+          }
+          //when we get the post, also get the user's rating (if they did one)
+          getPostRating(req, res, post);
+        });
+
+      } else {
+          //when we get the post, also get the user's rating (if they did one)
+          getPostRating(req, res, post);
+      }
+
+    });
+});
+
+/* Fill in the user's rating for this post */
+var getPostRating = function (req, res, post){
+  models.PostRatings.findOne({userid: req.session.user.id, postid: post._id}, function(err, post_rating) {
+    if (err){
+      return res.send(err);
+    } else if (!post_rating){
+      return res.json(post);
+    }
+    var postObj = post.toObject();
+    post.user_rating = post_rating.user_rating;
+    return res.json(post);
   });
 };
 
 
-
-
-
-
-//create interest
-var createInterest = function(interest){ //requireLogin
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
-     console.log('Unauthorized account type');
-     return;// res.status(403).send({error: 'Unauthorized account type'});
-  }  
-  var interest = new models.Interests(interest); //create new  
-  models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
-          if (!found_interest) { //THERE Couldn't be found a user with this group name
-              interest.save(function(err) {
-                  if (err) {
-                      console.log(err);
-                      return;// res.send(err); //ERROR
-                  }
-                  console.log(interest);
-
-              });
-
-              } else { 
-              //THERE EXISTS A USER WITH THIS EMAIL
-              //return res.status(401).send({error: "That email is already taken, please try another."});
-                console.log('That interest already exists.');
-              }   
-      }); //FINDONE
-};
-
-//get all interests, 
-var getAllInterests = function(){ //requireLogin
-  //Retrieve entire interest list from DB
-  models.Interests.find({}, function(err, interests) {
-    if (err) {
-      console.log(err);
-      return;
-      //return res.send(err);
-    }
-    // ONLY RETURN THE EMAIL AND DISPLAY NAME - empty or not!!!
-    console.log(interests);
-    //res.json(users);
-    });
-};
-
-//create Post, update hashtags
-var createPost = function(input){ //requireLogin
-  /* 
-  take care of username, userid
-  hashtags - everytime the user an array of tags to choose from
-  new hashtags????? TODO
-  for each, create new entry
-  */ 
-
-//if member is a user of that group, or an admin, then they can create the post
-      models.GroupMembers.findOne({user: req.session.user.id, group: input.post.group}, function(err, usergroup) {
-        if (err) {
-          //return res.send(err);
-          console.log(err);
-          return;
-        }
-        if (!usergroup){
-          console.log('Group access for this user is unauthorized');
-          return;
-        } else {
-          console.log(usergroup);
-          var post = new models.Posts(input.post); //create new 
-          post.username = req.session.user.username;
-          post.userid = req.session.user.userid;
-          var hashtags = [];
-          var time_inserted = Date.now();
-          for (tag in input.hashtags){
-            //promise with exec() for asynch behaviour
-            var tagid = models.Hashtags.findOneAndUpdate({name: tag}, {last_used: time_inserted, count: {$inc: 1}}, {'upsert': true}).exec();
-            hashtags.push({tag_id: tagid, name: tag});
-          }
-          post.hashtags = hashtags;
-          post.save(function(err) {
-                  if (err) {
-                      console.log(err);
-                      return;// res.send(err); //ERROR
-                  }
-                  console.log(post);
-
-         });
-
-        }
-      });    
-};
-
-
-
-
-
-
-
-//get post
-
-/* via id, get the post. 
-Load, populate the hashtags, 
-rights: admin, public or by private member */
-//Repeated code, imporve!
-var getPostByID = function (post){
-      models.Posts.findOne({ _id: post._id })
-      .populate({
-      path: 'post_type'
-      //populate: { path: 'interests' }
-      })
-      .populate({
-      path: 'group',
-      select: 'name'
-      //populate: { path: 'interests' }
-      })
-      .populate({
-      path: 'interest',
-      select: 'name'
-      //populate: { path: 'interests' }
-      })
-      .select('-fivestarcount -fourstarcount -threestarcount -twostarcount -onestarcount')
-      .exec(function(err, post) {
-        if (err){
-          console.log(err);
-          return;
-        } else if (!post){
-          console.log('Could not find post.');
-          return;
-        }
-        
-        //Authorization check 
-        if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
-          models.Groups.findOne({group: post.group, user: req.session.user.id}, function(err, user){
-            if (err | !user){
-              console.log('Unable to authenticate. Post viewing action not allowed for this user.');
-              return; //res  send
-            }
-
-            //when we get the post, also get the user's rating (if they did one)
-            models.PostRatings.findOne({ userid: req.session.user.id, postid: post._id}, function(err, post_rating) {
-              if (err){
-                console.log(err);
-                return;
-              } else if (!post_rating){
-                console.log(post)
-                return;
-              }
-              var postObj = post.toObject();
-              post.rating = post_rating.rating;
-              console.log(postObj); //send as res
-            });
-
-
-          });
-
-        } else {
-            //when we get the post, also get the user's rating (if they did one)
-          models.PostRatings.findOne({ userid: req.session.user.id, postid: post._id}, function(err, post_rating) {
-            if (err){
-              console.log(err);
-              return;
-            } else if (!post_rating){
-              console.log(post)
-              return;
-            }
-            var postObj = post.toObject();
-            post.rating = post_rating.rating;
-            console.log(postObj); //send as res
-          });
-        }
-
-      });
-};
-
-
-
-
-var updatePost = function(input){
-    //TODO: hashtags, for each create new in hashtag
+/* Update Post */
+app.put('/posts/post', requireLogin, function(req, res){
+  //Hashtags: For each new create new entry in hashtag schema
    models.Post.findOne({ _id: req.body._id }, function(err, post) {
     if (err) {
       return res.send(err);
     } else if (!post){
-      console.log('Post does not exist.');
-      return;
+      return res.status(404).send({error: 'Post does not exist.'});
     }
     if (post.userid == req.session.user.id){ //check if postcreator is is the user
       for (property in req.body) {
@@ -984,143 +940,149 @@ var updatePost = function(input){
         if (err) {
           return res.send(err);
         }
-        //res.json({ message: 'User profile updated!' });
-        console.log(post);
+        res.json({ message: 'Post updated!', result: post});
       });
     } else {
-      console.log('Unauthorized post update');
+      return res.status(403).send({error: 'Unauthorized post update'});
     }
   });
-};
+});
 
 
-var getAllPostTypes = function(){ //require login
+/* Get all Post Types */
+ app.get('/posttypes', requireLogin, function(req, res) {
+  //Retrieve entire post types list from DB
     models.PostTypes.find({}, function(err, types) {
     if (err) {
-      console.log(err);
-      return;
-      //return res.send(err);
+      return res.send(err);
     }
-    // ONLY RETURN THE EMAIL AND DISPLAY NAME - empty or not!!!
-    console.log(types);
-    //res.json(users);
+    res.json(types);
     });
+});
 
-};
 
-var postComment = function (comment){
+/* User add a comment to a post.*/
+app.post('/posts/post/addcomment', requireLogin, function(req, res){
   //to post a comment, user must be a member of the group
-  models.GroupMembers.findOne({user: req.session.user.id, group: comment.group}, function(err, usergroup) {
+  models.GroupMembers.findOne({user: req.session.user.id, group: req.body.comment.group}, function(err, usergroup) {
         if (err) {
-          //return res.send(err);
-          console.log(err);
-          return;
+          return res.send(err);
         }
         if (!usergroup){
-          console.log('Commenting on this post is unauthorized for this user');
-          return;
+          return res.status(403).send({error: 'Commenting on this post is unauthorized for this user'});
         } else {
-          console.log(usergroup);
-          
           var commentObj = {
             userid: req.session.user.id,
             username: req.session.user.username,
-            text: comment.text
+            text: req.body.comment.text
           };
           //update the post comment array
-          models.posts.findByIdAndUpdate(
-          comment.post._id, //111
+          models.Posts.findByIdAndUpdate(
+          req.body.comment.postid,
           {$push: {comments: commentObj}},
           {safe: true, upsert: true},
           function(err, comment) {
             if (err){
-              console.log(err);
-              return;
+               return res.send(err);
             }
-            console.log(comment);
+            res.json({ message: 'Comment added!', result : comment});
           });
         }
     });    
 
-};
+});
 
-var ratePost = function(rating){ //requireLogin
+
+
+/* Create new Interest (only Admins) */
+app.post('/interests/addnew', requireLogin, function(req, res){
+//var createInterest = function(interest){ //requireLogin
+  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
+     return res.status(403).send({error: 'Unauthorized account type'});
+  }  
+  var interest = new models.Interests(req.body.interest); //create new  
+  models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
+          if (err){
+            return res.send(err);
+          }
+          if (!found_interest) { //THERE Couldn't be found a user with this group name
+              interest.save(function(err) {
+                  if (err) {
+                      return res.send(err); //ERROR
+                  }
+                  res.json({ message: 'Interest added!' });
+              });
+          } else { 
+            return res.status(401).send({error: "That interest already exists."});
+          }   
+      }); //FINDONE
+});
+
+/* Rate the post */
+app.post('/posts/post/rate', requireLogin, function(req, res){
   //number from 1-5 check
   //check that a rating does not already exist this user and post id
   //if it does, just update the number
   //check that the user is a member of post's group first
-  if (rating.stars < 1 | rating.stars > 5){
-    console.log('Error: rating is out of bounds!');
-    return;
+  if (req.body.rating.stars < 1 | req.body.rating.stars > 5){
+    return res.status(403).send({error: "Rating is out of bounds!"});
   }
   //update the post five stars, four stars, etc
-  models.Posts.findById(rating.post._id, function(err, post){
+  models.Posts.findById(req.body.rating.postid, function(err, post){
     if (err){
-      console.log(err);
-      return;
+      return res.send(err); //ERROR
     } else if (!post){
-      console.log('Cannot authorize action rating: Post ref does not exist');
-      return;
+      return res.status(403).send({error: "Cannot authorize action rating: Post ref does not exist"});
     } else if (post.userid == req.session.user.id) {
-      console.log('A user cannot rate their own post');
-      return;
+      return res.status(403).send({error: "A user cannot rate their own post"});
     }
-    models.GroupMembers.findOne({user: req.session.user.id, group: rating.post.group}, function(err, usergroup) {
+    models.GroupMembers.findOne({user: req.session.user.id, group: req.body.rating.groupid}, function(err, usergroup) {
       if (err){
-        console.log(err);
-        return;
+        return res.send(err);
       } else if (!usergroup){
-        console.log('Rating on this post is unauthorized for this user.');
-        return;
+        return res.status(403).send({error: 'Rating on this post is unauthorized for this user.'});
       }
         //check that a rating does not already exist this user and post id
-        models.PostRatings.findOne({postid: rating.post._id, userid: req.session.user._id}, function(err, post_rating) {
+        models.PostRatings.findOne({postid: post._id, userid: req.session.user.id}, function(err, post_rating) {
           if(err){
-            console.log(err);
-            return;
+            return res.send(err);
           } 
-
           else if (!post_rating){ //a rating by this user for this post does not exist yet
             //CREATE NEW
             var in_rating = new models.PostRatings({postid: post._id, 
                                                       userid: req.session.user.id, 
-                                                      rating: rating.stars}); //create new  
+                                                      rating: req.body.rating.stars}); //create new  
             in_rating.save(function(err) { //SAVE NEW
               if (err) {
                 return res.send(err);
               }
-              //res.json({ message: 'User profile updated!' });
-              console.log('New rating saved!');
+              res.json({ message: 'New rating saved!' });
             });
-            
           } else {
             //UPDATE OLD RATING
              modifyPostRatingHelper(post, post_rating.rating, true);
-             post_rating.rating = rating.stars; //new num stars
+             post_rating.rating = req.body.rating.stars; //new num stars
              post_rating.save(function(err) {
                 if (err) {
-                  console.log(err);
-                  return;
+                  return res.send(err);
                 }
-                console.log('User rating for this post updated!');
+                res.json({ message: 'User rating for this post updated!' });
              });
           } 
 
-          modifyPostRatingHelper(post, rating.stars, false);
+          modifyPostRatingHelper(post, req.body.rating.stars, false);
           calculateAverageRating(post);
           post.save(function(err) {
             if (err) {
-              console.log(err);
-              return;
+              return res.send(err);
             }
             console.log('Post rating count updated!');
           });
         });
 
     });
-  
+  });
 });
-};
 
 /* Recalculate average rating for this post */
 var calculateAverageRating = function(postObj){
@@ -1158,127 +1120,118 @@ var modifyPostRatingHelper = function(postObj, numstars, subtract){
         break;
   }
   postObj.numberofratings += increment;
-}
-
- 
-
-var deleteUser = function(input){
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
-    return res.status(403).send({error: 'Unauthorized account type'});
-  }
-  models.Users.findById(input.user.id, function(err, user){
-      user.remove(function(err, user) {
-      if (err) {
-        console.log(err);
-      } else if (user && user.result.n > 0){
-      console.log("User deleted!");
-      /*models.Posts.find({}, function(err, posts) {
-        console.log(posts);
-        models.PostRatings.find({}, function(err, ratings) {
-          //console.log(ratings);
-        });
-
-      });*/
-    } else {
-      console.log('Unable to delete this user');
-    }
-    
-    });
-
-  });
-
 };
 
-var deleteGroup = function(input){
+ 
+/**
+ * Delete the user's record from the DB system.
+ */
+app.delete('/users/profile/:id', requireLogin, function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Groups.findById(input.group.id, function(err, group){
+  models.Users.findById(req.params.id, function(err, user){
+      user.remove(function(err, user) {
+      if (err) {
+        return res.send(err);
+      } else if (user && user.result.n > 0){
+        res.json({ message: 'User ' + req.params.id + ' deleted!' });
+      } else {
+        res.json({ message: 'Unable to delete this user' });
+      }
+    });
+  });
+});
+
+/**
+ * Delete this group from the DB system.
+ */
+app.delete('/groups/group/:id', requireLogin, function(req, res) {
+  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
+    return res.status(403).send({error: 'Unauthorized account type'});
+  }
+  models.Groups.findById(req.params.id, function(err, group){
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user.id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       group.remove(function(err, group) {
       if (err) {
-        console.log(err);
+        return res.send(err);
       } else if (group && group.result.n > 0){
-      console.log("Group deleted!");
-      /*models.Posts.find({}, function(err, posts) {
-        console.log(posts);
-        models.PostRatings.find({}, function(err, ratings) {
-          //console.log(ratings);
-        });
-
-      });*/
+        res.json({ message: 'Group ' + req.params.id + ' deleted!' });
       } else {
-        console.log('Unable to delete this group');
+        res.json({ message: 'Unable to delete this group' });
       }
-    
     });
 
   });
 
 };
 
-var deletePost = function(input){
-  models.Posts.findById(input.post.id, function(err, post){
+
+/**
+ * Delete this Post from the DB system.
+ */
+app.delete('/posts/post/:id', requireLogin, function(req, res) {
+  models.Posts.findById(req.params.id, function(err, post){
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.userid != req.session.user.id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       post.remove(function(err, post) {
       if (err) {
-        console.log(err);
+        return res.send(err);
       } else if (post && post.result.n > 0){
-      console.log("Post deleted!");
-      /*models.Posts.find({}, function(err, posts) {
-        console.log(posts);
-        models.PostRatings.find({}, function(err, ratings) {
-          //console.log(ratings);
-        });
-
-      });*/
-    } else {
-      console.log('Unable to delete this post');
-    }
-    
+        res.json({ message: 'Post' + req.params.id + ' deleted!' });
+      } else {
+        res.json({ message: 'Unable to delete this post' });
+      }
     });
-
   });
+});
 
-};
 
-
-var searchByGroup = function (group){
-  //auth: only group where the user is signed in
-
- models.Group.findById(group._id, function(err, group){
+/* Get Group Posts */
+app.get('/groups/group/posts', requireLogin, function(req, res) {
+//auth: only groups where the user is a member, or public
+ models.Group.findById(req.query.groupid, function(err, group){
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       if (err){
-        console.log(err);
-        return;
+        return res.send(err);
       } else if (group.private_type){
-        console.log('User is allowed to access this group.');
-        return;
-      }
+        models.GroupMembers.findOne({user: req.session.user.id, group: req.query.groupid}, function(err, usergroup) {
+          if (err){
+            return res.send(err);
+          } else if (!usergroup){
+            return res.status(403).send({error: 'Unauthorized account type'});
+          }
+          getGroupPosts(req, res, group);
+        });
+      } //else PUBLIC group, goes to bottom function
     }
+    getGroupPosts(req, res, group);
+  });
+
+});
+
+/* Get 100 most recent posts for this group. Authen. is done in wrapper rest api method. */
+var getGroupPosts = function (req, res, group){
     models.Posts.
     find({group:  group._id}).
     limit(100).
     sort({ date_posted: -1 }).
     select('post_type group short_text username userid date_posted averagerating numberofratings').
     exec(function(err, posts){
-      console.log(posts);
+      if (err){
+        return res.send(err);
+      }
+      return res.json(posts);
     });
-  });
-
 };
 
-
-
-
-var searchByTagname = function (tagname){
+/* Search Posts by Tagname. Get 100 most recent. */
+app.get('/tags/tag/posts', requireLogin, function(req, res) {
   //auth: only posts that are public, or that user is signed in to
   models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
-
       // Map the docs into an array of just the _ids
       var ids_public = docs.map(function(doc) { return doc._id; }); //all the public group ids
       models.GroupMembers.find({user: req.session.user.id, group: {$nin : ids_public}}, {_id: 1}, function(err, docs){
@@ -1286,41 +1239,33 @@ var searchByTagname = function (tagname){
         var merged_group_ids = ids_public.concat(ids_private);
         models.Posts.
         find({hashtags: { "$in" : [tagname]} }, group: {"$in" : merged_group_ids}).
-        limit(100).
         sort({ date_posted: -1 }).
+        limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').
         exec(function(err, posts){
           if (err){
-            console.log(err);
-            return;
+           return res.send(err);
           }
-          console.log(posts);
+          return res.json(posts);
         });
       });
     });
-};
+});
 
 
 
-var getPostsByInterest = function(interest){ //requireLogin
+/* 
+1. Get Posts By Interest. 
+2. Where the post group is public, or the user is member of that group
+3. Order by most recent date, rating, get top 100 first
+*/
+app.get('/interests/interest/posts', requireLogin, function(req, res) {
 
-  /*
-  Posts whose group the user is signed in to, + public 
-order by date, rating, 100 first 
-
-1. Get all posts by that interest
-2. where the post group is public, or the user is member of that group
-public OR 
-3. Date, rating, 100 first
-  */
-
-  models.Interests.findOne({_id: interest._id, name: interest.name}, function (err, found_interest){
+  models.Interests.findOne({_id: req.query.interest.id, name: req.query.interest.name}, function (err, found_interest){
     if (err){
-      console.log(err);
-      return;
+      return res.send(err);
     } else if(!found_interest){
-      console.log('Interest ' + interest.name + ' does not exist.');
-      return;
+      return res.status(404).send({error: 'Interest ' + req.query.interest.name + ' does not exist.'});
     }
     models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
 
@@ -1333,18 +1278,14 @@ public OR
 
         models.Posts.
         find({group: { "$in" : merged_group_ids} }, interest: found_interest._id).
-        //where('name.last').equals('Ghost').
-       // where('age').gt(17).lt(66).
-        //where('likes').in(['vaporizing', 'talking']).
         sort({date_posted: -1}).
         limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').
         exec(function(err){
           if (err) {
-            console.log(err);
-            return;
+            return res.send(err);
           } 
-          console.log('Searched for posts by interests!');
+          return res.json(posts);
         });
 
     });
@@ -1352,23 +1293,20 @@ public OR
    });
 
   });
-};
+});
 
 
 
 
 /* 
-
-Regarding hashtags, so far I cannot figure out how to choose which hashtags to present. 
+Get Hash Tags (Hash tag index)
 There are two parameters, use_count, and date_last_used. Which takes precedent? 
 For now, I'll use date_last_used first, get tags used less than 100 days ago, order 
 by use_count descending, and extract the top 100 of the list.
 */
-var hashTagIndex = function(){ //require login
-
+app.get('/tags', requireLogin, function(req, res) {
   var today = moment();
   var daysago = moment(today).subtract(100, 'days')
-
   models.HashTags.
   find({}).
   where('last_used').gt(daysago.toDate()).
@@ -1376,333 +1314,174 @@ var hashTagIndex = function(){ //require login
   limit(100).
   select('name').
   exec(function(err, tags){
-    console.log(tags);
+    if (err) {
+      return res.send(err);
+    } 
+    return res.json(tags);
   });
 
-};
+});
 
 
 
 /* 
-0. get all interests (a, b, c) and groups (1, 2, 3) of this user
+Generate Posts for Main Feed on Dashboard
+0. Get all interests (a, b, c) and groups (1, 2, 3) of this user
 1. Find all users who have intersecting interests (a,b,c) AND are in intersecting groups (1,2,3).
 2. Find posts rated by users in (1) as 4, 5, created less than a year ago, and NOT rated by THIS (self) user,
 limit to top 100.
-3. (select right feilds)!
+3. (select relevant fields)!
+
+*** If at any point, search result comes up empty display generic group feed for this user. *** 
+Function: getGroupFeed
 
 */
-var mainFeed = function(){ //requirelogin
-
-  console.log(user_ids[0]);
-  models.Users.findOne({_id: user_ids[0]}).exec(function(err, docs){
+app.get('/dashboard', requireLogin, function(req, res) {
+  models.Users.findOne({_id: req.session.user.id}).exec(function(err, docs){
+     if (err){
+        return res.send(err);
+     } 
+     var interest_ids = docs.interests.map(function(id) { return id; }); //array of ids
+     if (interest_ids.length == 0){
+        console.log('No interests, nothing to show here!');
+        getGroupFeed(req, res);
+        return;
+     }
+     models.GroupMembers.find({user: req.session.user.id}, 'group').exec(function(err, docs){
         if (err){
-          console.log(err);
-          return;
+          return res.send(err);
         } else if (!docs){
-          console.log('Something went wrong.');
+          console.log('No groups, nothing to show here!');
+          getGroupFeed(req, res);
           return;
         }
-        console.log('found this user Adele: ' + docs);
-         var interest_ids = docs.interests.map(function(id) { return id; }); //array of ids
-         if (interest_ids.length == 0){
-            console.log('No interests, nothing to show here!')
+        var group_ids = docs.map(function(obj) { return obj.group; });
+
+        //find all users with interests (a, b or c) AND in a group of (1, 2, or 3)
+        models.Users.find({ _id: {$ne: req.session.user.id}, interests: { "$in" : interest_ids} }, '_id').exec(function(err, docs){
+          if (err){
+            return res.send(err);
+          } else if (!docs){
+            //no Users with mutual interests
+            //GOTO: Group feed for this user!
+            getGroupFeed(req, res);
             return;
-         }
-         models.GroupMembers.find({user: user_ids[0]}, 'group').exec(function(err, docs){
+          }
+
+           var user_ids = docs.map(function(obj) { return obj._id; });
+           models.GroupMembers.find({user: {$ne: req.session.user.id}, group: { "$in" : group_ids}, user: { "$in" : user_ids} }, '_id').exec(function(err, docs){
             if (err){
-              console.log(err);
-              return;
-            } else if (!docs){
-              console.log('No groups, nothing to show here!')
+              return res.send(err);
+            } else if(!docs){
+              //no Users with mutual interests & mutual groups
+              //GOTO: Group feed for this user!
+              getGroupFeed(req, res);
               return;
             }
-            var group_ids = docs.map(function(obj) { return obj.group; });
-            //console.log(group_ids);
-            //find all users with interests (a, b or c) AND in a group of (1, 2, or 3)
-            console.log('Adeles interests are: ' + interest_ids[0] + ' ' + typeof(interest_ids[0]));
-            models.Users.find({_id: {$ne: user_ids[0]}, interests: { "$in" : interest_ids} }, '_id').exec(function(err, docs){
-              if (err){
-                console.log(err);
-                return;
-              } else if (!docs){
-                //no Users with mutual interests
+            var intersect_users = docs.map(function(obj) { return obj.user; });
+            models.PostRatings
+            .find({userid: { "$in" : intersect_users} })
+            .where('rating').gt(3).lt(6) //rated as 4 or 5
+            .select('postid')
+            .exec(function(err, docs){ //anything they rated as 4 or 5
+              if (err) { return res.send(err); }
+              else if (!docs) {
+                //no Users with mutual interests & mutual groups & rated posts
                 //GOTO: Group feed for this user!
-                getGroupFeed();
-              }
-              var user_ids = docs.map(function(obj) { return obj._id; });
-               models.GroupMembers.find({user: {$ne: user_ids[0]}, group: { "$in" : group_ids}, user: { "$in" : user_ids} }, '_id').exec(function(err, docs){
-                if (err){
-                  console.log(err);
-                  return;
-                } else if(!docs){
-                  //no Users with mutual interests & mutual groups
-                  //GOTO: Group feed for this user!
-                  getGroupFeed();
-                }
-                var intersect_users = docs.map(function(obj) { return obj.user; });
-                models.PostRatings.
-                find({userid: { "$in" : intersect_users}}).
-                where('rating').gt(3).lt(6). //rated as 4 or 5
-                select('postid').
-                exec(function(err, docs){ //anything they rated as 4 or 5
-                  if (err) { console.log(err); return;}
-                  else if (!docs) {
-                    //no Users with mutual interests & mutual groups & special posts
-                    //GOTO: Group feed for this user!
-                    getGroupFeed();
-                  } 
-                  var temppostids = docs.map(function(obj) { return obj.postid; });
+                getGroupFeed(req, res);
+                return;
+              } 
+              var temppostids = docs.map(function(obj) { return obj.postid; });
 
-                  //Get all posts that 'this' user has not seen before (via rating).
-                  models.PostRatings.find({postid: { "$in" : temppostids}, user : user_ids[0]}, 'postid').exec(function(err, docs){
-                    if (err) { console.log(err); return;}
-                    var finalpostids = [];
-                    if(!docs) { //this user has not rated anything, safe to skip additional "already seen" check
-                      finalpostids = temppostids;
-                    } else {
-                      var seenpostids = docs.map(function(obj) { return obj.postid; });
-                      for (var i = 0; i < temppostids.length; i++){
-                          boolean bad = false;
-                          for (var j = 0; j < seenpostids; j++){
-                            if (temppostids[i] == seenpostids[j]){
-                              bad = true;
-                              break;
-                            }
-                          } //END INNER FOR seenpostids
-                          if (!bad){
-                            finalpostids.push(temppostids[i]);
-                          }
-                      } //END OUT FOR temppostids
-                    }
-
-                    if (finalpostids.length == 0){
-                      //no special posts, give up
-                      //GOTO: Group feed for this user!
-                      getGroupFeed();
-                      return;
-                    }
-                   
-                    var today = moment();
-                    var daysago = moment(today).subtract(100, 'days')
-
-                    models.Posts
-                    .find({_id : {"$in" : finalpostids}})
-                    .where('date_posted').gt(daysago.toDate()).
-                    .limit(100).
-                    select('post_type group short_text username userid date_posted averagerating numberofratings').
-                    exec(function(err, posts){
-                      if (err) {console.log(err); return;}
-                      if (!posts){
-                        //no special posts, give up
-                        //GOTO: Group feed for this user!
-                        getGroupFeed();
-                        return;
+              //Get all posts that 'this' user has not seen before (via rating).
+              models.PostRatings.find({postid: { "$in" : temppostids}, user : req.session.user.id}, 'postid').exec(function(err, docs){
+                if (err) { return res.send(err); }
+                var finalpostids = [];
+                if(!docs) { //this user has not rated anything, safe to skip additional "already seen" check
+                  finalpostids = temppostids;
+                } else {
+                  var seenpostids = docs.map(function(obj) { return obj.postid; });
+                  for (var i = 0; i < temppostids.length; i++){
+                      boolean bad = false;
+                      for (var j = 0; j < seenpostids; j++){
+                        if (temppostids[i] == seenpostids[j]){
+                          bad = true;
+                          break;
+                        }
+                      } //END INNER FOR seenpostids
+                      if (!bad){
+                        finalpostids.push(temppostids[i]);
                       }
-                      console.log(posts);
-                    });
+                  } //END OUTER FOR temppostids
+                }
+
+                if (finalpostids.length == 0){
+                  //no special posts, give up
+                  //GOTO: Group feed for this user!
+                  getGroupFeed(req, res);
+                  return;
+                }
+               
+                var today = moment();
+                var daysago = moment(today).subtract(100, 'days');
+
+                models.Posts
+                .find({_id : {"$in" : finalpostids}})
+                .where('date_posted').gt(daysago.toDate())
+                .limit(100)
+                .select('post_type group short_text username userid date_posted averagerating numberofratings')
+                .exec(function(err, posts){
+                  if (err) {return res.send(err); }
+                  if (!posts){
+                    //no special posts, give up
+                    //GOTO: Group feed for this user!
+                    getGroupFeed(req, res);
+                    return;
+                  }
+                  //FINALLY 
+                  res.json(posts);
+                });
 
 
-                  }); //END NOT rated by THIS (self) user,
+              }); //END NOT rated by THIS (self) user,
 
-                  
-                  
+            }); //ENd Find posts rated by users in (1) as 4, 5
 
-
-                }); //ENd Find posts rated by users in (1) as 4, 5
-
-               }); //END intersecting users.
+           }); //END intersecting users.
 
 
-            });
+        }); //find all users with interests (a, b or c) AND in a group of (1, 2, or 3)
 
-            /* 
-`            all user who have interescting interests 
-
-              
-              all users who are in this group 
-
-            */
-
-         });
+     });
+    });
 
 
-      });
+});
 
-};
-
-
-var getGroupFeed = function () {
-  /* 
-  Get most recent feed from all user's groups
-  */
-  models.GroupMembers.find({user: user_ids[0]}, 'group').exec(function(err, docs){
+/* 
+Get feed from groups: Get most recent feed from all user's groups
+*/
+var getGroupFeed = function (req, res) {
+  models.GroupMembers.find({user: req.session.user.id}, 'group').exec(function(err, docs){
       if (err){
-        console.log(err);
-        return;
+        return res.send(err);
       } else if (!docs){
         console.log('No groups, nothing to show here!')
-        return;
+        return res.json('');
       }
       var group_ids = docs.map(function(obj) { return obj.group; });
       models.Posts.find({group: { "$in" : group_ids}})
       .sort({ date_posted: -1 })
       .limit(100)
-      .select('post_type group short_text username userid date_posted averagerating numberofratings').
-      exec(function(err, posts){
+      .select('post_type group short_text username userid date_posted averagerating numberofratings')
+      .exec(function(err, posts){
         if (err){
-          console.log(err);
-          return;
+          return res.send(err);
         } 
-        console.log(posts);
+        res.json(posts);
       });
   });
-
 };
-
-
-
-  // Get the _ids of people with the last name of Robertson.
-
-/* Posts whose group the user is signed in to, + public 
-order by date, rating, 100 first
-*/
-
-//get interests user does not have?
-//we will get all and a function that sorts the rabble from the gold
-
-//interests GET posts by interest, delete interests, 
-/*
-Posts whose group the user is signed in to, + public 
-order by date, rating, 100 first
-*/
-
-//ALL THE DELETES:
-//user, DONE
-//interest NOT REQUIRED
-//group, DONE 
-//post (pre done) DONE
-
-//user - PostRatings, PostSchema, Usergroups, user 
-
-//Authentication of Deletes, and recentmost creap
-//Rest api methods
-//Clean up 
-//Commit
-//Join with login page!
-
-
-
-/* 
-var getUserProfile = function (username){
-- GET /users/profile
-var createUser = function (user){
-- POST /register
-var loginUser = function (user){
-- POST /login
-
-
-var updateUser = function (user){
-- POST /users/profile
-
-
-var changePassword = function (user){
-PUT /users/profile/passwordchange
-
-
-var changePasswordRegular = function (user)
-var changePasswordAdmin = function (user)
-
-
-var getUsers = function(){
-GET /users/
-
-var getGroupByID = function(group){
-GET /groups/group
-
-var getAllGroups = function(){
-GET /groups/
-
-var getUserGroups = function(){
-GET /users/user/groups
-
-var createGroup = function(group){
-POST /groups/addnew
-
-var updateGroup = function (group){ 
-PUT /groups/group
-
-{{{{{{{{{{{{{{{
-var joinGroup = function (group){
-PUT /groups/group/joingroup
-
-var addGroupMember = function (input){
-POST /groups/group/adduser
-}}}}}}}}}}}}}}}}}}}}}
-
-
-var createInterest = function(interest){
-POST /interests/addnew
-
-var getAllInterests = function(){ 
-GET /interests/
-
-var createPost = function(input){
-POST /posts/addnew
-
-ar getPostByID = function (post)
-GET /posts/post
-
-var updatePost = function(input)
-PUT /posts/post
-
-var getAllPostTypes = function(){
-GET /posttypes
-
-
-var postComment = function (comment){
-POST /posts/post/addcomment
-
-var ratePost = function(rating){ 
-POST /posts/post/rate
-
-var deleteUser = function(input)
-DELETE /users/profile/:id
-
-var deleteGroup = function(input)
-DELETE /groups/group/:id
-
-var deletePost = function(input){
-DELETE /posts/post/:id
-
-var searchByGroup = function (group)
-GET /groups/group/posts
-
-var searchByTagname = function (tagname)
-GET /tags/tag/posts
-
-
-var getPostsByInterest = function(interest){
-GET /interests/interest/posts
-
-var hashTagIndex = function(){
-GET /tags/
-
-var mainFeed = function(){
-GET /dashboard/
-*/
-
-
-
-
-
-/*
-//PROFILE TODO: send to RESPONSE //RequireLogin
-
-*/
-
-
-
-
 
 
 function test () {
@@ -1715,9 +1494,4 @@ function test () {
   //searchByGroup();
 
 }
-
-
-
-
-
 
