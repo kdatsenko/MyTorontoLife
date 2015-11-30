@@ -1,6 +1,8 @@
 var passport = require('passport'),
 	User = require('mongoose').model('Users')
 
+//USER schema is NOT how I envisioned this
+
 module.exports = function() {
 	// handle user serialization here...
 	passport.serializeUser(function(user, done) {

@@ -21,7 +21,7 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
-var passport = require("../config/passport")()
+var passport = require("../config/passport");
 
 /**
  * Listen on provided port, on all network interfaces.

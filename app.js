@@ -10,8 +10,8 @@ var mongoose = require('mongoose');
 var moment = require('moment');
 moment().format();
 //=======
-var session = require('express-session');
-var passport = require('passport')
+var session = require('client-sessions');
+var passport = require('passport');
 //>>>>>>> origin/adam
 
 var models = require('./models/dbschema');
@@ -92,9 +92,6 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
-
-
 
 
 module.exports = app;
@@ -687,7 +684,7 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
         res.json(groups);
         //send as res
       });
-};
+});
 
 /* Create a new group */
 app.post('/groups/addnew', requireLogin, function(req, res) {
@@ -1166,7 +1163,7 @@ app.delete('/groups/group/:id', requireLogin, function(req, res) {
 
   });
 
-};
+});
 
 
 /**
@@ -1238,7 +1235,7 @@ app.get('/tags/tag/posts', requireLogin, function(req, res) {
         var ids_private = docs.map(function(doc) { return doc.group; });
         var merged_group_ids = ids_public.concat(ids_private);
         models.Posts.
-        find({hashtags: { "$in" : [tagname]} }, group: {"$in" : merged_group_ids}).
+        find({hashtags: { "$in" : [tagname]}, group: {"$in" : merged_group_ids}}).
         sort({ date_posted: -1 }).
         limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').
@@ -1277,7 +1274,7 @@ app.get('/interests/interest/posts', requireLogin, function(req, res) {
         var merged_group_ids = ids_public.concat(ids_private);
 
         models.Posts.
-        find({group: { "$in" : merged_group_ids} }, interest: found_interest._id).
+        find({group: { "$in" : merged_group_ids}, interest: found_interest._id}).
         sort({date_posted: -1}).
         limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').
@@ -1402,7 +1399,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
                 } else {
                   var seenpostids = docs.map(function(obj) { return obj.postid; });
                   for (var i = 0; i < temppostids.length; i++){
-                      boolean bad = false;
+                      var bad = false;
                       for (var j = 0; j < seenpostids; j++){
                         if (temppostids[i] == seenpostids[j]){
                           bad = true;
