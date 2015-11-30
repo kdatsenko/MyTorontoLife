@@ -1,0 +1,43 @@
+<style>
+    .btn-like:hover{background-color:#99FFFF;cursor:pointer;}
+</style>
+<div>
+	<div>
+		Sort by: 
+        <select ng-model="sortExpression">
+			<option value="name">Name</option>
+			<option value="group">Description</option>
+		</select>
+    </div>
+
+    <table class="table table-bordered table-condensed table-responsive table-sm">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Group Name</th>
+              <th>Description</th>
+              <th>Option<a href='/createGroup' style='margin-left: 10px' ng-click='addGroup(group._id)'>(ADD)</a></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input placeholder="Search name" ng-model="search.groupName" />
+              </td>
+              <td>
+                <input placeholder="Search description" ng-model="search.groupDescription" />
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr ng-repeat="group in groupList | orderBy:mySortFunction | filter:search">
+              <td class="btn-like">{{group.group}}</td> <!-- groupschema there is no group description -->
+            	<td class="btn-like">{{group.group}}</td>
+              <td>
+                <a ng-click='deleteGroup(group._id)'>
+                  <strong style="margin-left:10px">(DELETE)</strong>
+                </a>
+            </td> 
+            </tr>
+          </tbody>
+        </table>
+</div>
