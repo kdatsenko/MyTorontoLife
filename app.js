@@ -5,96 +5,14 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
-//<<<<<<< HEAD
-//var session = require('client-sessions');
 var moment = require('moment');
 moment().format();
-//=======
-var session = require('client-sessions');
+var session = require('express-session');
 var passport = require('passport');
-//>>>>>>> origin/adam
-
 var models = require('./models/dbschema');
 var ObjectId = mongoose.Types.ObjectId;
-var routes = require('./routes/index');
-var auth = require('./routes/auth')
 var app = express();
-app.use('/', routes);
-app.use('/auth', auth);
 
-
-
-// view engine setup
-var exphbs = require('express-handlebars');
-app.engine('.hbs', exphbs({defaultLayout: 'single', extname: '.hbs'}));
-app.set('view engine', '.hbs');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
-
-//app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
-//=======
-app.use('/api/v1/', api);
-app.use(passport.initialize());
-app.use(passport.session());
-//>>>>>>> origin/adam
-
-  //SESSION CODE ---------------------------------------------------------------------------
-//----------------------------------------------------------------------------------------------
-//---------------------------------------------------------------------------------------------
-var routes = require('./routes/index');
-var api = require('./api/index');
-var auth = require('./routes/auth')
-
-
-app.use(session({
-  cookieName: 'session',
-  secret: 'blargadeeblargblarg', // should be a large unguessable string
-  resave: true, 
-  saveUninitialized: true, 
-  cookie: { maxAge: null}
-
-}));
-
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
-// error handlers
-
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
-
-
-module.exports = app;
 
 //mongoose.connect('mongodb://localhost/csc309a5'); // connect to our database
 
@@ -102,13 +20,13 @@ var dbName = 'A5DB';
 var connectionString = 'mongodb://localhost:27017/' + dbName;
 
 
-var user_ids = [new ObjectId, new ObjectId];
+/*var user_ids = [new ObjectId, new ObjectId];
   var group_ids = [new ObjectId, new ObjectId, 
                   new ObjectId, new ObjectId,
                   new ObjectId, new ObjectId,
                   new ObjectId, new ObjectId];
 var postids = [new ObjectId, new ObjectId, new ObjectId];
-    var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+    var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];*/
 
 mongoose.connect(connectionString, function(err) {
   if(err) {
@@ -117,7 +35,7 @@ mongoose.connect(connectionString, function(err) {
     console.log('connection successful');
 
 
- var interests = [{_id: interest_ids[0], name: 'Food'},
+ /*var interests = [{_id: interest_ids[0], name: 'Food'},
                   {_id: interest_ids[1], name: 'Bars'},
                   {_id: interest_ids[2], name: 'Condo'},
                   {_id: interest_ids[3], name: 'Parks and Recreation'},
@@ -248,7 +166,7 @@ post.save(function(){
 
 
 
- test();
+ //test();
 
   }
 
@@ -263,6 +181,65 @@ post.save(function(){
     }
   }
 
+var routes = require('./routes/index');
+var api = require('./api/index');
+var auth = require('./routes/auth')
+
+// view engine setup
+var exphbs = require('express-handlebars');
+app.engine('.hbs', exphbs({defaultLayout: 'single', extname: '.hbs'}));
+app.set('view engine', '.hbs');
+
+// uncomment after placing your favicon in /public
+//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
+app.use(logger('dev'));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
+app.use(express.static(path.join(__dirname, 'public')));
+
+app.use('/api/v1/', api);
+app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.use('/', routes);
+app.use('/auth', auth);
+
+
+// catch 404 and forward to error handler
+app.use(function(req, res, next) {
+  var err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// error handlers
+
+// development error handler
+// will print stacktrace
+if (app.get('env') === 'development') {
+  app.use(function(err, req, res, next) {
+    res.status(err.status || 500);
+    res.render('error', {
+      message: err.message,
+      error: err
+    });
+  });
+}
+
+// production error handler
+// no stacktraces leaked to user
+app.use(function(err, req, res, next) {
+  res.status(err.status || 500);
+  res.render('error', {
+    message: err.message,
+    error: {}
+  });
+});
+
+
+module.exports = app;
 
 
 
@@ -279,7 +256,7 @@ post.save(function(){
   if (req.session && req.session.user) {
     models.Users.findOne({ _id: req.session.user.id }, function(err, user) {
       if (user) {
-        createUserSession(req, res, user);   
+        auth.setSession(req, res, user); 
       } 
       // finishing processing the middleware and run the route
       next();
@@ -288,38 +265,6 @@ post.save(function(){
     next();
   }
  });
-
-
-
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
-});
-
- /**
- * Given a user object:
- *
- *  - Store the user object as a req.user
- *  - Make the user object available to templates as #{user}
- *  - Set a session cookie with the user object
- *
- *  @param {Object} req - The http request object.
- *  @param {Object} res - The http response object.
- *  @param {Object} user - A user object.
- */
- function createUserSession(req, res, user) {
-  var cleanUser = {
-    id: user._id,
-    email:  user.email,
-    username: user.username,
-    accounttype: user.accounttype //Exists to personalize user experience
-  };
-  req.session.user = cleanUser; //refresh the session value
-  req.user = cleanUser;
-  res.locals.user = cleanUser;
-};
 
 
 /**
@@ -356,21 +301,6 @@ app.use(function(req, res, next) {
  };
 
 
-/**
-- Connection to DB, put in early data
-
-- Few statements that extract data from multiple tables. 
-- interest join with user
-- 
-
-Person.find().populate('teamId').exec(function(err, people) {
-  ...
-});
-
-app.post('/signup', function(req, res) {
-
-*/
-
 /* Get user profile */
 app.get('/users/profile', requireLogin, function(req, res) {
       models.Users.findOne({ username: req.query.username }, '-password')
@@ -388,80 +318,6 @@ app.get('/users/profile', requireLogin, function(req, res) {
         res.json(user);
       });
 });
-
-
-
-/* Register this user and their profile. Profile must have some INTERESTS. Interest are ids. */
-var createUser = function (user){
-  // verify if the DB has any records
-  // if yes, then verify if the user with this email or username already exists
-  // if email already exists, return error
-  // if not, create new regular user and return success response 
-  var user = new models.Users(user); //create new  
-  var error_msg;
-  user.accounttype = 2; //regular user
-
-  models.Users.find({$or:[ {'email': user.email}, {'username': user.username} ]}, function(err, found_users) {
-          if (!found_users.length) { //THERE Couldn't be found a user with this email or username yet! 
-              //new user credentials validated
-
-              user.loggedin = true;
-              user.save(function(err) {
-                  if (err) {
-                    console.log(err);
-                    return;
-                        //return res.send(err); //ERROR
-                  }
-                  //user id??? get from DB
-                  createUserSession(req, res, user); //make a session
-                  console.log("User Added");
-                  
-                  //res.status(200).send({message: 'Signed in user'});
-                  //createUserSession(req, res, user); //make a session
-                  //res.status(200).send({message: 'Signed in user'});
-
-                  });
-
-          } else { 
-          //THERE EXISTS A USER WITH THIS EMAIL
-          //return res.status(401).send({error: "That email is already taken, please try another."});
-            console.log("Email or username already taken.");
-          }
-      }); //FIND END
-};
-
-
-//TODO: create a session
-var loginUser = function (user){
-  models.Users.findOne({ email: user.email}, function(err, found_user) { ///????
-    if (err) { 
-      console('Something went wrong');
-      //res.status(500).send({error: 'Something went wrong'});
-    } else if (!found_user){
-          //THERE DOES NOT EXISTS A USER WITH THIS EMAIL & Password
-          console.log('Invalid email or password');
-          //res.status(401).send({error: 'Invalid email or password'});
-      } else {
-        if (found_user.password === user.password){ //validate login
-
-            //SESSION HANDLING
-            createUserSession(req, res, user);
-            console.log('Logged in user');
-            //res.status(200).send({message: 'Logged in user'});
-
-        } else {
-          console.log('Invalid email or password');
-          //res.status(401).send({error: 'Invalid email or password'});
-        }
-    }
-  });
-};
-
-
-
-
-
-
 
 
 // create, update, changepassword, upload image
