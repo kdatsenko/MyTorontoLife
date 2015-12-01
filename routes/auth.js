@@ -17,7 +17,7 @@ router.get('/github/callback', function(req, res, next){
 			res.redirect('/')
 		}else{
 			setSession(req, res, user)
-			res.redirect('/')
+			res.redirect('/profile.html')
 		}
 	})(req, res, next);
 })
@@ -67,6 +67,16 @@ router.get('/logout', function(req, res, next){
 	res.end()
 })
 
+router.get('/loggedInUser', function(req, res, next){
+	if(req.session.user){
+		res.writeHead(200, {"Content-Type": "application/json"})
+		res.end(JSON.stringify({logged: true, user: req.session.user}))
+	}else{
+		res.writeHead(200, {"Content-Type": "application/json"})
+		res.end(JSON.stringify({logged: false}))
+	}
+})
+
  /**
  * Given a user object:
  *
@@ -93,7 +103,9 @@ function setSession(req, res, user){
 
 function unsetSession(req){
 	// Again, just a place holder
-	req.session.reset();
+	console.log("Logging out user")
+	req.session.destroy();
+	req.user = null
 }
 
 module.exports = router;
