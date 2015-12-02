@@ -7,12 +7,12 @@ var ObjectId = Schema.ObjectId;
 
 var interestSchema = new Schema({
 	name: {type: String, unique: true, required: '{PATH} is required.'}
-});	
+});
 
 
 
 var userSchema   = new Schema({
-  email: {type: String, unique: true}, //unique 
+  email: {type: String, unique: true}, //unique
   password: String,
   accounttype: Number, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: Boolean,
@@ -27,22 +27,20 @@ var userSchema   = new Schema({
   workplace: String,
   position: String,
   contactinfo: String,
-  interests: [{type: ObjectId, ref: 'Interests'}]
+
+  interests: [{type: ObjectId, ref: 'Interests'}],
    //user reputation parameters
-  /* numberofposts: {type: Number, default: 0},
+   numberofposts: {type: Number, default: 0},
    fivestarposts: {type: Number, default: 0},
    fourstarposts: {type: Number, default: 0},
    threestarposts: {type: Number, default: 0},
    twostarposts: {type: Number, default: 0},
-   onestarposts: {type: Number, default: 0}*/
+	onestarposts: {type: Number, default: 0}
 });
-
-
-
 
 var postTypesSchema = new Schema({
 	name: {type: String, unique: true, required: '{PATH} is required.'}
-});	
+});
 
 var nameValidator = [
   validate({
@@ -57,11 +55,11 @@ var groupsSchema = new Schema({
 	private_type: {type: Boolean, default: false},//True = private, False public
   group_creator: {type: ObjectId, required: true, ref: 'Users'},
 	description: {type: String, default: ''}
-});	
+});
 
 var userGroups = new Schema({
-  user: {type: ObjectId, required: true, ref: 'Users', unique: true},
-  group: {type: ObjectId, required: true, ref: 'Groups', unique: true}
+  user: {type: ObjectId, required: true, ref: 'Users'},
+  group: {type: ObjectId, required: true, ref: 'Groups'}
 });
 
 var tagValidator = [
@@ -81,15 +79,15 @@ var hashTags = new Schema({
 	name: {type: String, index: {unique: true}, lowercase: true, validate: tagValidator},
 	last_used: Date,
 	count: Number
-});	
+});
 
 var postsSchema = new Schema({
-	post_type: {type: ObjectId, required: true, ref: 'PostTypes'},
+  post_type: {type: ObjectId, required: true, ref: 'Types'},
 	group: {type: ObjectId, required: true, ref: 'Groups'},
 	text: {type: String, required: '{PATH} is required.'},
-  short_text: {type: String, default: 'hey'},
 	username: {type: String, required: true},
 	userid: {type: ObjectId, required: true, ref: 'Users'},
+	location: String,
 	date_posted: {type: Date, default: Date.now},
 	hashtags: [
 		{tag_id: {type: ObjectId, ref: 'Hashtags'},
@@ -98,6 +96,7 @@ var postsSchema = new Schema({
 	external_urls: [
 		{type: String}
 	],
+
   interest: {type: Schema.ObjectId, ref: 'Interests'},
    fivestarcount: {type: Number, default: 0},
    fourstarcount: {type: Number, default: 0},
@@ -106,20 +105,21 @@ var postsSchema = new Schema({
    onestarcount: {type: Number, default: 0},
    numberofratings: {type: Number, default: 0},
    averagerating: {type: Number, default: 0},
+
    imageurl: {type : String},
    commercial: {type: Boolean, default: false},
    comments: [
    	{userid: {type: ObjectId, required: true, ref: 'Users'},
      username: {type: String, required: true},
  	 text: {type: String, required: true}}
-   ] 
-});	
+   ]
+});
 
 var postsRatings = new Schema({
 	postid: {type: ObjectId, required: true, ref: 'Posts', unique: true},
 	userid: {type: ObjectId, required: true, ref: 'Users', unique: true},
 	rating: {type: Number, min: 1, max: 5}
-});	
+});
 
 postsSchema.pre('remove', function(next) {
     // 'this' is the client being removed. Provide callbacks here if you want
@@ -136,13 +136,13 @@ userSchema.pre('remove', function(next) {
     Posts.find({userid: this._id}, function(err, posts) {
       for (var i = 0; i < posts.length; i++){
         posts[i].remove();
-      } 
+      }
     });
 
     Groups.find({group_creator: this._id}, function(err, groups) {
       for (var i = 0; i < groups.length; i++){
         groups[i].remove();
-      } 
+      }
     });
 
     next();
@@ -150,11 +150,11 @@ userSchema.pre('remove', function(next) {
 
 groupsSchema.pre('remove', function(next) {
   GroupMembers.remove({group: this._id}).exec();
-  //Posts to remove 
+  //Posts to remove
   Posts.find({group: this._id}, function(err, posts) {
       for (var i = 0; i < posts.length; i++){
         posts[i].remove();
-      } 
+      }
   });
 });
 
@@ -171,10 +171,17 @@ postsSchema.pre('save', function (next) {
 var Interests = mongoose.model('Interests', interestSchema);
 var Users = mongoose.model('Users', userSchema);
 var PostTypes = mongoose.model('PostTypes', postTypesSchema);
+
+
+var Interests = mongoose.model('Interests', interestSchema);
+var Users = mongoose.model('Users', userSchema);
+var Types = mongoose.model('Types', postTypesSchema);
+
 var Groups = mongoose.model('Groups', groupsSchema);
 var GroupMembers = mongoose.model('GroupMembers', userGroups);
 var Hashtags = mongoose.model('Hashtags', hashTags);
 var Posts = mongoose.model('Posts', postsSchema);
+
 var PostRatings = mongoose.model('PostRatings', postsRatings);
 
   /*var interests = [{name: 'Food'},
@@ -209,11 +216,10 @@ var PostRatings = mongoose.model('PostRatings', postsRatings);
 module.exports = {
     Interests: Interests,
     Users: Users,
-    PostTypes: PostTypes,
+    Types: PostTypes,
     Groups: Groups,
     GroupMembers: GroupMembers,
     Hashtags: Hashtags,
     Posts: Posts,
     PostRatings: PostRatings
 };
-

@@ -16,21 +16,21 @@ function addNextBox(){
 }
 var prev_scroll = 0;
 function handleScroll(){
-    if(window.scrollY > window.innerHeight)
-    {
-        // In the feed
-        document.getElementById("topNav").className = "feed";
-        // document.getElementById("rightsidebar").style.top = (window.scrollY - window.innerHeight + 40) + "px";
-        // document.getElementById("leftsidebar").style.top = (window.scrollY - window.innerHeight + 40) + "px";
-
-    }
-    else
-    {
-        // In the Hero image
-        document.getElementById("topNav").className = "hero";
-    document.getElementById("rightsidebar").style.top = "40px";
-        document.getElementById("leftsidebar").style.top = "40px";
-    }
+    // if(window.scrollY > window.innerHeight)
+    // {
+    //     // In the feed
+    //     // document.getElementById("topNav").className = "feed";
+    //     // document.getElementById("rightsidebar").style.top = (window.scrollY - window.innerHeight + 40) + "px";
+    //     // document.getElementById("leftsidebar").style.top = (window.scrollY - window.innerHeight + 40) + "px";
+    //
+    // }
+    // else
+    // {
+    //     // In the Hero image
+    //     document.getElementById("topNav").className = "hero";
+    // document.getElementById("rightsidebar").style.top = "40px";
+    //     document.getElementById("leftsidebar").style.top = "40px";
+    // }
     if (window.scrollY > getDocHeight() - 1000){
         // Download another box
         addNextBox();
