@@ -1,0 +1,39 @@
+#below-image{
+	text-align: center;
+}
+
+#profile-image-holder{
+	text-align: center;
+}
+
+#profile-img{
+	width: 100%;
+	border-radius: 50%;
+	max-width: 20em;
+}
+
+.interest-star{
+	color: #E7EE05;
+	font-size: 1.5em;
+}
+
+.center{
+	text-align: center;
+}
+
+.group-right{
+	text-align: right;
+}
+
+.group-icon{
+	font-size: 1.5em;
+	color: #2541EE;
+}
+
+.group-top{
+	margin-bottom: 0.5em;
+}
+
+.group-description{
+	display: none;
+}
