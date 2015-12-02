@@ -23,17 +23,17 @@ var connectionString = 'mongodb://localhost:27017/' + dbName;
 
 var types = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
 var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
-var group_ids = [new ObjectId, 
-new ObjectId, 
-new ObjectId, 
-new ObjectId, 
-new ObjectId, 
+var group_ids = [new ObjectId,
 new ObjectId,
-new ObjectId, 
-new ObjectId, 
-new ObjectId, 
 new ObjectId,
-new ObjectId, 
+new ObjectId,
+new ObjectId,
+new ObjectId,
+new ObjectId,
+new ObjectId,
+new ObjectId,
+new ObjectId,
+new ObjectId,
 new ObjectId];
 var user_ids = [new ObjectId, new ObjectId, new ObjectId];
 
@@ -41,7 +41,7 @@ var hashtag_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new O
 
 var post_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
 
-var rating_ids = [new ObjectId, new ObjectId, new ObjectId, 
+var rating_ids = [new ObjectId, new ObjectId, new ObjectId,
 new ObjectId, new ObjectId, new ObjectId];
 
 
@@ -50,7 +50,7 @@ mongoose.connect(connectionString, function(err) {
     console.log('connection error', err);
   } else {
     console.log('connection successful');
-    
+
     mongoose.connection.db.dropDatabase();
 
 
@@ -73,54 +73,54 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
  var desc1 = "Groups - I assume we will preload some groups. " +
-  "How does the user belong to a group? Can they choose any " + 
-  "group to join? Are there public and private groups? " + 
-  "Will the user only see posts for the groups that they " + 
-  "are registered with? Right now, I have set it so that " + 
-  "all groups are by default public, and I was thinking " + 
-  "that if a group is private then users already in the " + 
-  "group have the privilege to add others. search and " + 
-  "rate things in neighbourhood Toronto overall. Does " + 
-  "this mean search and rate posts in the group the " + 
-  "user belongs to? Site events? Page views I understand, " + 
-  "but what else goes into this? Post expiry date - " + 
-  "why do we need it? What happens to the post after expiry? " + 
-  "I am concerned because there are tuples in other tables " + 
-  "that depend on the post, and reputation of the user is " + 
-  "aggregated based on ratings on their posts, so we shouldn’t " + 
-  "remove the posts. How to calculate the user’s reputation? " + 
-  "Example: there could be 1 post with a five star rating made by one user. " + 
-  "On the other hand, there could be a post where 100 users voted. Also, " + 
-  "some users have only a few posts, while others have multiple. So I was " + 
-  "thinking what if we will create some formula based on numbers " + 
+  "How does the user belong to a group? Can they choose any " +
+  "group to join? Are there public and private groups? " +
+  "Will the user only see posts for the groups that they " +
+  "are registered with? Right now, I have set it so that " +
+  "all groups are by default public, and I was thinking " +
+  "that if a group is private then users already in the " +
+  "group have the privilege to add others. search and " +
+  "rate things in neighbourhood Toronto overall. Does " +
+  "this mean search and rate posts in the group the " +
+  "user belongs to? Site events? Page views I understand, " +
+  "but what else goes into this? Post expiry date - " +
+  "why do we need it? What happens to the post after expiry? " +
+  "I am concerned because there are tuples in other tables " +
+  "that depend on the post, and reputation of the user is " +
+  "aggregated based on ratings on their posts, so we shouldn’t " +
+  "remove the posts. How to calculate the user’s reputation? " +
+  "Example: there could be 1 post with a five star rating made by one user. " +
+  "On the other hand, there could be a post where 100 users voted. Also, " +
+  "some users have only a few posts, while others have multiple. So I was " +
+  "thinking what if we will create some formula based on numbers " +
   "of posts and 5, 4, … 1 rating counts, number of votes.";
 
   var desc2 = "A politically adept and popular leader of the Roman Republic, " +
   "Julius Caesar significantly transformed what became known as the Roman Empire, " +
   "by greatly expanding its geographic reach and establishing its imperial system. " +
-  "While it has long been disputed, it's estimated that Julius Caesar was born in " + 
+  "While it has long been disputed, it's estimated that Julius Caesar was born in " +
   "Rome on July 12 or 13, 100 BC. While he hailed from Roman aristocrats, " +
-  "his family was far from rich. When Caesar was 16 his father, " + 
+  "his family was far from rich. When Caesar was 16 his father, " +
   "Gaius Caesar, died. He remained close to his mother, Aurelia. " +
-  "The Rome of Caesar's youth was unstable. An element of disorder ruled the " + 
-  "Republic, which had discredited its nobility and seemed unable to " + 
+  "The Rome of Caesar's youth was unstable. An element of disorder ruled the " +
+  "Republic, which had discredited its nobility and seemed unable to " +
   "handle its considerable size and influence";
 
-  var desc3 = "In choosing a cat, you must first decide whether you want " + 
-   "to bring home a kitten, a juvenile, or an adult. Generally, kittens are " +  
-   "curious, playful, and energetic. You get to watch them grow and mature, " +  
-   "and can influence the development of their personality. A kitten may " +  
-   "also be more readily accepted by pets that you already have. An adult " +  
-   "cat's personality is already established, so you'll have a better idea " +  
-   "of what kind of pet it will be in your home situation. Adult cats also " +  
-   "usually require less intensive care and supervision than kittens or  " + 
-   "juveniles do. A second thing to consider in choosing a cat is whether " +  
-   "you want a pedigreed or a mixed-breed animal. Mixed-breed cats are " +  
-   "generally categorized as either domestic shorthairs or domestic longhairs. " +  
-   "Mixed-breed and pedigreed cats both can be excellent companions. The greatest " +  
-   "advantage of getting a pedigreed kitten or adult is that its size, appearance, " +  
-   "and to some extent, personality, are likely to fit the profile of its particular " +  
-   "breed. With a mixed-breed kitten, you will be unable to predict its adult size " +  
+  var desc3 = "In choosing a cat, you must first decide whether you want " +
+   "to bring home a kitten, a juvenile, or an adult. Generally, kittens are " +
+   "curious, playful, and energetic. You get to watch them grow and mature, " +
+   "and can influence the development of their personality. A kitten may " +
+   "also be more readily accepted by pets that you already have. An adult " +
+   "cat's personality is already established, so you'll have a better idea " +
+   "of what kind of pet it will be in your home situation. Adult cats also " +
+   "usually require less intensive care and supervision than kittens or  " +
+   "juveniles do. A second thing to consider in choosing a cat is whether " +
+   "you want a pedigreed or a mixed-breed animal. Mixed-breed cats are " +
+   "generally categorized as either domestic shorthairs or domestic longhairs. " +
+   "Mixed-breed and pedigreed cats both can be excellent companions. The greatest " +
+   "advantage of getting a pedigreed kitten or adult is that its size, appearance, " +
+   "and to some extent, personality, are likely to fit the profile of its particular " +
+   "breed. With a mixed-breed kitten, you will be unable to predict its adult size " +
    "and appearance as accurately.";
 
 
@@ -141,27 +141,27 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
 
- 
+
 
   var usergroups = [{user: user_ids[0], group: group_ids[0]},
     {user: user_ids[2], group: group_ids[0]},
-  {user: user_ids[1], group: group_ids[0]}, 
-  {user: user_ids[0], group: group_ids[1]}, 
-  {user: user_ids[0], group: group_ids[2]}, 
+  {user: user_ids[1], group: group_ids[0]},
+  {user: user_ids[0], group: group_ids[1]},
+  {user: user_ids[0], group: group_ids[2]},
   {user: user_ids[0], group: group_ids[3]},
-  {user: user_ids[2], group: group_ids[3]}, 
-  {user: user_ids[0], group: group_ids[4]}, 
+  {user: user_ids[2], group: group_ids[3]},
+  {user: user_ids[0], group: group_ids[4]},
   {user: user_ids[0], group: group_ids[5]},
-  {user: user_ids[2], group: group_ids[5]}, 
-  {user: user_ids[1], group: group_ids[5]}, 
+  {user: user_ids[2], group: group_ids[5]},
+  {user: user_ids[1], group: group_ids[5]},
 
   {user: user_ids[1], group: group_ids[6]},
   {user: user_ids[1], group: group_ids[7]},
   {user: user_ids[1], group: group_ids[8]},
-  {user: user_ids[2], group: group_ids[8]}, 
-  {user: user_ids[0], group: group_ids[8]}, 
+  {user: user_ids[2], group: group_ids[8]},
+  {user: user_ids[0], group: group_ids[8]},
 
-  {user: user_ids[2], group: group_ids[9]}, 
+  {user: user_ids[2], group: group_ids[9]},
   {user: user_ids[2], group: group_ids[10]},
   {user: user_ids[1], group: group_ids[10]},
   {user: user_ids[2], group: group_ids[11]},
@@ -170,7 +170,7 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
 
-     
+
 
 
 
@@ -233,7 +233,7 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
 
- 
+
 
 var posts = [
 { _id: post_ids[0],
@@ -333,14 +333,14 @@ var postsRatings = [
 
 models.Interests.collection.insert(interests, onInsert);
 models.Types.collection.insert(postTypes, onInsert);
- 
+
  models.Groups.collection.insert(groups, onInsert);
  models.GroupMembers.collection.insert(usergroups, onInsert);
  models.Hashtags.collection.insert(hashtags, onInsert);
  models.Users.collection.insert(users, onInsert)
  models.Posts.collection.insert(posts, onInsert);
   models.PostRatings.collection.insert(postsRatings, onInsert);
- 
+
 
 
  test();
@@ -361,7 +361,7 @@ models.Types.collection.insert(postTypes, onInsert);
 
 var routes = require('./routes/index');
 
-
+app.use(logger('dev'));
 
 // view engine setup
 /*var exphbs = require('express-handlebars');
@@ -425,4 +425,3 @@ var getUser = function (username){
 };
 
 module.exports = app;
-
