@@ -3,10 +3,11 @@ var router = express.Router();
 var schema = require('../models/dbschema');
 var mongoose = require('mongoose');
 
-var Users = schema.Users;
-var Interests = schema.Interests;
-var Groups = schema.Groups;
-var Posts = schema.Posts;
+var Users = require('mongoose').model('Users');
+var Interests = require('mongoose').model('Interests');
+var Groups = require('mongoose').model('Groups');
+var Posts = require('mongoose').model('Posts');
+
 
 /* GET admin page. */
 router.get('/', function(req, res) {
