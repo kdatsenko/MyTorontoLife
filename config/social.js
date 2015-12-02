@@ -19,11 +19,11 @@ module.exports = function () {
 				console.log("Github: User not found, creating new")
 				// User email not in the database
 				// Let's create a new user
-				
+
 				// This is just placeholder, as we may not want
 				// Users to be added to the database automatically
 				// When they sign in with social media
-				
+
 				var user = new User()
 				user.email = profile.emails[0].value
 				user.username = profile._json.login
@@ -40,5 +40,7 @@ module.exports = function () {
 				})
 			}
 		})
+		req.session.profile = profile;
+		return done(null, profile);
 	}))
 }

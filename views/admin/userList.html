@@ -1,0 +1,43 @@
+<style>
+    .btn-like:hover{background-color:#99FFFF;cursor:pointer;}
+</style>
+<div>
+	<div>
+		Sort by: 
+        <select ng-model="sortExpression">
+			<option value="username">Username</option>
+			<option value="useremail">Useremail</option>
+		</select>
+    </div>
+
+    <table class="table table-bordered table-condensed table-responsive table-sm">
+          <thead class="thead-inverse">
+            <tr  >
+              <th>Username</th>
+              <th>Useremail</th>
+              <th>Option</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input placeholder="Search name" ng-model="search.username" />
+              </td>
+              <td>
+                <input placeholder="Search email" ng-model="search.useremail" />
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr ng-repeat="user in userList | orderBy:mySortFunction | filter:search">
+              	<td ng-click='getUser(user.useremail)' class="btn-like">{{user.username}}</td>
+            	<td ng-click='getUser(user.useremail)' class="btn-like">{{user.useremail}}</td>
+             	<td>
+             		<a ng-click='deleteUser(user.useremail)'>
+		              <strong style="margin-left:10px">(DELETE)</strong>
+		            </a>
+		        </td>  
+            </tr>
+          </tbody>
+        </table>
+</div>

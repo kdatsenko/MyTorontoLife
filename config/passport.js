@@ -2,6 +2,8 @@ var passport = require('passport'),
 	User = require('mongoose').model('Users')
 
 //USER schema is NOT how I envisioned this
+var passport = require('passport')
+
 
 module.exports = function() {
 	// handle user serialization here...
@@ -17,4 +19,3 @@ module.exports = function() {
 
 	require('./social.js')()
 	require('./local.js')()
-}

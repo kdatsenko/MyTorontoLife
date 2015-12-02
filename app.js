@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+
 var moment = require('moment');
 moment().format();
 var session = require('express-session');
@@ -13,27 +14,81 @@ var models = require('./models/dbschema');
 var ObjectId = mongoose.Types.ObjectId;
 var app = express();
 
-
 //mongoose.connect('mongodb://localhost/csc309a5'); // connect to our database
 
 var dbName = 'A5DB';
 var connectionString = 'mongodb://localhost:27017/' + dbName;
-
-
-/*var user_ids = [new ObjectId, new ObjectId];
-  var group_ids = [new ObjectId, new ObjectId, 
-                  new ObjectId, new ObjectId,
-                  new ObjectId, new ObjectId,
-                  new ObjectId, new ObjectId];
-var postids = [new ObjectId, new ObjectId, new ObjectId];
-    var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];*/
 
 mongoose.connect(connectionString, function(err) {
   if(err) {
     console.log('connection error', err);
   } else {
     console.log('connection successful');
+    var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
 
+ var interests = [{_id: interest_ids[0], name: 'Food'},
+                  {_id: interest_ids[1], name: 'Bars'},
+                  {_id: interest_ids[2], name: 'Condo'},
+                  {_id: interest_ids[3], name: 'Parks and Recreation'},
+                  {_id: interest_ids[4], name: 'Hockey'},
+                  {_id: interest_ids[5], name: 'Cat Cafe'}];
+
+  var postTypes = [{_id: 7, name: 'Announcement'},
+                  {_id: 8, name: 'Question'},
+                  {_id: 9, name: 'Business Ad'},
+                  {_id: 10, name: 'Event'},
+                  {_id: 11, name: 'Sale Listing'},
+                  {_id: 12, name: 'Poll'}];
+
+  var groups = [{_id: 13, name: 'Toronto'},
+                  {_id: 14, name: 'Etobicoke'},
+                  {_id: 15, name: 'Little Italy'},
+                  {_id: 16, name: 'Kensington'},
+                  {_id: 17, name: 'Guelph'},
+                  {_id: 18, name: 'Old Mill'},
+                  {_id: 19, name: 'Marys Housemates'},
+                  {_id: 20, name: 'Distillery District'}];
+
+ var users = [
+ { email: 'hello@fromtheotherside.com',
+  password: 'dddd',
+  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
+  loggedin: 0,
+  username: 'Adele',
+  description: '25 now',
+  //validation between 10 and 200 (vampires!)
+  age: 25,
+  gender: 'female', //for aliens!
+  homeaddress: 'London',
+  workplace: 'Some label',
+  position: 'Songstress',
+  contactinfo: 'Forget it',
+  interests: [interest_ids[0], interest_ids[2]]},
+
+  { email: 'borntodie@lana.com',
+  password: 'dddd',
+  accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
+  loggedin: 0,
+  username: 'LanaDelRey',
+  description: 'Off to the races!',
+  //validation between 10 and 200 (vampires!)
+  age: 25,
+  gender: 'female', //for aliens!
+  homeaddress: 'USA',
+  workplace: 'Some label',
+  position: 'Songstress',
+  contactinfo: 'Forget it',
+  interests: [interest_ids[0], interest_ids[2]]
+}];
+
+
+ models.Interests.collection.insert(interests, onInsert);
+ models.Users.collection.insert(users, onInsert)
+ models.Types.collection.insert(postTypes, onInsert);
+ models.Groups.collection.insert(groups, onInsert);
+
+
+ test();
 
   }
 
@@ -48,9 +103,11 @@ mongoose.connect(connectionString, function(err) {
     }
   }
 
+
 var routes = require('./routes/index');
-//var api = require('./api/index');
 var auth = require('./routes/auth')
+
+
 
 // view engine setup
 /*var exphbs = require('express-handlebars');
@@ -74,20 +131,18 @@ app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+app.use('/api/v1/', api);
+
+app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+app.use(passport.initialize());
+app.use(passport.session());
+
+
 app.use('/', routes);
 app.use('/auth', auth);
 
-//app.use(express.logger('dev'));
-app.use(express.static(path.join(__dirname, 'public')));
 
-
-
-
-/*app.get('/', function(req, res, next) {
-  console.log('hdhhfhjkehfwekfj');
-  res.render('anything');
-  next();
-});*/
 
 
 app.use(function (req, res, next) {
@@ -302,9 +357,9 @@ var changePasswordRegular = function (user, res){
 
     // move the file from the temporary location to the intended location
     fs.rename(tmp_path, target_path, function(err) {
-      if (err) 
+      if (err)
         return res.send(err);
-        // delete the temporary file, so that the explicitly set temporary 
+        // delete the temporary file, so that the explicitly set temporary
         //upload dir does not get filled with unwanted files
         fs.unlink(tmp_path, function() {
           if (err) return res.send(err);
@@ -367,7 +422,7 @@ app.get('/groups/group', requireLogin, function(req, res) {
       res.json(found_group);
     }
 
-  });  
+  });
 });
 
 
@@ -399,9 +454,9 @@ app.get('/groups/group', requireLogin, function(req, res) {
 
 /* Get all this user's groups */
  app.get('/users/user/groups', requireLogin, function(req, res) {
-  //get groups related to this user 
-  /* 
-1. Get all thi's user's group 
+  //get groups related to this user
+  /*
+1. Get all thi's user's group
 UserGroups - for this userid, get all the groupids, populate with group name, and id
 [ { group: { name: 'Toronto', _id: 5658ed81876352c41cb95891 } },
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
@@ -420,7 +475,7 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
 
 /* Create a new group */
 app.post('/groups/addnew', requireLogin, function(req, res) {
-  var group = new models.Group(req.body.group); //create new  
+  var group = new models.Group(req.body.group); //create new
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
               group.group_creator = req.session.user.id; //this user
@@ -431,9 +486,9 @@ app.post('/groups/addnew', requireLogin, function(req, res) {
                   res.status(200).send({message: 'Created group successfully'});
 
               });
-          } else { 
+          } else {
             return res.status(401).send({error: "That group name is already taken."});
-          }   
+          }
       }); //FINDONE
 });
 
@@ -496,7 +551,7 @@ app.post('/groups/group/addmember', requireLogin, function(req, res){
 });
 
 var joinGroup = function (req, res, group){ //requireLogin
-    models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id}, 
+    models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id},
         {user: req.session.user.id, group: group._id}, { upsert: true }, function(err, membership){
       res.json({ message: 'Joined group!', result: membership});
     });
@@ -505,7 +560,7 @@ var joinGroup = function (req, res, group){ //requireLogin
 //group creator add member
 var addGroupMember = function (req, res, group){
     //req.body.user._id = id of user to add in req JSON body
-    models.GroupMembers.findOneAndUpdate({user: req.body.user._id, group: group._id}, 
+    models.GroupMembers.findOneAndUpdate({user: req.body.user._id, group: group._id},
       {user: req.body.user._id, group: group._id}, { upsert: true }, function(err, membership){
       res.json({ message: 'Joined group!', result: membership});
     });
@@ -517,8 +572,8 @@ app.post('/interests/addnew', requireLogin, function(req, res){
 //var createInterest = function(interest){ //requireLogin
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
      return res.status(403).send({error: 'Unauthorized account type'});
-  }  
-  var interest = new models.Interests(req.body.interest); //create new  
+  }
+  var interest = new models.Interests(req.body.interest); //create new
   models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
           if (err){
             return res.send(err);
@@ -530,9 +585,9 @@ app.post('/interests/addnew', requireLogin, function(req, res){
                   }
                   res.json({ message: 'Interest added!' });
               });
-          } else { 
+          } else {
             return res.status(401).send({error: "That interest already exists."});
-          }   
+          }
       }); //FINDONE
 });
 
@@ -558,7 +613,7 @@ app.post('/posts/addnew', requireLogin, function(req, res){
       if (!usergroup){
         return res.status(403).send({error: 'Group access for this user is unauthorized'});
       } else {
-        var post = new models.Posts(req.body.post); //create new 
+        var post = new models.Posts(req.body.post); //create new
         post.username = req.session.user.username;
         post.userid = req.session.user.userid;
         var hashtags = [];
@@ -578,13 +633,13 @@ app.post('/posts/addnew', requireLogin, function(req, res){
        });
 
     }
-  });    
+  });
 });
 
 
 
-/* Get Post by Id. While loading the post, also populate the hashtags. 
-Rights: admin, public or by private member 
+/* Get Post by Id. While loading the post, also populate the hashtags.
+Rights: admin, public or by private member
 */
 app.get('/posts/post', requireLogin, function(req, res) {
     models.Posts.findOne({ _id: req.query._id })
@@ -609,7 +664,7 @@ app.get('/posts/post', requireLogin, function(req, res) {
       } else if (!post){
         return res.status(404).send({error: 'Post not found'});
       }
-      //Authorization check 
+      //Authorization check
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.group.private_type){
         models.GroupMembers.findOne({group: post.group, user: req.session.user.id}, function(err, user){
           if (err){
@@ -717,7 +772,7 @@ app.post('/posts/post/addcomment', requireLogin, function(req, res){
             res.json({ message: 'Comment added!', result : comment});
           });
         }
-    });    
+    });
 
 });
 
@@ -728,8 +783,8 @@ app.post('/interests/addnew', requireLogin, function(req, res){
 //var createInterest = function(interest){ //requireLogin
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
      return res.status(403).send({error: 'Unauthorized account type'});
-  }  
-  var interest = new models.Interests(req.body.interest); //create new  
+  }
+  var interest = new models.Interests(req.body.interest); //create new
   models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
           if (err){
             return res.send(err);
@@ -741,9 +796,9 @@ app.post('/interests/addnew', requireLogin, function(req, res){
                   }
                   res.json({ message: 'Interest added!' });
               });
-          } else { 
+          } else {
             return res.status(401).send({error: "That interest already exists."});
-          }   
+          }
       }); //FINDONE
 });
 
@@ -775,12 +830,12 @@ app.post('/posts/post/rate', requireLogin, function(req, res){
         models.PostRatings.findOne({postid: post._id, userid: req.session.user.id}, function(err, post_rating) {
           if(err){
             return res.send(err);
-          } 
+          }
           else if (!post_rating){ //a rating by this user for this post does not exist yet
             //CREATE NEW
-            var in_rating = new models.PostRatings({postid: post._id, 
-                                                      userid: req.session.user.id, 
-                                                      rating: req.body.rating.stars}); //create new  
+            var in_rating = new models.PostRatings({postid: post._id,
+                                                      userid: req.session.user.id,
+                                                      rating: req.body.rating.stars}); //create new
             in_rating.save(function(err) { //SAVE NEW
               if (err) {
                 return res.send(err);
@@ -797,7 +852,7 @@ app.post('/posts/post/rate', requireLogin, function(req, res){
                 }
                 res.json({ message: 'User rating for this post updated!' });
              });
-          } 
+          }
 
           modifyPostRatingHelper(post, req.body.rating.stars, false);
           calculateAverageRating(post);
@@ -816,9 +871,9 @@ app.post('/posts/post/rate', requireLogin, function(req, res){
 /* Recalculate average rating for this post */
 var calculateAverageRating = function(postObj){
   var total = (postObj.onestarcount * 1) +
-              (postObj.twostarcount * 2) + 
-              (postObj.threestarcount * 3) + 
-              (postObj.fourstarcount * 4) + 
+              (postObj.twostarcount * 2) +
+              (postObj.threestarcount * 3) +
+              (postObj.fourstarcount * 4) +
               (postObj.fivestarcount * 5);
   postObj.averagerating = (total / numberofratings);
 };
@@ -851,7 +906,7 @@ var modifyPostRatingHelper = function(postObj, numstars, subtract){
   postObj.numberofratings += increment;
 };
 
- 
+
 /**
  * Delete the user's record from the DB system.
  */
@@ -983,8 +1038,8 @@ app.get('/tags/tag/posts', requireLogin, function(req, res) {
 
 
 
-/* 
-1. Get Posts By Interest. 
+/*
+1. Get Posts By Interest.
 2. Where the post group is public, or the user is member of that group
 3. Order by most recent date, rating, get top 100 first
 */
@@ -1013,7 +1068,7 @@ app.get('/interests/interest/posts', requireLogin, function(req, res) {
         exec(function(err){
           if (err) {
             return res.send(err);
-          } 
+          }
           return res.json(posts);
         });
 
@@ -1027,10 +1082,10 @@ app.get('/interests/interest/posts', requireLogin, function(req, res) {
 
 
 
-/* 
+/*
 Get Hash Tags (Hash tag index)
-There are two parameters, use_count, and date_last_used. Which takes precedent? 
-For now, I'll use date_last_used first, get tags used less than 100 days ago, order 
+There are two parameters, use_count, and date_last_used. Which takes precedent?
+For now, I'll use date_last_used first, get tags used less than 100 days ago, order
 by use_count descending, and extract the top 100 of the list.
 */
 app.get('/tags', requireLogin, function(req, res) {
@@ -1045,7 +1100,7 @@ app.get('/tags', requireLogin, function(req, res) {
   exec(function(err, tags){
     if (err) {
       return res.send(err);
-    } 
+    }
     return res.json(tags);
   });
 
@@ -1053,7 +1108,7 @@ app.get('/tags', requireLogin, function(req, res) {
 
 
 
-/* 
+/*
 Generate Posts for Main Feed on Dashboard
 0. Get all interests (a, b, c) and groups (1, 2, 3) of this user
 1. Find all users who have intersecting interests (a,b,c) AND are in intersecting groups (1,2,3).
@@ -1061,7 +1116,7 @@ Generate Posts for Main Feed on Dashboard
 limit to top 100.
 3. (select relevant fields)!
 
-*** If at any point, search result comes up empty display generic group feed for this user. *** 
+*** If at any point, search result comes up empty display generic group feed for this user. ***
 Function: getGroupFeed
 
 */
@@ -1069,7 +1124,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
   models.Users.findOne({_id: req.session.user.id}).exec(function(err, docs){
      if (err){
         return res.send(err);
-     } 
+     }
      var interest_ids = docs.interests.map(function(id) { return id; }); //array of ids
      if (interest_ids.length == 0){
         console.log('No interests, nothing to show here!');
@@ -1119,7 +1174,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
                 //GOTO: Group feed for this user!
                 getGroupFeed(req, res);
                 return;
-              } 
+              }
               var temppostids = docs.map(function(obj) { return obj.postid; });
 
               //Get all posts that 'this' user has not seen before (via rating).
@@ -1150,7 +1205,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
                   getGroupFeed(req, res);
                   return;
                 }
-               
+
                 var today = moment();
                 var daysago = moment(today).subtract(100, 'days');
 
@@ -1167,7 +1222,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
                     getGroupFeed(req, res);
                     return;
                   }
-                  //FINALLY 
+                  //FINALLY
                   res.json(posts);
                 });
 
@@ -1187,7 +1242,7 @@ app.get('/dashboard', requireLogin, function(req, res) {
 
 });
 
-/* 
+/*
 Get feed from groups: Get most recent feed from all user's groups
 */
 var getGroupFeed = function (req, res) {
@@ -1206,7 +1261,7 @@ var getGroupFeed = function (req, res) {
       .exec(function(err, posts){
         if (err){
           return res.send(err);
-        } 
+        }
         res.json(posts);
       });
   });
@@ -1224,3 +1279,38 @@ function test () {
 
 }
 
+module.exports = app;
+
+/**
+- Connection to DB, put in early data
+
+- Few statements that extract data from multiple tables.
+- interest join with user
+-
+
+Person.find().populate('teamId').exec(function(err, people) {
+  ...
+});
+
+app.post('/signup', function(req, res) {
+
+*/
+
+var getUser = function (username){
+      models.Users.findOne({ username: username })
+      .populate({
+      path: 'interests',
+      //populate: { path: 'interests' }
+      })
+      .exec(function(err, user) {
+        console.log(err);
+        console.log(user);
+      });
+
+
+};
+
+function test () {
+  console.log('Hello we are sitting with me!');
+  getUser('Adele');
+}
