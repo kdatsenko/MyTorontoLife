@@ -123,12 +123,7 @@ var crudApp = angular.module('crudApp');
 
 	$scope.github_signin = function(){
 
-		$http.get('/auth/github').success(function(data, status, headers, config) {
-            	console.log("back in success");
-            }).
-            error(function(data, status, headers, config) {
-            	console.log('ERROR!');
-            });
+		window.location = '/auth/github';
 
 	}
 

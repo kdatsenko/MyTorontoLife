@@ -10,14 +10,14 @@ router.get('/github/callback', function(req, res, next){
 	passport.authenticate('github', function(err, user, info){
 		console.log(err, user, info)
 		if(err){
-			res.redirect('/')
+			// res.redirect('/')
 			throw err;
 		}
 		if(!user){
-			res.redirect('/')
+			res.redirect('/login');
 		}else{
 			setSession(req, res, user)
-			res.redirect('/profile.html')
+			res.redirect('/profile.html');
 		}
 	})(req, res, next);
 })

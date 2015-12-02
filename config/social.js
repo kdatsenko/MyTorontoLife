@@ -41,6 +41,6 @@ module.exports = function () {
 			}
 		})
 		req.session.profile = profile;
-		return done(null, profile);
+		// return done(null, profile);
 	}))
 }

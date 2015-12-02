@@ -8,6 +8,7 @@ function editModeReplace(el, type, attrs){
 		var value = el.html()
 		el.replaceWith("<"+type+' '+attrs+">"+value+"</"+type+">")
 	}
+}
 
 crudApp.controller('profileController', function ($scope, $http, $compile, $routeParams, $location) {
 	$scope.user = {
