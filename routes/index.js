@@ -52,6 +52,7 @@ router.use('/users', require('./users'));
 router.use('/tags', require('./tags'));
 router.use('/groups', require('./groups'));
 router.use('/dashboard', require('./dashboard'));
+router.use('/interests', require('./interests'));
 
 router.get('/login', function(req, res, next){
 	if(req.session && req.session.user){
