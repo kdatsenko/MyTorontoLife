@@ -44,7 +44,9 @@ router.post('/local/signup', function(req, res, next){
 
 
 router.post('/local/login', function(req, res, next){
+	//console.log('req: ' + JSON.stringify(req));
 	passport.authenticate('local-login', function(err, user, info){
+		console.log(err + ' ' + user + ' ' + JSON.stringify(info));
 		if(err){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: "Error Occurred"}))

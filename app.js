@@ -19,40 +19,165 @@ var app = express();
 var dbName = 'A5DB';
 var connectionString = 'mongodb://localhost:27017/' + dbName;
 
+
+var types = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+var group_ids = [new ObjectId, 
+new ObjectId, 
+new ObjectId, 
+new ObjectId, 
+new ObjectId, 
+new ObjectId,
+new ObjectId, 
+new ObjectId, 
+new ObjectId, 
+new ObjectId,
+new ObjectId, 
+new ObjectId];
+var user_ids = [new ObjectId, new ObjectId, new ObjectId];
+
+var hashtag_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+
+var post_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+
+var rating_ids = [new ObjectId, new ObjectId, new ObjectId, 
+new ObjectId, new ObjectId, new ObjectId];
+
+
 mongoose.connect(connectionString, function(err) {
   if(err) {
     console.log('connection error', err);
   } else {
     console.log('connection successful');
-    var interest_ids = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
+    
+    mongoose.connection.db.dropDatabase();
 
- var interests = [{_id: interest_ids[0], name: 'Food'},
+
+  var postTypes = [{_id: types[0], name: 'Announcement'},
+                  {_id: types[1], name: 'Question'},
+                  {_id: types[2], name: 'Business Ad'},
+                  {_id: types[3], name: 'Event'},
+                  {_id: types[4], name: 'Sale Listing'},
+                  {_id: types[5], name: 'Poll'}];
+
+
+var interests = [{_id: interest_ids[0], name: 'Food'},
                   {_id: interest_ids[1], name: 'Bars'},
                   {_id: interest_ids[2], name: 'Condo'},
                   {_id: interest_ids[3], name: 'Parks and Recreation'},
                   {_id: interest_ids[4], name: 'Hockey'},
                   {_id: interest_ids[5], name: 'Cat Cafe'}];
 
-  var postTypes = [{_id: 7, name: 'Announcement'},
-                  {_id: 8, name: 'Question'},
-                  {_id: 9, name: 'Business Ad'},
-                  {_id: 10, name: 'Event'},
-                  {_id: 11, name: 'Sale Listing'},
-                  {_id: 12, name: 'Poll'}];
 
-  var groups = [{_id: 13, name: 'Toronto'},
-                  {_id: 14, name: 'Etobicoke'},
-                  {_id: 15, name: 'Little Italy'},
-                  {_id: 16, name: 'Kensington'},
-                  {_id: 17, name: 'Guelph'},
-                  {_id: 18, name: 'Old Mill'},
-                  {_id: 19, name: 'Marys Housemates'},
-                  {_id: 20, name: 'Distillery District'}];
+
+
+ var desc1 = "Groups - I assume we will preload some groups. " +
+  "How does the user belong to a group? Can they choose any " + 
+  "group to join? Are there public and private groups? " + 
+  "Will the user only see posts for the groups that they " + 
+  "are registered with? Right now, I have set it so that " + 
+  "all groups are by default public, and I was thinking " + 
+  "that if a group is private then users already in the " + 
+  "group have the privilege to add others. search and " + 
+  "rate things in neighbourhood Toronto overall. Does " + 
+  "this mean search and rate posts in the group the " + 
+  "user belongs to? Site events? Page views I understand, " + 
+  "but what else goes into this? Post expiry date - " + 
+  "why do we need it? What happens to the post after expiry? " + 
+  "I am concerned because there are tuples in other tables " + 
+  "that depend on the post, and reputation of the user is " + 
+  "aggregated based on ratings on their posts, so we shouldn’t " + 
+  "remove the posts. How to calculate the user’s reputation? " + 
+  "Example: there could be 1 post with a five star rating made by one user. " + 
+  "On the other hand, there could be a post where 100 users voted. Also, " + 
+  "some users have only a few posts, while others have multiple. So I was " + 
+  "thinking what if we will create some formula based on numbers " + 
+  "of posts and 5, 4, … 1 rating counts, number of votes.";
+
+  var desc2 = "A politically adept and popular leader of the Roman Republic, " +
+  "Julius Caesar significantly transformed what became known as the Roman Empire, " +
+  "by greatly expanding its geographic reach and establishing its imperial system. " +
+  "While it has long been disputed, it's estimated that Julius Caesar was born in " + 
+  "Rome on July 12 or 13, 100 BC. While he hailed from Roman aristocrats, " +
+  "his family was far from rich. When Caesar was 16 his father, " + 
+  "Gaius Caesar, died. He remained close to his mother, Aurelia. " +
+  "The Rome of Caesar's youth was unstable. An element of disorder ruled the " + 
+  "Republic, which had discredited its nobility and seemed unable to " + 
+  "handle its considerable size and influence";
+
+  var desc3 = "In choosing a cat, you must first decide whether you want " + 
+   "to bring home a kitten, a juvenile, or an adult. Generally, kittens are " +  
+   "curious, playful, and energetic. You get to watch them grow and mature, " +  
+   "and can influence the development of their personality. A kitten may " +  
+   "also be more readily accepted by pets that you already have. An adult " +  
+   "cat's personality is already established, so you'll have a better idea " +  
+   "of what kind of pet it will be in your home situation. Adult cats also " +  
+   "usually require less intensive care and supervision than kittens or  " + 
+   "juveniles do. A second thing to consider in choosing a cat is whether " +  
+   "you want a pedigreed or a mixed-breed animal. Mixed-breed cats are " +  
+   "generally categorized as either domestic shorthairs or domestic longhairs. " +  
+   "Mixed-breed and pedigreed cats both can be excellent companions. The greatest " +  
+   "advantage of getting a pedigreed kitten or adult is that its size, appearance, " +  
+   "and to some extent, personality, are likely to fit the profile of its particular " +  
+   "breed. With a mixed-breed kitten, you will be unable to predict its adult size " +  
+   "and appearance as accurately.";
+
+
+
+
+  var groups = [{_id: group_ids[0], name: 'Toronto', group_creator: user_ids[0], description: desc1},
+                  {_id: group_ids[1], name: 'Etobicoke', group_creator: user_ids[0], description: desc2},
+                  {_id: group_ids[2], name: 'Little Italy', group_creator: user_ids[0], description: desc3},
+                  {_id: group_ids[3], name: 'Kensington', group_creator: user_ids[0], description: 'Kensington yay'},
+                  {_id: group_ids[4], name: 'Guelph', group_creator: user_ids[0], description: 'Guelph yay'},
+                  {_id: group_ids[5], name: 'Old Mill', group_creator: user_ids[0], description: 'Old Mill yay'},
+                  {_id: group_ids[6], name: 'Marys Housemates', group_creator: user_ids[1], description: 'Marys Housemates yay'},
+                  {_id: group_ids[7], name: 'Ontario', group_creator: user_ids[1], description: 'Ontario yay'},
+                  {_id: group_ids[8], name: 'Waterloo', group_creator: user_ids[1], description: 'Waterloo yay'},
+                  {_id: group_ids[9], name: 'London', group_creator: user_ids[2], description: 'London yay'},
+                  {_id: group_ids[10], name: 'Bloor', group_creator: user_ids[2], description: 'Bloor yay'},
+                  {_id: group_ids[11], name: 'UofT', group_creator: user_ids[2], description: 'UofTn yay'}];
+
+
+
+ 
+
+  var usergroups = [{user: user_ids[0], group: group_ids[0]},
+    {user: user_ids[2], group: group_ids[0]},
+  {user: user_ids[1], group: group_ids[0]}, 
+  {user: user_ids[0], group: group_ids[1]}, 
+  {user: user_ids[0], group: group_ids[2]}, 
+  {user: user_ids[0], group: group_ids[3]},
+  {user: user_ids[2], group: group_ids[3]}, 
+  {user: user_ids[0], group: group_ids[4]}, 
+  {user: user_ids[0], group: group_ids[5]},
+  {user: user_ids[2], group: group_ids[5]}, 
+  {user: user_ids[1], group: group_ids[5]}, 
+
+  {user: user_ids[1], group: group_ids[6]},
+  {user: user_ids[1], group: group_ids[7]},
+  {user: user_ids[1], group: group_ids[8]},
+  {user: user_ids[2], group: group_ids[8]}, 
+  {user: user_ids[0], group: group_ids[8]}, 
+
+  {user: user_ids[2], group: group_ids[9]}, 
+  {user: user_ids[2], group: group_ids[10]},
+  {user: user_ids[1], group: group_ids[10]},
+  {user: user_ids[2], group: group_ids[11]},
+  {user: user_ids[0], group: group_ids[11]}];
+
+
+
+
+     
+
+
 
  var users = [
- { email: 'hello@fromtheotherside.com',
+ { _id: user_ids[0],
+  email: 'adele@gmail.com',
   password: 'dddd',
-  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
+  accounttype: 0, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: 0,
   username: 'Adele',
   description: '25 now',
@@ -63,9 +188,24 @@ mongoose.connect(connectionString, function(err) {
   workplace: 'Some label',
   position: 'Songstress',
   contactinfo: 'Forget it',
-  interests: [interest_ids[0], interest_ids[2]]},
-
-  { email: 'borntodie@lana.com',
+  interests: [interest_ids[0], interest_ids[1], interest_ids[2], interest_ids[3]]},
+ { _id: user_ids[1],
+  email: 'mchammer@gmail.com',
+  password: 'dddd',
+  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
+  loggedin: 0,
+  username: 'MCHammer',
+  description: 'Cant touch this',
+  //validation between 10 and 200 (vampires!)
+  age: 25,
+  gender: 'male', //for aliens!
+  homeaddress: 'USA',
+  workplace: 'Some label',
+  position: 'Songster',
+  contactinfo: 'Forget it',
+  interests: [interest_ids[0], interest_ids[2], interest_ids[4], interest_ids[5]]},
+  { _id: user_ids[2],
+    email: 'lanadelrey@gmail.com',
   password: 'dddd',
   accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: 0,
@@ -78,14 +218,128 @@ mongoose.connect(connectionString, function(err) {
   workplace: 'Some label',
   position: 'Songstress',
   contactinfo: 'Forget it',
-  interests: [interest_ids[0], interest_ids[2]]
+  interests: [interest_ids[0], interest_ids[1], interest_ids[3], interest_ids[4]]
 }];
 
 
- models.Interests.collection.insert(interests, onInsert);
- models.Users.collection.insert(users, onInsert)
- models.Types.collection.insert(postTypes, onInsert);
+
+ var hashtags = [{_id: hashtag_ids[0], name: 'Cool'},
+                  {_id: hashtag_ids[1], name: 'Interesting'},
+                  {_id: hashtag_ids[2], name: 'Coolerthanyourcity'},
+                  {_id: hashtag_ids[3], name: 'greatlandscapes'},
+                  {_id: hashtag_ids[4], name: 'someonecalltheplumber'},
+                  {_id: hashtag_ids[5], name: 'lostatsomewhere'}];
+
+
+
+ 
+
+var posts = [
+{ _id: post_ids[0],
+  post_type: types[0],
+  group: group_ids[0],
+  text: desc3,
+  username: 'Adele',
+  userid: user_ids[0],
+  hashtags: [
+    {tag_id: hashtag_ids[0],
+      name: 'Cool'},
+      {tag_id: hashtag_ids[2],
+      name: 'Coolerthanyourcity'}],
+  interest: interest_ids[0],
+   fivestarcount: 2,
+   comments: [
+    {userid: user_ids[1],
+     username: 'MCHammer',
+   text: 'Yo, this is cool'}]},
+
+{_id: post_ids[1],
+  post_type: types[1],
+  group: group_ids[0],
+  text: desc2,
+  username: 'LanaDelRey',
+  userid: user_ids[2],
+  hashtags: [
+    {tag_id: hashtag_ids[0],
+      name: 'Cool'},
+      {tag_id: hashtag_ids[5],
+      name: 'lostatsomewhere'}],
+  interest: interest_ids[3],
+   fivestarcount: 1,
+   threestarcount: 1,
+   comments: [
+    {userid: user_ids[1],
+     username: 'MCHammer',
+   text: 'Yo, this is quite cool, good post'},
+   {userid: user_ids[0],
+     username: 'Adele',
+   text: 'So knowledgeable, Lana'}]},
+
+{ _id: post_ids[2],
+  post_type: types[0],
+  group: group_ids[0],
+  text: desc2,
+  username: 'MCHammer',
+  userid: user_ids[1],
+  hashtags: [
+    {tag_id: hashtag_ids[3],
+      name: 'greatlandscapes'},
+      {tag_id: hashtag_ids[4],
+      name: 'someonecalltheplumber'}],
+  interest: interest_ids[5],
+   twostarcount: 1,
+   onestarcount: 1,
+   comments: [
+    {userid: user_ids[1],
+     username: 'MCHammer',
+   text: 'Yo, check out my post'},
+   {userid: user_ids[0],
+     username: 'Adele',
+   text: 'Ummm...'},
+   {userid: user_ids[2],
+     username: 'LanaDelRey',
+   text: 'I agree with Adele'},
+   {userid: user_ids[1],
+     username: 'MCHammer',
+   text: 'Why?'}]}
+ ];
+
+
+
+
+var postsRatings = [
+  {_id: rating_ids[0], postid: post_ids[0],
+  userid: user_ids[1],
+  rating: 5},
+  {_id: rating_ids[1], postid: post_ids[0],
+  userid: user_ids[2],
+  rating: 5},
+
+  {_id: rating_ids[2], postid: post_ids[1],
+  userid: user_ids[1],
+  rating: 3},
+  {_id: rating_ids[3], postid: post_ids[1],
+  userid: user_ids[0],
+  rating: 5},
+
+  {_id: rating_ids[4], postid: post_ids[2],
+  userid: user_ids[0],
+  rating: 2},
+  {_id: rating_ids[5], postid: post_ids[2],
+  userid: user_ids[2],
+  rating: 1}
+  ];
+
+models.Interests.collection.insert(interests, onInsert);
+models.Types.collection.insert(postTypes, onInsert);
+ 
  models.Groups.collection.insert(groups, onInsert);
+ models.GroupMembers.collection.insert(usergroups, onInsert);
+ models.Hashtags.collection.insert(hashtags, onInsert);
+ models.Users.collection.insert(users, onInsert)
+ models.Posts.collection.insert(posts, onInsert);
+  models.PostRatings.collection.insert(postsRatings, onInsert);
+ 
 
 
  test();
@@ -96,7 +350,7 @@ mongoose.connect(connectionString, function(err) {
 
   function onInsert(err, docs) {
     if (err) {
-        // TODO: handle error
+        console.log(err);
     } else {
       console.log(docs);
         console.log(docs.insertedCount + ' entries were successfully stored.');
@@ -133,17 +387,12 @@ app.use(passport.session());
 app.use('/', routes);
 
 function test () {
-  console.log('Hello we are sitting with me!');
-  var post = {
-    _id: postids[0]
-  };
+  console.log('Hello we are sitting on test function in app.js!');
   //mainFeed();
   //getUser('Adele');
   //searchByGroup();
 
-}
-
-module.exports = app;
+};
 
 /**
 - Connection to DB, put in early data
@@ -174,7 +423,5 @@ var getUser = function (username){
 
 };
 
-function test () {
-  console.log('Hello we are sitting with me!');
-  getUser('Adele');
-}
+module.exports = app;
+

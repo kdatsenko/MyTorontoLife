@@ -61,16 +61,21 @@ module.exports = function () {
 			if(err){
 				return done(err)
 			}
-
+			console.log(JSON.stringify(existingUser) + ' passwordPPP: ' + password);
+			console.log(password == existingUser.password);
 			// No user found
 			if(!existingUser){
 				return done(null, false, {message: "No user found with those credentials!"})
 			}
 
-			//Invalid password
-			if(!validPassword(password, existingUser)){
+			//Invalid password UNCOMMENT LATER
+			/*if(!validPassword(password, existingUser)){
+				return done(null, false, {message: 'Invalid password! Try again!'})
+			}*/
+			if (!(password == existingUser.password)){
 				return done(null, false, {message: 'Invalid password! Try again!'})
 			}
+
 
 			return done(null, existingUser)
 		})
@@ -87,6 +92,7 @@ function validPassword(password, user){
 	}catch(err){
 		// This usually only happens when there are non-hashed passwords
 		// in the db
+		console.log('Ummm...');
 		console.error(err)
 		return false
 	}
