@@ -1,0 +1,42 @@
+<style>
+    .btn-like:hover{background-color:#99FFFF;cursor:pointer;}
+</style>
+<div>
+	<div>
+		Sort by: 
+        <select ng-model="sortExpression">
+			<option value="ser">Name</option>
+			<option value="group">Description</option>
+		</select>
+    </div>
+
+    <table class="table table-bordered table-condensed table-responsive table-sm">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input placeholder="Search name" ng-model="search.interestName" />
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr ng-repeat="interest in interestList | orderBy:mySortFunction | filter:search">
+              <td class="btn-like">{{interest.name}}</td> <!-- groupschema there is no group description -->
+              <td>
+                <a ng-click='deleteInterest(interest.name)'>
+                  <strong style="margin-left:10px">(DELETE)</strong>
+                </a>
+            </td> 
+            </tr>
+          </tbody>
+      </table>
+
+      <form id="addInterest">
+        <input type="text" placeholder="Enter interest" name="interest">
+        <input type="submit" value="submit" ng-click="submit()">
+      </form>
+</div>
