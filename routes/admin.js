@@ -29,7 +29,7 @@ router.get('/', function(req, res) {
     });
 });
 
-router.post('/deleteInterest/:id', function(req, res) {
+/*router.post('/deleteInterest/:id', function(req, res) {
     var id = req.params.id; 
     Interests.remove({'_id': id}, function(error, interests) {
       if (error) {
@@ -37,7 +37,7 @@ router.post('/deleteInterest/:id', function(req, res) {
       } else {
         res.send(success: 'Successfully delete an interest:' + id, status: 'success');
       }
-    })
+    });
 });
 
 
@@ -50,7 +50,7 @@ router.post('/deleteGroup/:id', function(req, res) {
         res.send(success: 'Successfully delete an group:' + id, status: 'success');
       }
     })
-});
+});*/
 
 
 module.exports = router;

@@ -45,8 +45,8 @@ crudApp.config(function($routeProvider, $locationProvider) {
   	show_name: false,
   	loggedIn: false
   };*/
-  
-  	
+
+
 
 
  });
@@ -105,7 +105,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
     		password: password
     	};
 		$http.post('/auth/local/login', data).success(function(response) {
-    		 $location.path('/profile'); 
+    		 $location.path('/feed'); 
     	}).error(function (data, status, headers, config) {
     		$scope.login_error_msg = data.message;
         	$scope.loginError = true;
@@ -266,9 +266,20 @@ crudApp.controller('feedController', function($scope, $location) {
 
  /* 
 	
-
+1. Dashboard
+		- populate the main feed (different methods)
+		- populate the side bar for the user
+		- populate interests, groups
+		- populate name, admin/not admin
 
  */
+
+ /*var populateInterests = function(){
+ 	$http.get('/users/profile').success(function(data, status, headers, config) {
+        	console.log(data);
+    });
+ };*/
+
 
 
   $scope.user = {
@@ -293,6 +304,7 @@ crudApp.controller('feedController', function($scope, $location) {
 }]
 	};
 	$scope.showHero = true;
+  
   $scope.feed = {
     type: 'group', /* types: dashboard, group, tag */
     group: {

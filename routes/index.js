@@ -11,6 +11,7 @@ var router = express.Router();
  */
 router.use(function(req, res, next) {
 	if (req.session && req.session.user) {
+		console.log('What is unsafe? ' + JSON.stringify(req.session.user));	
 	  models.Users.findOne({ _id: req.session.user.id }, function(err, cleanUser) {
 	    if (cleanUser) {
 	      req.session.user = cleanUser; //refresh the session value
