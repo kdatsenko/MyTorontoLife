@@ -39,6 +39,4 @@ router.use('/admin', admin);
 router.use([login, api]);
 
 
-
-
 module.exports = router;

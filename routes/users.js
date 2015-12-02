@@ -8,12 +8,14 @@ models.GroupMembers = require('mongoose').model('GroupMembers');
 
 /* Get user profile */
 router.get('/profile', function(req, res) {
+      console.log("We're here req.session.user" + req.session.user + "");
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
+        console.log("were here "  + user + " " + err);
         if (err) {
           return res.send(err);
         }
