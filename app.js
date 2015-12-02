@@ -5,6 +5,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
+var bcrypt = require('bcrypt-nodejs');
 
 var moment = require('moment');
 moment().format();
@@ -176,7 +177,7 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
  var users = [
  { _id: user_ids[0],
   email: 'adele@gmail.com',
-  password: 'dddd',
+  password: bcrypt.hashSync('dddd', bcrypt.genSaltSync(8), null),
   accounttype: 0, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: 0,
   username: 'Adele',
@@ -191,7 +192,7 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
   interests: [interest_ids[0], interest_ids[1], interest_ids[2], interest_ids[3]]},
  { _id: user_ids[1],
   email: 'mchammer@gmail.com',
-  password: 'dddd',
+  password: bcrypt.hashSync('dddd', bcrypt.genSaltSync(8), null),
   accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: 0,
   username: 'MCHammer',
@@ -206,7 +207,7 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
   interests: [interest_ids[0], interest_ids[2], interest_ids[4], interest_ids[5]]},
   { _id: user_ids[2],
     email: 'lanadelrey@gmail.com',
-  password: 'dddd',
+  password: bcrypt.hashSync('dddd', bcrypt.genSaltSync(8), null),
   accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: 0,
   username: 'LanaDelRey',

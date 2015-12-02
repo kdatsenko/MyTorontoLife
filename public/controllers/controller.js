@@ -5,7 +5,7 @@ var crudApp = angular.module('crudApp', ['ngRoute']);
 crudApp.config(function($routeProvider, $locationProvider) {
 	$routeProvider
       // route for the home page
-      .when('/login', {
+     .when('/login', {
       	templateUrl : 'pages/login.html',
       	controller  : 'loginController'
       })
@@ -23,6 +23,22 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	templateUrl : 'pages/login.html',
       	controller  : 'loginController'
       });
+
+       /*     .when('/login', {
+      	templateUrl : 'pages/login.html',
+      	controller  : 'loginController'
+      })
+      // route for the about page
+      .when('/profile', {
+      	templateUrl : 'pages/profile.html',
+      	controller  : 'profileController'
+      })
+
+			.when('/', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'feedController'
+      });*/
+
 
       $locationProvider.html5Mode(true);
   });
@@ -280,15 +296,35 @@ crudApp.controller('feedController', function($scope, $location, $http) {
  */
 
  var populateInterests = function(){
- 	$http.get('/users/profile').success(function(data, status, headers, config) {
+
+ 	/*$http.get('/users/profile', ).success(function(data, status, headers, config) {
         	console.log(data);
-    });
+    });*/
+
+    $http({
+    		method: 'GET',
+          url: '/users/profile', //get all user emails & displayname
+          //params: {email: (sharedService.getData()).email}
+      })
+    	.then(function successCallback(response) {
+    		$scope.data.email = response.data.email;
+    		$scope.data.display_name = response.data.displayname;
+    		$scope.data.description = response.data.description;
+    		$scope.data.user_logo = response.data.imageurl;
+    		if (response.data.accounttype < 2){
+    			$scope.data.profile_is_admin = true;
+    		}    
+    	},
+    	function errorCallback(response) {
+    		console.log("Failure");
+    		console.log(response);
+    	});
  };
 
 
 
  var start = function (){
- 	populateInterests();
+ 	//populateInterests();
  }
 
 
