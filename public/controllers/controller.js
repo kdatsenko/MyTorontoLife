@@ -45,7 +45,8 @@ crudApp.config(function($routeProvider, $locationProvider) {
   	show_name: false,
   	loggedIn: false
   };*/
-
+  
+  	
 
 
  });
@@ -260,6 +261,16 @@ crudApp.config(function($routeProvider, $locationProvider) {
 });
 
 crudApp.controller('feedController', function($scope, $location) {
+
+
+
+ /* 
+	
+
+
+ */
+
+
   $scope.user = {
 		interests : [{
 			    "_id" : "5654b6c6e903c5aa96a19df2",
@@ -300,4 +311,10 @@ crudApp.controller('feedController', function($scope, $location) {
       }
     ]
   }
+
+
+
+
+
+
 })
