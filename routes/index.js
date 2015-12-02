@@ -1,4 +1,6 @@
 var express = require('express');
+var path = require('path');
+
 var router = express.Router();
 var admin = express.Router();
 var login = express.Router();
@@ -8,18 +10,15 @@ var middleware = require('../middleware');
 
 /* GET home page. */
 
-router.use(middleware.installHelpers);
+
+
 router.use(middleware.verifyUser);
+// router.use(middleware.sendAngularHtml);
+router.use(middleware.installHelpers);
 router.use(middleware.setupCORS);
 
-// login.get('/login', function(req, res, next){
-// 	res.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
-// 	// if(req.session && req.session.user){
-// 	// 	res.render('login', {logged: true, username: req.session.user.username})
-// 	// }else{
-// 	// 	res.render('login')
-// 	// }
-// });
+
+login.get('/login', middleware.sendAngularHtml);
 login.use('/auth', require('./auth'));
 
 
@@ -38,10 +37,7 @@ api.use('/users', require('./users'));
 router.use('/admin', admin);
 router.use([login, api]);
 
-// Let angular handle everything else
-router.use(function(req, res, next){
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
+
 
 
 module.exports = router;
