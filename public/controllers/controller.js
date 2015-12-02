@@ -295,36 +295,51 @@ crudApp.controller('feedController', function($scope, $location, $http) {
 
  */
 
- var populateInterests = function(){
+ var populateNavBar = function(){
 
  	/*$http.get('/users/profile', ).success(function(data, status, headers, config) {
         	console.log(data);
     });*/
+	
 
-    $http({
-    		method: 'GET',
-          url: '/users/profile', //get all user emails & displayname
-          //params: {email: (sharedService.getData()).email}
-      })
-    	.then(function successCallback(response) {
-    		$scope.data.email = response.data.email;
-    		$scope.data.display_name = response.data.displayname;
-    		$scope.data.description = response.data.description;
-    		$scope.data.user_logo = response.data.imageurl;
-    		if (response.data.accounttype < 2){
-    			$scope.data.profile_is_admin = true;
-    		}    
-    	},
-    	function errorCallback(response) {
-    		console.log("Failure");
-    		console.log(response);
-    	});
+	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
+    	var account = data.user.accounttype;
+   		var username = data.user.username; //Should be a JSON object
+    	var id = data.user._id;
+		populateInterests(data.user.username);
+		populateUserGroups();
+    });
+ };
+
+ var populateUserGroups = function(){
+  	$http.get('/users/user/groups').success(function(data, status, headers, config) {
+        console.log(data);
+    });
+ };
+
+ var populateInterests = function(username){
+ 	$http({
+  		method: 'GET',
+        url: '/users/profile', //get all user emails & displayname
+        params: {username: username}
+    })
+  	.then(function successCallback(response) {
+  		console.log(response.data.interests);
+  		$scope.user.interests = response.data.interests;
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
  };
 
 
 
+
+
  var start = function (){
- 	//populateInterests();
+ 	populateNavBar();
  }
 
 

@@ -8,7 +8,7 @@ models.GroupMembers = require('mongoose').model('GroupMembers');
 
 /* Get user profile */
 router.get('/profile', function(req, res) {
-      console.log("We're here req.session.user" + req.session.user + "");
+    
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
@@ -24,6 +24,13 @@ router.get('/profile', function(req, res) {
         }
         res.json(user);
       });
+});
+
+/* Get a few credential feilds for the user with the email stored in the session. */
+router.get('/credentials', function(req, res){
+  var sess = req.session.user;
+  return res.json({_id: sess._id, username: sess.username, accounttype: sess.accounttype});
+
 });
 
 
@@ -182,13 +189,20 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      models.GroupMembers.find({ user: req.session.user.id}, '-_id -user')
-      .populate('group', 'name')
+      console.log('in usergrouos yay');
+      models.GroupMembers.find({ user: req.session.user._id}, '-_id -user')
+      .populate({path: 'group', model: 'Groups', select:'_id name'})
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
-        res.json(groups);
+        var groupObj = groups.toObject();
+        console.log(JSON.stringify(groupObj));
+        var group_array = groupObj.map(function(group_beautified){
+          return {_id: group_beautified._id, name: group_beautified.name};
+        });
+        console.log(JSON.stringify(group_array));
+        res.json(group_array);
         //send as res
       });
 });

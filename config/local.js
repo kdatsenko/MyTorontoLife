@@ -72,9 +72,6 @@ module.exports = function () {
 			if(!validPassword(password, existingUser)){
 				return done(null, false, {message: 'Invalid password! Try again!'})
 			}
-			/*if (!(password == existingUser.password)){
-				return done(null, false, {message: 'Invalid password! Try again!'})
-			}*/
 
 
 			return done(null, existingUser)
