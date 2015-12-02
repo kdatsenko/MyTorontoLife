@@ -1,9 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
+var middleware = require("../middleware");
+var requireLogin = middleware.requireLogin;
+var checkAdmin = middleware.checkAdmin;
+
 models = {};
 models.Groups = require('mongoose').model('Groups');
-models.HashTags = require('mongoose').model('HashTags');
+models.HashTags = require('mongoose').model('Hashtags');
 
 
 /*
@@ -12,7 +16,7 @@ There are two parameters, use_count, and date_last_used. Which takes precedent?
 For now, I'll use date_last_used first, get tags used less than 100 days ago, order
 by use_count descending, and extract the top 100 of the list.
 */
-app.get('/', requireLogin, function(req, res) {
+router.get('/', requireLogin, function(req, res) {
   var today = moment();
   var daysago = moment(today).subtract(100, 'days')
   models.HashTags.
@@ -30,7 +34,7 @@ app.get('/', requireLogin, function(req, res) {
 });
 
 /* Search Posts by Tagname. Get 100 most recent. */
-app.get('/tag/posts', requireLogin, function(req, res) {
+router.get('/tag/posts', requireLogin, function(req, res) {
   //auth: only posts that are public, or that user is signed in to
   models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
       // Map the docs into an array of just the _ids
