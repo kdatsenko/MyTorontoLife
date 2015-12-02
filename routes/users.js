@@ -211,5 +211,28 @@ router.delete('/profile/:id', function(req, res) {
   });
 });
 
+router.get('/hasEditPermission', function(req, res, next){
+  var username = req.query.username
+  console.log(username)
+
+  if(!req.session.user){
+    res.status(401).send({error: "Not logged in"})
+  }
+  
+  models.Users.findOne({username: username}, function(err, foundUser){
+    if(err){
+      throw err;
+    }
+    if(!foundUser){
+      return res.status(404).send({error: "User not found"})
+    }
+    if(req.session.user.accountType > foundUser.accountType || req.session.user.username == foundUser.username){
+      return res.status(200).send({hasEditPermission: true})
+    }else{
+      return res.status(200).send({hasEditPermission: false})
+    }
+  })
+})
+
 
 module.exports = router;
