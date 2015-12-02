@@ -20,15 +20,6 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	templateUrl : 'pages/feed.html',
       	controller  : 'feedController'
       })
-	  .when('/', {
-      	templateUrl : 'pages/login.html',
-      	controller  : 'loginController'
-      });
-
-      .when('/login', {
-      	templateUrl : 'pages/login.html',
-      	controller  : 'loginController'
-      })
       // route for the about page
       .when('/profile', {
       	templateUrl : 'pages/profile.html',
@@ -413,7 +404,7 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 		templateUrl: '/groupList.html',
 		controller: 'groupController'
 	});
-	$routeProvider.otherwire({redirectTo: '/'});
+	$routeProvider.otherwise({redirectTo: '/'});
 
 	$locationProvider.html5Mode({enabled: true,requireBase: false});
 });
