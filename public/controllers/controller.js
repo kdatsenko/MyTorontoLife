@@ -21,7 +21,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	controller  : 'feedController'
       })
       // route for the about page
-      .when('/profile', {
+      .when('/profile/:username', {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
       })
