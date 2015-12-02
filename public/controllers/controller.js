@@ -109,7 +109,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
     		password: password
     	};
 		$http.post('/auth/local/login', data).success(function(response) {
-    		 $location.path('/profile');
+			$location.path('/profile');
     	}).error(function (data, status, headers, config) {
     		$scope.login_error_msg = data.message;
         	$scope.loginError = true;
@@ -168,7 +168,9 @@ crudApp.config(function($routeProvider, $locationProvider) {
     		password: pass1,
     		username: username
     	};
+
 		$http.post('/auth/local/signup', data).success(function(response) {
+			$location.path('/profile');
     		console.log(response);
     	}).error(function (data, status, headers, config) {
     		console.log(data);
@@ -200,13 +202,13 @@ crudApp.config(function($routeProvider, $locationProvider) {
 	}
 
 	$scope.logout = function(){
-		$.ajax({
+		/*$.ajax({
 			url: "/auth/logout",
 			type: "GET",
 			success: function(data){
 				location.href = "/"
 			}
-		})
+		})*/
 
 		$http.get('/auth/logout').success(function(data, status, headers, config) {
         	redirect();
@@ -240,9 +242,6 @@ crudApp.config(function($routeProvider, $locationProvider) {
 	var start = function(){
 		$scope.showLogin = false;
 		$scope.showRegister = false;
-		//$("#signin_popup").appendTo("#hello") // Ensures modal shows up
-		//$("#signup_popup").appendTo("#hello")
-
 		/*$.ajax({
 			url: "/auth/loggedInUser",
 			type: "GET",
