@@ -213,51 +213,6 @@ app.post('/interests/addnew', requireLogin, function(req, res){
       }); //FINDONE
 });
 
-
-
-
-/* Get Group Posts */
-app.get('/groups/group/posts', requireLogin, function(req, res) {
-//auth: only groups where the user is a member, or public
- models.Group.findById(req.query.groupid, function(err, group){
-    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
-      if (err){
-        return res.send(err);
-      } else if (group.private_type){
-        models.GroupMembers.findOne({user: req.session.user.id, group: req.query.groupid}, function(err, usergroup) {
-          if (err){
-            return res.send(err);
-          } else if (!usergroup){
-            return res.status(403).send({error: 'Unauthorized account type'});
-          }
-          getGroupPosts(req, res, group);
-        });
-      } //else PUBLIC group, goes to bottom function
-    }
-    getGroupPosts(req, res, group);
-  });
-
-});
-
-/* Get 100 most recent posts for this group. Authen. is done in wrapper rest api method. */
-var getGroupPosts = function (req, res, group){
-    models.Posts.
-    find({group:  group._id}).
-    limit(100).
-    sort({ date_posted: -1 }).
-    select('post_type group short_text username userid date_posted averagerating numberofratings').
-    exec(function(err, posts){
-      if (err){
-        return res.send(err);
-      }
-      return res.json(posts);
-    });
-};
-
-
-
-
-
 /*
 1. Get Posts By Interest.
 2. Where the post group is public, or the user is member of that group
