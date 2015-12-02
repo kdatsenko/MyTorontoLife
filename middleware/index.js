@@ -99,7 +99,7 @@ module.exports.requireUser = function(userType){
       if(
         (
            userType.toLowerCase() == "superadmin" &&
-           request.session.user.accounttype == 2
+           request.session.user.accounttype == 0
         )
         ||
         (
@@ -107,7 +107,7 @@ module.exports.requireUser = function(userType){
           (
             request.session.user.accounttype == 1
             ||
-            request.session.user.accounttype == 2
+            request.session.user.accounttype == 0
           )
         )
         ||
