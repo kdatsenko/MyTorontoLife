@@ -4,9 +4,9 @@ var router = express.Router();
 /* GET home page. */
 
 router.use('/post', require('./post'));
-router.use('/user', require('./user'));
+router.use('/users', require('./users'));
 router.use('/tag', require('./tag'));
-router.use('/group', require('./group'));
+router.use('/groups', require('./groups'));
 router.use('/', require('./feed'));
 
 router.get('/login', function(req, res, next){
