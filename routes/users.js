@@ -5,6 +5,10 @@ var middleware = require("../middleware");
 var requireLogin = middleware.requireLogin;
 var checkAdmin = middleware.checkAdmin;
 
+models = {};
+models.Users = require('mongoose').model('Users');
+models.GroupMembers = require('mongoose').model('GroupMembers');
+
 /* Get user profile */
 router.get('/profile', requireLogin, function(req, res) {
       models.Users.findOne({ username: req.query.username }, '-password')
