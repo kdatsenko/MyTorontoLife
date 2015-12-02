@@ -156,7 +156,7 @@ var changePasswordRegular = function (user, res){
 });*/
 
 /* Get all a list of all users' email, username (for Admin) */
- router.get('', requireLogin, function(req, res) {
+ router.get('/', requireLogin, function(req, res) {
   //Retrieve entire list from DB
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
     return res.status(403).send({error: 'Unauthorized account type'});
@@ -168,5 +168,47 @@ var changePasswordRegular = function (user, res){
     res.json(users);
     });
 });
+
+/* Get all this user's groups */
+ router.get('/user/groups', requireLogin, function(req, res) {
+  //get groups related to this user
+  /*
+1. Get all thi's user's group
+UserGroups - for this userid, get all the groupids, populate with group name, and id
+[ { group: { name: 'Toronto', _id: 5658ed81876352c41cb95891 } },
+  { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
+  { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
+  */
+      models.GroupMembers.find({ user: req.session.user.id}, '-_id -user')
+      .populate('group', 'name')
+      .exec(function(err, groups) {
+        if (err){
+          return res.send(err);
+        }
+        res.json(groups);
+        //send as res
+      });
+});
+
+/**
+ * Delete the user's record from the DB system.
+ */
+router.delete('/profile/:id', requireLogin, function(req, res) {
+  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
+    return res.status(403).send({error: 'Unauthorized account type'});
+  }
+  models.Users.findById(req.params.id, function(err, user){
+      user.remove(function(err, user) {
+      if (err) {
+        return res.send(err);
+      } else if (user && user.result.n > 0){
+        res.json({ message: 'User ' + req.params.id + ' deleted!' });
+      } else {
+        res.json({ message: 'Unable to delete this user' });
+      }
+    });
+  });
+});
+
 
 module.exports = router;
