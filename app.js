@@ -128,14 +128,10 @@ app.set('views', __dirname + '/public');
 
 //app.use('/api/v1/', api);
 app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
+
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
-app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
-app.use(passport.initialize());
-app.use(passport.session());
 
 
 app.use('/', routes);
@@ -170,7 +166,7 @@ app.use(function (req, res, next) {
 
 
 
-module.exports = app;
+
 
 
 
@@ -203,6 +199,9 @@ module.exports = app;
  * If a user isn't logged in, they'll be redirected back to the login page.
  */
  function requireLogin (req, res, next) {
+   if(req.session.user){
+     req.user = req.session.user;
+   }
   if (!req.user) { //Checks if a user is logged in or not
     req.session.reset();
     res.redirect('/');
@@ -1313,3 +1312,4 @@ function test () {
   console.log('Hello we are sitting with me!');
   getUser('Adele');
 }
+module.exports = app;
