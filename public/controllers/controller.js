@@ -36,9 +36,6 @@ crudApp.config(function($routeProvider, $locationProvider) {
       $locationProvider.html5Mode(true);
   });
 
-requirejs(["controllers/loginController", "controllers/mainController", "controllers/profileController"], function(){
-	console.log("loaded controllers");
-});
 
 function editModeReplace(el, type, attrs){
 	if(type == "input"){
