@@ -132,7 +132,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 
-app.use('/api/v1/', api);
 
 app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
 app.use(passport.initialize());

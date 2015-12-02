@@ -28,7 +28,7 @@ var userSchema   = new Schema({
   position: String,
   contactinfo: String,
 
-  interests: [{type: ObjectId, ref: 'Interests'}]
+  interests: [{type: ObjectId, ref: 'Interests'}],
    //user reputation parameters
    numberofposts: {type: Number, default: 0},
    fivestarposts: {type: Number, default: 0},
@@ -216,7 +216,7 @@ var PostRatings = mongoose.model('PostRatings', postsRatings);
 module.exports = {
     Interests: Interests,
     Users: Users,
-    PostTypes: PostTypes,
+    Types: PostTypes,
     Groups: Groups,
     GroupMembers: GroupMembers,
     Hashtags: Hashtags,

@@ -3,7 +3,8 @@ var passport = require('passport'),
 
 //USER schema is NOT how I envisioned this
 var passport = require('passport')
-
+require('./social.js')()
+require('./local.js')()
 
 module.exports = function() {
 	// handle user serialization here...
@@ -16,6 +17,4 @@ module.exports = function() {
         done(err, user);
       });
 	});
-
-	require('./social.js')()
-	require('./local.js')()
+}
