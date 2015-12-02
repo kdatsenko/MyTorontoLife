@@ -3,6 +3,7 @@ var router = express.Router();
 
 /* GET home page. */
 
+router.use('/auth', require('./auth'));
 router.use('/post', require('./post'));
 router.use('/users', require('./users'));
 router.use('/tag', require('./tag'));

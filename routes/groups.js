@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 models = {};
-models.Users = require('mongoose').model('Users');
 models.Groups = require('mongoose').model('Groups');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 

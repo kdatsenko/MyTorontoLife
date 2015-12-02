@@ -105,14 +105,13 @@ mongoose.connect(connectionString, function(err) {
 
 
 var routes = require('./routes/index');
-var auth = require('./routes/auth')
 
 
 
 // view engine setup
 /*var exphbs = require('express-handlebars');
 app.engine('.hbs', exphbs({defaultLayout: 'single', extname: '.hbs'}));
-app.set('view engine', '.hbs');*/ 
+app.set('view engine', '.hbs');*/
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
@@ -135,7 +134,6 @@ app.use(passport.session());
 
 
 app.use('/', routes);
-app.use('/auth', auth);
 
 
 
