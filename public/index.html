@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<!-- Angular App -->
+<html ng-app="crudApp">
+
+<head>
+	<base href="/">
+	<!-- Styles -->
+	<link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css"/>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" />
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.css" />
+
+	<!-- JS files -->
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+	<script src="http://rawgit.com/danialfarid/ng-file-upload/master/dist/ng-file-upload.min.js"></script>
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+	<script src="controllers/controller.js"></script>
+	<script src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+	<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+	<link rel="stylesheet" href="stylesheets/style.css">
+</head>
+
+<!-- define top-level controller -->
+<body ng-controller="mainController">	
+</div>
+
+<div id="main" ng-controller="loginController">
+	
+	<!-- angular templating -->
+	<!-- this is where content will be injected -->
+	<div ng-view></div>
+	
+</div>
+
+</body>
+
+</html>

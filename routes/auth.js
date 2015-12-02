@@ -16,14 +16,16 @@ router.get('/github/callback', function(req, res, next){
 		if(!user){
 			res.redirect('/')
 		}else{
-			setSession(req, user)
-			res.redirect('/')
+			setSession(req, res, user)
+			res.redirect('/profile.html')
 		}
 	})(req, res, next);
 })
 
 router.post('/local/signup', function(req, res, next){
+
 	passport.authenticate('local-signup', function(err, user, info){
+		console.log('hello ' + err);
 		if(err){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: "Error Occurred"}))
@@ -33,7 +35,7 @@ router.post('/local/signup', function(req, res, next){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: info.message}))
 		}else{
-			setSession(req, user)
+			setSession(req, res, user)
 			res.writeHead(200)
 			res.end()
 		}
@@ -52,7 +54,7 @@ router.post('/local/login', function(req, res, next){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: info.message}))
 		}else{
-			setSession(req, user)
+			setSession(req, res, user)
 			res.writeHead(200)
 			res.end()
 		}
@@ -65,14 +67,45 @@ router.get('/logout', function(req, res, next){
 	res.end()
 })
 
-function setSession(req, user){
+router.get('/loggedInUser', function(req, res, next){
+	if(req.session.user){
+		res.writeHead(200, {"Content-Type": "application/json"})
+		res.end(JSON.stringify({logged: true, user: req.session.user}))
+	}else{
+		res.writeHead(200, {"Content-Type": "application/json"})
+		res.end(JSON.stringify({logged: false}))
+	}
+})
+
+ /**
+ * Given a user object:
+ *
+ *  - Store the user object as a req.user
+ *  - Make the user object available to templates as #{user}
+ *  - Set a session cookie with the user object
+ *
+ *  @param {Object} req - The http request object.
+ *  @param {Object} res - The http response object.
+ *  @param {Object} user - A user object.
+ */
+function setSession(req, res, user){
 	// Set session, currently just a place holder!
-	req.session.user = user
+	var cleanUser = {
+    	id: user._id,
+    	email:  user.email,
+    	username: user.username,
+    	accounttype: user.accounttype //Exists to personalize user experience
+  	};
+  	req.session.user = cleanUser; //refresh the session value
+  	req.user = cleanUser;
+  	res.locals.user = cleanUser;
 }
 
 function unsetSession(req){
 	// Again, just a place holder
-	req.session.user = null
+	console.log("Logging out user")
+	req.session.destroy();
+	req.user = null
 }
 
 module.exports = router;
