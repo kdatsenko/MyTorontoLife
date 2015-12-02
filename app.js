@@ -165,7 +165,9 @@ app.use(function (req, res, next) {
 
 
 
-
+app.get('/feed', function(req, res){
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
 
 
 
@@ -202,8 +204,9 @@ app.use(function (req, res, next) {
    if(req.session.user){
      req.user = req.session.user;
    }
+
   if (!req.user) { //Checks if a user is logged in or not
-    req.session.reset();
+    req.session.destroy();
     res.redirect('/');
   } else {
     next();
