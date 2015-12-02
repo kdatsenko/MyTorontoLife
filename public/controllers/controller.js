@@ -15,9 +15,13 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	controller  : 'profileController'
       })
 
-			.when('/', {
+	  .when('/feed', {
       	templateUrl : 'pages/feed.html',
       	controller  : 'feedController'
+      })
+	  .when('/', {
+      	templateUrl : 'pages/login.html',
+      	controller  : 'loginController'
       });
 
       $locationProvider.html5Mode(true);
@@ -261,7 +265,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
 
 });
 
-crudApp.controller('feedController', function($scope, $location) {
+crudApp.controller('feedController', function($scope, $location, $http) {
 
 
 
@@ -275,12 +279,17 @@ crudApp.controller('feedController', function($scope, $location) {
 
  */
 
- /*var populateInterests = function(){
+ var populateInterests = function(){
  	$http.get('/users/profile').success(function(data, status, headers, config) {
         	console.log(data);
     });
- };*/
+ };
 
+
+
+ var start = function (){
+ 	populateInterests();
+ }
 
 
   $scope.user = {
@@ -326,7 +335,7 @@ crudApp.controller('feedController', function($scope, $location) {
   }
 
 
-
+  start();
 
 
 
