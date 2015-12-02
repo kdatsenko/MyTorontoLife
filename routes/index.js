@@ -10,8 +10,8 @@ router.use('/group', require('./group'));
 router.use('/', require('./feed'));
 
 router.get('/login', function(req, res, next){
-	if(req.session.profile){
-		res.render('login', {logged: true, username: req.session.profile.username})
+	if(req.session.user){
+		res.render('login', {logged: true, username: req.session.user.username})
 	}else{
 		res.render('login')
 	}
