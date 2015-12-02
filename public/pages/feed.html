@@ -1,11 +1,11 @@
-<nav id="topNav" class="hero">
+<nav id="topNav" class="hero" ng-if="showHero">
     <h1>MyTorontoLife.ca</h1>
 </nav>
 <nav id="topNav" class="feed">
     <h1>MyTorontoLife.ca</h1>
 </nav>
-  {{#if 1}}
-    <section class="hero">
+
+    <section class="hero" ng-if="showHero">
     <div class="bg"></div>
     <div class="content">
         <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
@@ -15,24 +15,22 @@
         </form>
     </div>
     </section>
-  {{/if}}
 
-        <section class="feed">
+
+        <section class="feed" ng-controller="feedController">
 
         <div id="leftsidebar"class="quick-links left">
           <div class="box">
             <h1>Chris Dobson</h1>
             <a>My Profile</a><br>
-            <a>Admin Dashboard, if admin</a><br>
+            <a ng-if="user.isAdmin">Admin Dashboard, if admin</a><br>
             <a>Log Out</a>
 
           </div>
             <div>
                 <h1>Interests</h1>
                 <ul>
-                    <li>- List of user's Interests</li>
-                    <li>- List of user's Interests</li>
-                    <li>- List of user's Interests</li>
+                    <li ng-repeat="interest in user.interests"><a href="{{interest.link}}">{{interest.name}}</a></li>
                 </ul>
                 <a>Customize my Interests</a>
             </div>
@@ -40,9 +38,7 @@
             <div>
                 <h1>Groups</h1>
                 <ul>
-                    <li>- List of groups a user is in</li>
-                    <li>- List of groups a user is in</li>
-                    <li>- List of groups a user is in</li>
+                    <li ng-repeat="group in user.groups"><a href="{{group.link}}">{{group.name}}</a></li>
                 </ul>
                 <a>show all public groups</a>
             </div>
@@ -50,41 +46,37 @@
         </div>
         <div id="mainfeed" class="main-feed center">
           <a name="feed"></a>
-            <div class="box">
+            <div class="box" ng-repeat="post in feed.posts">
               <div class="rating">
               <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
               </div>
               <div class="profile">
-                <img src="https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50">
-                <a href="/users/chris">Chris Dobson</a><br>
+                <img src="{{post.user.imageurl}}">
+                <a href="/users/{{post.user.username}}">{{post.user.username}}</a><br>
                 <span class="permalinks"><a>Yesterday</a> - Tags &amp; Interests</span>
+              </div>
+              <div ng-bind-html="post.html">
+
               </div>
               <p>This is my post about stuff!</p>
               <div class="ratings"></div>
               <p></p>
               <ul><li>Comment</li><li>Share</li></ul>
             </div>
-            <div class="box loading"><h1>Loading 2</h1></div>
-            <div class="box loading"><h1>Loading 3</h1></div>
-            <div class="box loading"><h1>Loading 4</h1></div>
-            <div class="box loading"><h1>Loading 5</h1></div>
 
         </div>
         <div id="rightsidebar" class="actions right">
-          {{#if group}}
-          <div class="box">
-              <h1>Group: {{group.name}}</h1>
+          <div class="box" ng-if="feed.type == 'group'">
+              <h1>Group: {{feed.group.name}}</h1>
               <ul>
                 <li>List of members</li>
               </ul>
               <a>Add a user to this group</a>
           </div>
-          {{/if}}
-          {{#if tag}}
-          <div class="box">
-              <h1>Showing Results for: {{tag}}</h1>
+          <div class="box" ng-if="feed.type=='tag'">
+              <h1>Showing Results for: {{feed.tag}}</h1>
           </div>
-          {{/if}}
+
             <div class="box">
                 <h1>Create a post</h1>
                 <ul>
@@ -103,4 +95,4 @@
 
         </div>
     </section>
-    <script type="text/javascript" src="/javascripts/script.js"></script>
+    <script type="text/javascript" src="/controllers/feedController.js"></script>

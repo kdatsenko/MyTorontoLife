@@ -13,6 +13,11 @@ crudApp.config(function($routeProvider, $locationProvider) {
       .when('/profile', {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
+      })
+
+			.when('/feed', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'feedController'
       });
 
       $locationProvider.html5Mode(true);
@@ -247,9 +252,52 @@ crudApp.config(function($routeProvider, $locationProvider) {
 			}
         });
 
-		
+
 	};
 
     start(); //Init
 
 });
+
+crudApp.controller('feedController', function($scope, $location) {
+  $scope.user = {
+		interests : [{
+			    "_id" : "5654b6c6e903c5aa96a19df2",
+			    "name" : "Food"
+			},
+			{
+			    "_id" : "5654b6c6e903c5aa96a19df3",
+			    "name" : "Bars"
+			},{
+			    "_id" : "5654b6c6e903c5aa96a19df4",
+			    "name" : "Condo"
+			}],
+			groups:[{
+    "_id" : 13,
+    "name" : "Toronto"
+},
+{
+    "_id" : 14,
+    "name" : "Etobicoke"
+}]
+	};
+	$scope.showHero = true;
+  $scope.feed = {
+    type: 'group', /* types: dashboard, group, tag */
+    group: {
+      name: "myGroup"
+    },
+    tag: {
+      name: "myTag"
+    },
+    posts:[
+      {
+        user:{
+          username: "Chris",
+          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
+        },
+        html:"<p>This is my post!</p>"
+      }
+    ]
+  }
+})
