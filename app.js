@@ -136,68 +136,9 @@ app.use(passport.session());
 app.use('/', routes);
 
 
-
-
-app.use(function (req, res, next) {
-
-    // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
-
-    // Request methods you wish to allow
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
-
-    // Request headers you wish to allow
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type');
-
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
-    res.setHeader('Access-Control-Allow-Credentials', true);
-
-    // Pass to next layer of middleware
-    next();
-});
-
-
-
-
-
-
-
-app.get('/feed', function(req, res){
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
 var middleware = require("./middleware");
 var requireLogin = middleware.requireLogin;
 var checkAdmin = middleware.checkAdmin;
-
-/**
- * A simple authentication middleware for Express.
- *
- * Global Middleware that checks for a session on every request
- * and sets req.user to user if the user is logged in.
- */
- app.use(function(req, res, next) {
-  if (req.session && req.session.user) {
-    models.Users.findOne({ _id: req.session.user.id }, function(err, cleanUser) {
-      if (cleanUser) {
-        req.session.user = cleanUser; //refresh the session value
-      	req.user = cleanUser;
-      	res.locals.user = cleanUser;
-      }
-      // finishing processing the middleware and run the route
-      next();
-  });
-  } else {
-    next();
-  }
- });
-
-
-
-
-
 
 
 /* Create new Interest (only Admins) */
@@ -833,6 +774,12 @@ app.get('/dashboard', requireLogin, function(req, res) {
 
 });
 
+// Let angular handle everything else
+app.get(function(req, res){
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+
 /*
 Get feed from groups: Get most recent feed from all user's groups
 */
@@ -905,4 +852,3 @@ function test () {
   console.log('Hello we are sitting with me!');
   getUser('Adele');
 }
-module.exports = app;
