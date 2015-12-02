@@ -69,12 +69,12 @@ module.exports = function () {
 			}
 
 			//Invalid password UNCOMMENT LATER
-			/*if(!validPassword(password, existingUser)){
-				return done(null, false, {message: 'Invalid password! Try again!'})
-			}*/
-			if (!(password == existingUser.password)){
+			if(!validPassword(password, existingUser)){
 				return done(null, false, {message: 'Invalid password! Try again!'})
 			}
+			/*if (!(password == existingUser.password)){
+				return done(null, false, {message: 'Invalid password! Try again!'})
+			}*/
 
 
 			return done(null, existingUser)
