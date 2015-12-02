@@ -30,12 +30,12 @@ var userSchema   = new Schema({
 
   interests: [{type: ObjectId, ref: 'Interests'}],
    //user reputation parameters
-   numberofposts: {type: Number, default: 0},
+   /*numberofposts: {type: Number, default: 0},
    fivestarposts: {type: Number, default: 0},
    fourstarposts: {type: Number, default: 0},
    threestarposts: {type: Number, default: 0},
    twostarposts: {type: Number, default: 0},
-	onestarposts: {type: Number, default: 0}
+	onestarposts: {type: Number, default: 0}*/
 });
 
 var postTypesSchema = new Schema({
@@ -77,7 +77,7 @@ var tagValidator = [
 
 var hashTags = new Schema({
 	name: {type: String, index: {unique: true}, lowercase: true, validate: tagValidator},
-	last_used: Date,
+	last_used: {type: Date, default: Date.now},
 	count: Number
 });
 
@@ -87,7 +87,6 @@ var postsSchema = new Schema({
 	text: {type: String, required: '{PATH} is required.'},
 	username: {type: String, required: true},
 	userid: {type: ObjectId, required: true, ref: 'Users'},
-	location: String,
 	date_posted: {type: Date, default: Date.now},
 	hashtags: [
 		{tag_id: {type: ObjectId, ref: 'Hashtags'},
@@ -107,7 +106,6 @@ var postsSchema = new Schema({
    averagerating: {type: Number, default: 0},
 
    imageurl: {type : String},
-   commercial: {type: Boolean, default: false},
    comments: [
    	{userid: {type: ObjectId, required: true, ref: 'Users'},
      username: {type: String, required: true},
@@ -116,10 +114,12 @@ var postsSchema = new Schema({
 });
 
 var postsRatings = new Schema({
-	postid: {type: ObjectId, required: true, ref: 'Posts', unique: true},
-	userid: {type: ObjectId, required: true, ref: 'Users', unique: true},
+	postid: {type: ObjectId, required: true, ref: 'Posts'},
+	userid: {type: ObjectId, required: true, ref: 'Users'},
 	rating: {type: Number, min: 1, max: 5}
 });
+
+postsRatings.index({ postid: 1, userid: 1 }, { unique: true }); // schema level
 
 postsSchema.pre('remove', function(next) {
     // 'this' is the client being removed. Provide callbacks here if you want
@@ -171,12 +171,6 @@ postsSchema.pre('save', function (next) {
 var Interests = mongoose.model('Interests', interestSchema);
 var Users = mongoose.model('Users', userSchema);
 var PostTypes = mongoose.model('PostTypes', postTypesSchema);
-
-
-var Interests = mongoose.model('Interests', interestSchema);
-var Users = mongoose.model('Users', userSchema);
-var Types = mongoose.model('Types', postTypesSchema);
-
 var Groups = mongoose.model('Groups', groupsSchema);
 var GroupMembers = mongoose.model('GroupMembers', userGroups);
 var Hashtags = mongoose.model('Hashtags', hashTags);
