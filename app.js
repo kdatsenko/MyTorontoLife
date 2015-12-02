@@ -35,139 +35,6 @@ mongoose.connect(connectionString, function(err) {
     console.log('connection successful');
 
 
- /*var interests = [{_id: interest_ids[0], name: 'Food'},
-                  {_id: interest_ids[1], name: 'Bars'},
-                  {_id: interest_ids[2], name: 'Condo'},
-                  {_id: interest_ids[3], name: 'Parks and Recreation'},
-                  {_id: interest_ids[4], name: 'Hockey'},
-                  {_id: interest_ids[5], name: 'Cat Cafe'}];
-
-  var types = [new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId, new ObjectId];
-  var postTypes = [{_id: types[0], name: 'Announcement'},
-                  {_id: types[1], name: 'Question'},
-                  {_id: types[2], name: 'Business Ad'},
-                  {_id: types[3], name: 'Event'},
-                  {_id: types[4], name: 'Sale Listing'},
-                  {_id: types[5], name: 'Poll'}];
-
-
-
-  var groups = [{_id: group_ids[0], name: 'Toronto', group_creator: user_ids[0], description: "Groups - I assume we will preload some groups. How does the user belong to a group? Can they choose any group to join? Are there public and private groups? Will the user only see posts for the groups that they are registered with? Right now, I have set it so that all groups are by default public, and I was thinking that if a group is private then users already in the group have the privilege to add others. search and rate things in neighbourhood Toronto overall. Does this mean search and rate posts in the group the user belongs to? Site events? Page views I understand, but what else goes into this? Post expiry date - why do we need it? What happens to the post after expiry? I am concerned because there are tuples in other tables that depend on the post, and reputation of the user is aggregated based on ratings on their posts, so we shouldn’t remove the posts. How to calculate the user’s reputation? Example: there could be 1 post with a five star rating made by one user. On the other hand, there could be a post where 100 users voted. Also, some users have only a few posts, while others have multiple. So I was thinking what if we will create some formula based on numbers of posts and 5, 4, … 1 rating counts, number of votes. "},
-                  {_id: group_ids[1], name: 'Etobicoke', group_creator: user_ids[0], description: "hello my kitty!"},
-                  {_id: group_ids[2], name: 'Little Italy', group_creator: user_ids[0]},
-                  {_id: group_ids[3], name: 'Kensington', group_creator: user_ids[0]},
-                  {_id: group_ids[4], name: 'Guelph', group_creator: user_ids[0], description: "Post expiry date - why do we need it? What happens to the post after expiry? I am concerned because there are tuples in other tables that depend on the post, and reputation of the user is aggregated based on ratings on their posts, so we shouldn’t remove the posts. How to calculate the user’s reputation? Example: there could be 1 post with a five star rating made by one user. On the other hand, there could be a post where 100 users voted. Also, some users have only a few posts, while others have multiple. So I was thinking what if we will create some formula based on numbers of posts and 5, 4, … 1 rating counts, number of votes. "},
-                  {_id: group_ids[5], name: 'Old Mill', group_creator: user_ids[0]},
-                  {_id: group_ids[6], name: 'Marys Housemates', group_creator: user_ids[0]},
-                  {_id: group_ids[7], name: 'Distillery District', group_creator: user_ids[0]}];
-
-  var usergroups = [{user: user_ids[0], group: group_ids[0]}, {user: user_ids[0], group: group_ids[1]}, 
-  {user: user_ids[0], group: group_ids[2]},
-  {user: user_ids[1], group: group_ids[1]}, {user: user_ids[1], group: group_ids[3] }];
-
-
-
-
-var posts = [
-{
-  _id: postids[1],
-  post_type: types[0],
-  group: group_ids[0],
-  text: 'Hello, Hello!',
-  username: 'Adele',
-  userid: user_ids[0],
-  date_posted: Date.now(),
-  interest: interest_ids[0],
-   fivestarcount: 1
-},
-{
-  _id: postids[0],
-  post_type: types[0],
-  group: group_ids[0],
-  text: 'Adelaida!!',
-  username: 'Adele',
-  userid: user_ids[0],
-  interest: interest_ids[0],
-   fivestarcount: 1
-}
-];
-
-var ratings = [{
-  postid: postids[0],
-  userid: user_ids[1],
-  rating: 5
-}];
-
-
- var users1 = [
- {_id: user_ids[0], 
-  email: 'hello@fromtheotherside.com',
-  password: 'dddd',
-  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
-  loggedin: 0,
-  username: 'Adele',
-  description: '25 now',
-  //validation between 10 and 200 (vampires!)
-  age: 25,
-  gender: 'female', //for aliens!
-  homeaddress: 'London',
-  workplace: 'Some label',
-  position: 'Songstress',
-  contactinfo: 'Forget it',
-  interests: [interest_ids[0], interest_ids[2]]},
-
-  {_id: user_ids[1],
-    email: 'borntodie@lana.com',
-  password: 'dddd',
-  accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
-  loggedin: 0,
-  username: 'LanaDelRey',
-  description: 'Off to the races!',
-  //validation between 10 and 200 (vampires!)
-  age: 25,
-  gender: 'female', //for aliens!
-  homeaddress: 'USA',
-  workplace: 'Some label',
-  position: 'Songstress',
-  contactinfo: 'Forget it',
-  interests: [interest_ids[0], interest_ids[4]]
-}];
-
- console.log('users Adele!!!!!!!!!!!! ' + users1[0].interests);
- console.log('users Lana!!!!!!!!!!!! ' + users1[1].interests);
-
-  
- models.Interests.collection.insert(interests, onInsert);
- models.Users.collection.insert(users1, onInsert)
- models.PostTypes.collection.insert(postTypes, onInsert);
- models.Groups.collection.insert(groups, onInsert);
- models.GroupMembers.collection.insert(usergroups, onInsert);
- models.Posts.collection.insert(posts, onInsert);
- models.PostRatings.collection.insert(ratings, onInsert);
-
-
-/*var postinfo = {
-  _id: postids[2],
-  post_type: types[0],
-  group: group_ids[0],
-  text: 'Hello works!',
-  short_text: 'g',
-  username: 'Adele',
-  userid: user_ids[0],
-  interest: interest_ids[0],
-   fivestarcount: 1
-};
-var post = new models.Posts(postinfo); //create new  
-post.save(function(){
-  models.Posts.find({}, function(err, posts){
-    console.log(posts);
-  });
-});*/
-
-
-
- //test();
-
   }
 
 });
@@ -182,23 +49,27 @@ post.save(function(){
   }
 
 var routes = require('./routes/index');
-var api = require('./api/index');
+//var api = require('./api/index');
 var auth = require('./routes/auth')
 
 // view engine setup
-var exphbs = require('express-handlebars');
+/*var exphbs = require('express-handlebars');
 app.engine('.hbs', exphbs({defaultLayout: 'single', extname: '.hbs'}));
-app.set('view engine', '.hbs');
+app.set('view engine', '.hbs');*/
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+//app.use(express.static(path.join(__dirname, 'public')));
 
-app.use('/api/v1/', api);
+app.use(express.static(path.join(__dirname + '/public')));
+app.set('views', __dirname + '/public');
+//app.engine('html', require('ejs').renderFile);
+//app.set('view engine', 'html');
+
+//app.use('/api/v1/', api);
 app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -206,43 +77,46 @@ app.use(passport.session());
 app.use('/', routes);
 app.use('/auth', auth);
 
+//app.use(express.logger('dev'));
+app.use(express.static(path.join(__dirname, 'public')));
 
-// catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  var err = new Error('Not Found');
-  err.status = 404;
-  next(err);
+
+
+
+/*app.get('/', function(req, res, next) {
+  console.log('hdhhfhjkehfwekfj');
+  res.render('anything');
+  next();
+});*/
+
+
+app.use(function (req, res, next) {
+
+    // Website you wish to allow to connect
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+
+    // Request methods you wish to allow
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+
+    // Request headers you wish to allow
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, content-type');
+
+    // Set to true if you need the website to include cookies in the requests sent
+    // to the API (e.g. in case you use sessions)
+    res.setHeader('Access-Control-Allow-Credentials', true);
+
+    // Pass to next layer of middleware
+    next();
 });
 
-// error handlers
 
-// development error handler
-// will print stacktrace
-if (app.get('env') === 'development') {
-  app.use(function(err, req, res, next) {
-    res.status(err.status || 500);
-    res.render('error', {
-      message: err.message,
-      error: err
-    });
-  });
-}
 
-// production error handler
-// no stacktraces leaked to user
-app.use(function(err, req, res, next) {
-  res.status(err.status || 500);
-  res.render('error', {
-    message: err.message,
-    error: {}
-  });
-});
+
+
+
 
 
 module.exports = app;
-
-
-
 
 
 
@@ -256,7 +130,7 @@ module.exports = app;
   if (req.session && req.session.user) {
     models.Users.findOne({ _id: req.session.user.id }, function(err, user) {
       if (user) {
-        auth.setSession(req, res, user); 
+        auth. setSession(req, res, user); 
       } 
       // finishing processing the middleware and run the route
       next();
