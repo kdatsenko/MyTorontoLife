@@ -130,12 +130,7 @@ app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8
 app.use(passport.initialize());
 app.use(passport.session());
 
-
-
 app.use('/', routes);
-
-
-
 
 function test () {
   console.log('Hello we are sitting with me!');
