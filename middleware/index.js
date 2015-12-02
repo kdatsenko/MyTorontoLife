@@ -45,12 +45,12 @@ module.exports = {}
 module.exports.installHelpers = function(request, response, next){
   response.json = function(data){
     console.log("Please use res.sendData instead of response.json");
-    response.send(JSON.stringify(data, null, 4))
+    response.send(JSON.stringify(data, null, 2))
   }
   response.sendData = function(data){
     return response.format({
       json: function(){
-        response.status(200).send(JSON.stringify({'success': 'true', 'data': data }, null, 4));
+        response.status(200).send(JSON.stringify({'success': 'true', 'data': data }, null, 2));
       },
       html: function(){
         response.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
@@ -71,7 +71,7 @@ module.exports.installHelpers = function(request, response, next){
       },
 
       json: function(){
-        response.send(JSON.stringify({'success': 'false', 'message': message }, null, 4));
+        response.send(JSON.stringify({'success': 'false', 'message': message }, null, 2));
       },
 
       'default': function() {
@@ -116,7 +116,7 @@ module.exports.requireUser = function(userType){
         )
       )
       {
-         next()
+         next();
       }
       else
       {
@@ -132,7 +132,13 @@ module.exports.requireUser = function(userType){
     }
     else
     {
-           response.sendError(403, "This action requires you to log in.");
+       response.status(403);
+       if(request.accepts(['html', 'json']) != 'json'){
+        return response.redirect('/login');
+       }
+       else{
+         return response.send(JSON.stringify({'success': 'false', 'message': "This action requires you to log in." }, null, 2));
+       }
     }
   }
 }
@@ -176,4 +182,13 @@ module.exports.verifyUser = function(req, res, next) {
 	} else {
 	  next();
 	}
+}
+
+module.exports.sendAngularHtml = function (request, response, next) {
+  if(request.accepts('html')){
+     response.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
+  }
+  else{
+    next();
+  }
 }
