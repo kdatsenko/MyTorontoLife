@@ -123,15 +123,17 @@ module.exports = app;
 /**
  * A simple authentication middleware for Express.
  *
- * Global Middleware that checks for a session on every request 
+ * Global Middleware that checks for a session on every request
  * and sets req.user to user if the user is logged in.
  */
  app.use(function(req, res, next) {
   if (req.session && req.session.user) {
-    models.Users.findOne({ _id: req.session.user.id }, function(err, user) {
-      if (user) {
-        auth. setSession(req, res, user); 
-      } 
+    models.Users.findOne({ _id: req.session.user.id }, function(err, cleanUser) {
+      if (cleanUser) {
+        req.session.user = cleanUser; //refresh the session value
+      	req.user = cleanUser;
+      	res.locals.user = cleanUser;
+      }
       // finishing processing the middleware and run the route
       next();
   });
