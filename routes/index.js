@@ -47,7 +47,7 @@ router.use(function (req, res, next) {
 });
 
 router.use('/auth', require('./auth'));
-router.use('/post', require('./post'));
+router.use('/posts', require('./posts'));
 router.use('/users', require('./users'));
 router.use('/tags', require('./tags'));
 router.use('/groups', require('./groups'));
