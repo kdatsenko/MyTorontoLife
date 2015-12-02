@@ -544,29 +544,7 @@ var getGroupPosts = function (req, res, group){
     });
 };
 
-/* Search Posts by Tagname. Get 100 most recent. */
-app.get('/tags/tag/posts', requireLogin, function(req, res) {
-  //auth: only posts that are public, or that user is signed in to
-  models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
-      // Map the docs into an array of just the _ids
-      var ids_public = docs.map(function(doc) { return doc._id; }); //all the public group ids
-      models.GroupMembers.find({user: req.session.user.id, group: {$nin : ids_public}}, {_id: 1}, function(err, docs){
-        var ids_private = docs.map(function(doc) { return doc.group; });
-        var merged_group_ids = ids_public.concat(ids_private);
-        models.Posts.
-        find({hashtags: { "$in" : [tagname]}, group: {"$in" : merged_group_ids}}).
-        sort({ date_posted: -1 }).
-        limit(100).
-        select('post_type group short_text username userid date_posted averagerating numberofratings').
-        exec(function(err, posts){
-          if (err){
-           return res.send(err);
-          }
-          return res.json(posts);
-        });
-      });
-    });
-});
+
 
 
 
@@ -610,9 +588,6 @@ app.get('/interests/interest/posts', requireLogin, function(req, res) {
 
   });
 });
-
-
-
 
 
 // Let angular handle everything else
