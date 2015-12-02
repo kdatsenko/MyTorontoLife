@@ -1,17 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-var middleware = require("../middleware");
-var requireLogin = middleware.requireLogin;
-var checkAdmin = middleware.checkAdmin;
-
 models = {};
 models.GroupMembers = require('mongoose').model('GroupMembers');
 models.Posts = require('mongoose').model('Posts');
 models.Interests = require('mongoose').model('Interests');
 
 /* Get all Interests */
-router.get('/', requireLogin, function(req, res) {
+router.get('/', function(req, res) {
   //Retrieve entire interest list from DB
   models.Interests.find({}, function(err, interests) {
     if (err) {
@@ -23,7 +19,7 @@ router.get('/', requireLogin, function(req, res) {
 
 
 /* Create new Interest (only Admins) */
-router.post('/addnew', requireLogin, function(req, res){
+router.post('/addnew', function(req, res){
 //var createInterest = function(interest){ //requireLogin
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
      return res.status(403).send({error: 'Unauthorized account type'});
@@ -51,7 +47,7 @@ router.post('/addnew', requireLogin, function(req, res){
 2. Where the post group is public, or the user is member of that group
 3. Order by most recent date, rating, get top 100 first
 */
-router.get('/interest/posts', requireLogin, function(req, res) {
+router.get('/interest/posts', function(req, res) {
 
   models.Interests.findOne({_id: req.query.interest.id, name: req.query.interest.name}, function (err, found_interest){
     if (err){

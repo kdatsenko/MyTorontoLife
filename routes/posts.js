@@ -1,10 +1,6 @@
 var express = require('express');
 var router = express.Router();
 
-var middleware = require("../middleware");
-var requireLogin = middleware.requireLogin;
-var checkAdmin = middleware.checkAdmin;
-
 models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
@@ -14,7 +10,7 @@ models.PostRatings = require('mongoose').model('PostRatings');
 
 /* The posts page shows a single post. */
 /* Create Post, update hashtags */
-router.post('/addnew', requireLogin, function(req, res){
+router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
     models.GroupMembers.findOne({user: req.session.user.id, group: req.body.post.group}, function(err, usergroup) {
@@ -52,7 +48,7 @@ router.post('/addnew', requireLogin, function(req, res){
 /* Get Post by Id. While loading the post, also populate the hashtags.
 Rights: admin, public or by private member
 */
-router.get('/post', requireLogin, function(req, res) {
+router.get('/post', function(req, res) {
     models.Posts.findOne({ _id: req.query._id })
     .populate({
     path: 'post_type'
@@ -111,7 +107,7 @@ var getPostRating = function (req, res, post){
 
 
 /* Update Post */
-router.put('/post', requireLogin, function(req, res){
+router.put('/post', function(req, res){
   //Hashtags: For each new create new entry in hashtag schema
    models.Posts.findOne({ _id: req.body._id }, function(err, post) {
     if (err) {
@@ -144,7 +140,7 @@ router.put('/post', requireLogin, function(req, res){
 });
 
 /* User add a comment to a post.*/
-router.post('/post/addcomment', requireLogin, function(req, res){
+router.post('/post/addcomment', function(req, res){
   //to post a comment, user must be a member of the group
   models.GroupMembers.findOne({user: req.session.user.id, group: req.body.comment.group}, function(err, usergroup) {
         if (err) {
@@ -174,7 +170,7 @@ router.post('/post/addcomment', requireLogin, function(req, res){
 });
 
 /* Rate the post */
-router.post('/post/rate', requireLogin, function(req, res){
+router.post('/post/rate', function(req, res){
   //number from 1-5 check
   //check that a rating does not already exist this user and post id
   //if it does, just update the number
@@ -285,7 +281,7 @@ var modifyPostRatingHelper = function(postObj, numstars, subtract){
 /**
  * Delete this Post from the DB system.
  */
-router.delete('/post/:id', requireLogin, function(req, res) {
+router.delete('/post/:id', function(req, res) {
   models.Posts.findById(req.params.id, function(err, post){
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.userid != req.session.user.id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
