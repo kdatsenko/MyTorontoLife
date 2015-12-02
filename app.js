@@ -125,7 +125,6 @@ app.set('views', __dirname + '/public');
 //app.engine('html', require('ejs').renderFile);
 //app.set('view engine', 'html');
 
-//app.use('/api/v1/', api);
 app.use(session({resave: true, saveUninitialized: true, secret: '25jh345hj34b7h8f', cookie: { maxAge: null}}));
 
 app.use(passport.initialize());
@@ -134,29 +133,6 @@ app.use(passport.session());
 
 
 app.use('/', routes);
-
-
-var middleware = require("./middleware");
-var requireLogin = middleware.requireLogin;
-var checkAdmin = middleware.checkAdmin;
-
-
-
-
-
-/* Get all Post Types */
- app.get('/posttypes', requireLogin, function(req, res) {
-  //Retrieve entire post types list from DB
-    models.PostTypes.find({}, function(err, types) {
-    if (err) {
-      return res.send(err);
-    }
-    res.json(types);
-    });
-});
-
-
-
 
 // Let angular handle everything else
 app.get(function(req, res){
