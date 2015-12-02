@@ -31,23 +31,27 @@ router.get('/', function(req, res) {
 
 /*router.post('/deleteInterest/:id', function(req, res) {
     var id = req.params.id; 
+=======
+router.post('/deleteInterest/:id', function(req, res) {
+    var id = req.params.id;
+>>>>>>> origin/chris
     Interests.remove({'_id': id}, function(error, interests) {
       if (error) {
-        res.send(error: 'Fail to delete an interest:' + id, status: 'fail');
+        res.send({error: 'Fail to delete an interest:' + id, status: 'fail'});
       } else {
-        res.send(success: 'Successfully delete an interest:' + id, status: 'success');
+        res.send({success: 'Successfully delete an interest:' + id, status: 'success'});
       }
     });
 });
 
 
 router.post('/deleteGroup/:id', function(req, res) {
-    var id = req.params.id; 
+    var id = req.params.id;
     Groups.remove({'_id': id}, function(error, interests) {
       if (error) {
-        res.send(error: 'Fail to delete an group:' + id, status: 'fail');
+        res.send({error: 'Fail to delete an group:' + id, status: 'fail'});
       } else {
-        res.send(success: 'Successfully delete an group:' + id, status: 'success');
+        res.send({success: 'Successfully delete an group:' + id, status: 'success'});
       }
     })
 });*/

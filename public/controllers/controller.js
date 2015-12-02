@@ -5,7 +5,7 @@ var crudApp = angular.module('crudApp', ['ngRoute']);
 crudApp.config(function($routeProvider, $locationProvider) {
 	$routeProvider
       // route for the home page
-      .when('/', {
+      .when('/login', {
       	templateUrl : 'pages/login.html',
       	controller  : 'loginController'
       })
@@ -15,7 +15,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	controller  : 'profileController'
       })
 
-			.when('/feed', {
+			.when('/', {
       	templateUrl : 'pages/feed.html',
       	controller  : 'feedController'
       });
@@ -58,10 +58,10 @@ crudApp.config(function($routeProvider, $locationProvider) {
 
 
 /**
- * Controller for login page template. 
+ * Controller for login page template.
  */
  crudApp.controller('loginController', function($scope, $location, $http) {
- 	
+
  	$scope.logged = false;
  	$scope.username = null;
  	$scope.login_error_msg = "";
@@ -101,23 +101,24 @@ crudApp.config(function($routeProvider, $locationProvider) {
 
 
 		var data = {
-    		email: email, 
+    		email: email,
     		password: password
     	};
 		$http.post('/auth/local/login', data).success(function(response) {
     		 $location.path('/feed'); 
+
     	}).error(function (data, status, headers, config) {
     		$scope.login_error_msg = data.message;
         	$scope.loginError = true;
       	});
-    
+
 	}
 
 
 
 	$scope.signup = function(){
 		//return $location.path('/hey'); // path not hash
-		
+
 		var email = $("#signup-email").val()
 		var username = $("#signup-username").val()
 		var pass1 = $("#signup-password").val()
@@ -159,8 +160,8 @@ crudApp.config(function($routeProvider, $locationProvider) {
 			}
 		})*/
 		var data = {
-    		email: email, 
-    		password: pass1, 
+    		email: email,
+    		password: pass1,
     		username: username
     	};
 		$http.post('/auth/local/signup', data).success(function(response) {
@@ -170,11 +171,11 @@ crudApp.config(function($routeProvider, $locationProvider) {
           $scope.register_error_msg = data.message;
         	$scope.registerError = true;
       });
-    	
+
 
 	}
 
-	
+
 
 	$scope.github_signin = function(){
 
@@ -184,7 +185,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
             error(function(data, status, headers, config) {
             	console.log('ERROR!');
             });
-    	
+
 	}
 
 	var redirect = function(){
@@ -209,7 +210,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
 
 	}
 
-	
+
 
 	$scope.login_form = function(){
  		$scope.showLogin = true;
@@ -238,7 +239,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
 			url: "/auth/loggedInUser",
 			type: "GET",
 			success: function(data){
-				
+
 				if(data.user){
 					$scope.username = data.user.username
 				}

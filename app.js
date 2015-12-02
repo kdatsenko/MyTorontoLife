@@ -388,12 +388,6 @@ app.use(passport.session());
 
 app.use('/', routes);
 
-// Let angular handle everything else
-app.get(function(req, res){
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
-});
-
-
 
 
 

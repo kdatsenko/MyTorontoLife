@@ -1,16 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-var middleware = require("../middleware");
-var requireLogin = middleware.requireLogin;
-var checkAdmin = middleware.checkAdmin;
 
 models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
 /* Get user profile */
-router.get('/profile', requireLogin, function(req, res) {
+router.get('/profile', function(req, res) {
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
@@ -32,7 +29,7 @@ router.get('/profile', requireLogin, function(req, res) {
 
 
 /* Edit the user's profile */
-router.put('/profile', requireLogin, function(req, res){
+router.put('/profile', function(req, res){
   //Action allowed only for Admins, or the user's own profile (session check)
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user._id == req.body._id)){
     return res.status(403).send({error: 'Unauthorized account type'});
@@ -60,7 +57,7 @@ router.put('/profile', requireLogin, function(req, res){
 
 
 /* Update the user's password. */
-router.put('/profile/passwordchange', requireLogin, function(req,res){
+router.put('/profile/passwordchange', function(req,res){
 //var changePassword = function (user){ //Require login
   if (checkAdmin(req, res, 1) | checkAdmin(req, res, 0)){
     changePasswordRegular(req.body, res); //req, res
@@ -117,7 +114,7 @@ var changePasswordRegular = function (user, res){
 /** Uploads an image file to the server, tranfers it to public/images folder,
  *  update the DB profile imageurl for this user.
  */
-/* router.post('/fileupload', requireLogin, multipartyMiddleware, function(req, res) {
+/* router.post('/fileupload', multipartyMiddleware, function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.email == req.body.email)){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
@@ -160,7 +157,7 @@ var changePasswordRegular = function (user, res){
 });*/
 
 /* Get all a list of all users' email, username (for Admin) */
- router.get('/', requireLogin, function(req, res) {
+ router.get('/', function(req, res) {
   //Retrieve entire list from DB
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
     return res.status(403).send({error: 'Unauthorized account type'});
@@ -174,7 +171,7 @@ var changePasswordRegular = function (user, res){
 });
 
 /* Get all this user's groups */
- router.get('/user/groups', requireLogin, function(req, res) {
+ router.get('/user/groups', function(req, res) {
   //get groups related to this user
   /*
 1. Get all thi's user's group
@@ -197,7 +194,7 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
 /**
  * Delete the user's record from the DB system.
  */
-router.delete('/profile/:id', requireLogin, function(req, res) {
+router.delete('/profile/:id', function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
     return res.status(403).send({error: 'Unauthorized account type'});
   }

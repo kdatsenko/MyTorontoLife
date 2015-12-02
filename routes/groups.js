@@ -5,9 +5,6 @@ models = {};
 models.Groups = require('mongoose').model('Groups');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
-var middleware = require("../middleware");
-var requireLogin = middleware.requireLogin;
-var checkAdmin = middleware.checkAdmin;
 /* GET group home page. */
 /*router.get('/', function(req, res, next) {
 	console.log("efejfeklfj");
@@ -17,7 +14,7 @@ var checkAdmin = middleware.checkAdmin;
 
 
 /* getGroupByID */
-router.get('/group', requireLogin, function(req, res) {
+router.get('/group', function(req, res) {
   //if admin, go ahead
   //Check group privacy, and members of the group => if user included, display
   models.Groups.findOne({ _id: req.query._id }, function(err, found_group) {
@@ -47,7 +44,7 @@ router.get('/group', requireLogin, function(req, res) {
 
 
 /* getAllGroups */
- router.get('/', requireLogin, function(req, res) {
+ router.get('/', function(req, res) {
 /*
 1. If user is admin, get all
 2. If user is not admin, get only public & those they signed up for (private - todo)
@@ -74,7 +71,7 @@ router.get('/group', requireLogin, function(req, res) {
 
 
 /* Create a new group */
-router.post('/groups/addnew', requireLogin, function(req, res) {
+router.post('/groups/addnew', function(req, res) {
   var group = new models.Group(req.body.group); //create new
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
@@ -93,7 +90,7 @@ router.post('/groups/addnew', requireLogin, function(req, res) {
 });
 
 /* Update group - only group creator can do this. */
-router.put('/groups/group', requireLogin, function(req, res){
+router.put('/groups/group', function(req, res){
   models.Groups.findOne({ _id: req.body._id }, function(err, group) {
     if (err) {
       return res.send(err);
@@ -132,7 +129,7 @@ router.put('/groups/group', requireLogin, function(req, res){
 //if group creator is not the req.id, then we know what type of request it is
 
 
-router.post('/groups/group/addmember', requireLogin, function(req, res){
+router.post('/groups/group/addmember', function(req, res){
     models.Groups.findOne({ _id: req.body.group._id }, function(err, group) {
       if (err){
         return res.send(err);
@@ -150,7 +147,7 @@ router.post('/groups/group/addmember', requireLogin, function(req, res){
 
 });
 
-var joinGroup = function (req, res, group){ //requireLogin
+var joinGroup = function (req, res, group){
     models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id},
         {user: req.session.user.id, group: group._id}, { upsert: true }, function(err, membership){
       res.json({ message: 'Joined group!', result: membership});
@@ -169,7 +166,7 @@ var addGroupMember = function (req, res, group){
 /**
  * Delete this group from the DB system.
  */
-router.delete('/groups/group/:id', requireLogin, function(req, res) {
+router.delete('/groups/group/:id', function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
     return res.status(403).send({error: 'Unauthorized account type'});
   }
@@ -192,7 +189,7 @@ router.delete('/groups/group/:id', requireLogin, function(req, res) {
 });
 
 /* Get Group Posts */
-router.get('/group/posts', requireLogin, function(req, res) {
+router.get('/group/posts', function(req, res) {
 //auth: only groups where the user is a member, or public
  models.Group.findById(req.query.groupid, function(err, group){
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
