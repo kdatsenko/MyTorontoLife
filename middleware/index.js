@@ -1,4 +1,8 @@
 var path = require('path');
+//var Users = require('mongoose').model('Users');
+var mongoose = require('mongoose');
+var models = require('../models/dbschema');
+
 
 module.exports = {}
 /**
