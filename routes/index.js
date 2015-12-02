@@ -51,7 +51,7 @@ router.use('/post', require('./post'));
 router.use('/users', require('./users'));
 router.use('/tag', require('./tag'));
 router.use('/groups', require('./groups'));
-router.use('/', require('./feed'));
+router.use('/dashboard', require('./dashboard'));
 
 router.get('/login', function(req, res, next){
 	if(req.session && req.session.user){
