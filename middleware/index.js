@@ -184,11 +184,15 @@ module.exports.verifyUser = function(req, res, next) {
 	}
 }
 
-module.exports.sendAngularHtml = function (request, response, next) {
-  if(request.accepts(['html', 'json']) == 'html'){
-     response.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
-  }
-  else{
-    next();
+module.exports.sendAngularHtml = function(filename, force){
+  if(typeof filename == "boolean"){force = filename;}
+  if(!filename || typeof filename == "boolean") {filename = 'index.html';}
+  return function (request, response, next) {
+    if(request.accepts(['html', 'json']) == 'html' || force){
+       response.sendFile(path.join('public', filename), {root: __dirname+"/.."});
+    }
+    else{
+      next();
+    }
   }
 }
