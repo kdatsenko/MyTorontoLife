@@ -1,5 +1,7 @@
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware');
+var crypt = require('../config/bcrypt')
 
 
 models = {};
@@ -33,16 +35,16 @@ router.get('/profile', function(req, res) {
 /* Edit the user's profile */
 router.put('/profile', function(req, res){
   //Action allowed only for Admins, or the user's own profile (session check)
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user._id == req.body._id)){
+  if (!(middleware.checkAdmin(req, res, 1) || middleware.checkAdmin(req, res, 0) || (req.session.user._id == req.body.user._id))){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Users.findOne({ _id: req.body._id }, function(err, user) {
+  models.Users.findOne({ _id: req.body.user._id }, function(err, user) {
     if (err) {
       return res.send(err);
     }
 
-    for (property in req.body) {
-      user[property] = req.body[property];
+    for(property in req.body.user){
+      user[property] = req.body.user[property]
     }
 
     // save the user profile details
@@ -61,10 +63,10 @@ router.put('/profile', function(req, res){
 /* Update the user's password. */
 router.put('/profile/passwordchange', function(req,res){
 //var changePassword = function (user){ //Require login
-  if (checkAdmin(req, res, 1) | checkAdmin(req, res, 0)){
-    changePasswordRegular(req.body, res); //req, res
-  } else if (req.session.user._id == req.body._id){
+  if (middleware.checkAdmin(req, res, 1) || middleware.checkAdmin(req, res, 0)){
     changePasswordAdmin(req.body, res); //req, res
+  } else if (req.session.user._id == req.body._id){
+    changePasswordRegular(req.body, res); //req, res
   } else {
     return res.status(403).send({error: 'Unauthorized account type'});
   }
@@ -78,7 +80,7 @@ var changePasswordAdmin = function (user, res){
     if (err) {
       return res.send(err);
     }
-    update_user.password = user.new_password;
+    update_user.password = crypt.generateHash(user.new_password);
     // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
@@ -96,10 +98,11 @@ var changePasswordRegular = function (user, res){
     if (err) {
       return res.send(err);
     }
-    if (update_user.password != user.old_password){
+    
+    if (crypt.validPassword(update_user.password, user.old_password)){
       return res.status(422).send({error: 'Incorrect password submission.'});
     }
-    update_user.password = user.new_password;
+    update_user.password = crypt.generateHash(user.new_password);
     // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
@@ -182,13 +185,16 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      models.GroupMembers.find({ user: req.session.user.id}, '-_id -user')
+      if(!req.query.id){
+        return res.sendError(400, "No query defined")
+      }
+      models.GroupMembers.find({ user: req.query.id}, '-_id -user')
       .populate('group', 'name')
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
-        res.json(groups);
+        res.sendData(groups)
         //send as res
       });
 });

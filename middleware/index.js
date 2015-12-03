@@ -185,7 +185,7 @@ module.exports.verifyUser = function(req, res, next) {
 }
 
 module.exports.sendAngularHtml = function (request, response, next) {
-  if(request.accepts('html')){
+  if(request.accepts(['html', 'json']) == 'html'){
      response.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
   }
   else{

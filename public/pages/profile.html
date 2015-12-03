@@ -22,12 +22,16 @@
 	</div>
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
-			<p id="description" ng-bind="user.description"></p>
+			<p id="description" ng-bind="user.description" ng-show="!editing"></p>
+			<textarea id="description-box" placeholder="Description" style="width:100%" ng-if="editing" ng-model="edits.newDescription">{{user.description}}</textarea>
 		</div>
 	</div>
 	<div class="row" ng-if="hasEditPermission">
 		<div id="buttons" class="col-md-2 col-md-offset-5" style="text-align: center;">
-			<button id="edit-button" class="btn btn-primary" ng-click="enterEditMode()">Edit</button>
+			<button id="edit-button" class="btn btn-primary" ng-click="enterEditMode()" ng-if="!editing">Edit</button>
+			<button id="save-button" class='btn btn-success' ng-click='saveEdits()' ng-if="editing">Save Changes</button>
+			<button id="change-password-button" class='btn btn-primary' data-toggle="modal" data-target="#password-modal" ng-if="editing">Change Password</button>
+			<button id="change-image-button" class='btn btn-primary' ng-click='test()' ng-if="editing">Upload Profile Image</button>
 		</div>
 	</div>
 	<div class="row">
@@ -83,6 +87,36 @@
 
 			<div ng-if="isEmpty(user.interests)" class="well">
 				<i><h3 class="center">No Interests Listed</h3></i>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="password-modal" class="modal" tabindex="-1" role="dialog" ng-controller="profilePasswordController">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Change Password</h4>
+			</div>
+
+			<div class="modal-body">
+				<span id="password-error" class="error" ng-show="error">{{error}}</span>
+				<div style="width: 100%">
+					<div class="input-group">
+						<input type="password" class="form-control" style="width: 100%" placeholder="Old Password" ng-model="passwordChange.old" ng-change="resetError()">
+					</div>
+					<div class="input-group">
+						<input type="password" class="form-control" style="width: 100%" placeholder="New Password" ng-model="passwordChange.new1" ng-change="resetError()">
+					</div>
+					<div class="input-group">
+						<input type="password" class="form-control" style="width: 100%" placeholder="Confirm Password" ng-model="passwordChange.new2" ng-change="resetError()">
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal">Close</button>
+				<button class="btn btn-success" ng-click="changePassword()">Save Changes</button>
 			</div>
 		</div>
 	</div>

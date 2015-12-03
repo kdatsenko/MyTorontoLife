@@ -37,3 +37,7 @@
 .group-description{
 	display: none;
 }
+
+.error{
+	color: #EE1423;
+}

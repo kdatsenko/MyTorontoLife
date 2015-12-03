@@ -14,7 +14,7 @@ var middleware = require('../middleware');
 
 
 router.use(middleware.verifyUser);
-// router.use(middleware.sendAngularHtml);
+router.use(middleware.sendAngularHtml);
 router.use(middleware.installHelpers);
 router.use(middleware.setupCORS);
 
