@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.PostTypes = require('mongoose').model('PostTypes');
 
 

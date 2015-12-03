@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 
-models = {};
+var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
 /* Get user profile */
 router.get('/profile', function(req, res) {
-    
+
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
@@ -234,7 +234,7 @@ router.get('/hasEditPermission', function(req, res, next){
   if(!req.session.user){
     res.status(401).send({error: "Not logged in"})
   }
-  
+
   models.Users.findOne({username: username}, function(err, foundUser){
     if(err){
       throw err;

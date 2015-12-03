@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.GroupMembers = require('mongoose').model('GroupMembers');
 models.Posts = require('mongoose').model('Posts');
 models.Interests = require('mongoose').model('Interests');
