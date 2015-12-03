@@ -22,9 +22,9 @@
         <div id="leftsidebar"class="quick-links left">
           <div class="box">
             <h1>Chris Dobson</h1>
-            <a>My Profile</a><br>
+            <a href="/profile">My Profile</a><br>
             <a ng-if="user.isAdmin">Admin Dashboard, if admin</a><br>
-            <a>Log Out</a>
+            <!-- <a>Log Out</a> -->
 
           </div>
             <div>
@@ -32,7 +32,7 @@
                 <ul>
                     <li ng-repeat="interest in user.interests"><a href="{{interest.link}}">{{interest.name}}</a></li>
                 </ul>
-                <a>Customize my Interests</a>
+                <a href="/interests">Customize my Interests</a>
             </div>
             <br>
             <div>
@@ -40,7 +40,7 @@
                 <ul>
                     <li ng-repeat="group in user.groups"><a href="{{group.link}}">{{group.name}}</a></li>
                 </ul>
-                <a>show all public groups</a>
+                <a href="/groups">show all public groups</a>
             </div>
 
         </div>

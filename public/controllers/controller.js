@@ -5,7 +5,10 @@ var crudApp = angular.module('crudApp', ['ngRoute']);
 crudApp.config(function($routeProvider, $locationProvider) {
 	$routeProvider
       // route for the home page
-
+		 .when('/', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'feedController'
+     })
      .when('/login', {
       	templateUrl : 'pages/login.html',
       	controller  : 'loginController'
@@ -15,27 +18,46 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
       })
-
-	  .when('/feed', {
-      	templateUrl : 'pages/feed.html',
-      	controller  : 'feedController'
-      })
-      // route for the about page
-      .when('/profile/:username', {
+			.when('/profile/:username', {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
       })
-
-			.when('/', {
-      	templateUrl : 'pages/feed.html',
-      	controller  : 'feedController'
-
+			.when('/profile/interests', {
+      	templateUrl : 'pages/customizeInterests.html',
+      	controller  : 'interestsController'
       })
 
-			.when('/posts/create', {
-      	templateUrl : 'pages/newpost.html'
-      	controller  : 'newPostController'
+			.when('/permalink/', {
+      	templateUrl : 'pages/postpermalink.html',
+      	controller  : 'PostPermalinkController'
+      })
 
+	    .when('/feed', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'feedController'
+      })
+
+			.when('/groups', {
+      	templateUrl : 'pages/list.html',
+      	controller  : 'groupsListController'
+      })
+			.when('/groups/:group_id', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'GroupController'
+      })
+
+			.when('/tags', {
+      	templateUrl : 'pages/list.html',
+      	controller  : 'tagsListController'
+      })
+			.when('/tags/:tag_id', {
+      	templateUrl : 'pages/feed.html',
+      	controller  : 'TagController'
+      })
+
+			.when('/create-post', {
+      	templateUrl : 'pages/newpost.html',
+      	controller  : 'newPostController'
       });
 
       $locationProvider.html5Mode(true);
@@ -131,13 +153,13 @@ crudApp.controller('feedController', function($scope, $location, $http) {
 			    "name" : "Condo"
 			}],
 			groups:[{
-    "_id" : 13,
-    "name" : "Toronto"
-},
-{
-    "_id" : 14,
-    "name" : "Etobicoke"
-}]
+			    "_id" : 13,
+			    "name" : "Toronto"
+			},
+			{
+			    "_id" : 14,
+			    "name" : "Etobicoke"
+			}]
 	};
 	$scope.showHero = true;
 
@@ -151,6 +173,33 @@ crudApp.controller('feedController', function($scope, $location, $http) {
     },
     posts:[
       {
+        user:{
+          username: "Chris",
+          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
+        },
+        html:"<p>This is my post!</p>"
+      },
+			{
+        user:{
+          username: "Chris",
+          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
+        },
+        html:"<p>This is my post!</p>"
+      },
+			{
+        user:{
+          username: "Chris",
+          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
+        },
+        html:"<p>This is my post!</p>"
+      },
+			{
+        user:{
+          username: "Chris",
+          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
+        },
+        html:"<p>This is my post!</p>"
+      },{
         user:{
           username: "Chris",
           imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
