@@ -1,0 +1,82 @@
+<style>
+    .btn-like:hover{background-color:#99FFFF;cursor:pointer;}
+    .tab {margin-left:130px;}
+        #header {margin-left:80px;margin-bottom:20px;}
+</style>
+    <div id="header">
+      <h1>Admin Dashboard</h1>
+    </div>
+    
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <ul class="nav nav-tabs">
+          <li class="tab" ng-style="tabIndex == 0 && {'background-color':'#CCFFFF'}"><a href="admin/users">Users</a></li>
+          <li class="tab" ng-style="tabIndex == 1 && {'background-color':'#CCFFFF'}"><a href="admin/posts">Posts</a></li>
+          <li class="tab" ng-style="tabIndex == 2 && {'background-color':'#CCFFFF'}"><a href="admin/interests">Interests</a></li>
+          <li class="tab" ng-style="tabIndex == 3 && {'background-color':'#CCFFFF'}"><a href="admin/groups">Groups</a></li>
+        </ul>
+
+      </div>
+    </nav>
+
+  <div id="main" ng-controller="postController">
+  
+  <div>
+  <div>
+    Sort by: 
+        <select ng-model="sortExpression">
+      <option value="user">User</option>
+      <option value="group">Group</option>
+      <option value="datePost">Date Post</option>
+      <option value="type">Type</option>
+      <option value="shortDescription">Short Description</option>
+    </select>
+    </div>
+
+    <table class="table table-bordered table-condensed table-responsive table-sm">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Username</th>
+              <th>Group</th>
+              <th>Date Post</th>
+              <th>Type</th>
+              <th>Short Description</th>
+              <th>Option</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input placeholder="Search name" ng-model="search.username" />
+              </td>
+              <td>
+                <input placeholder="Search group" ng-model="search.group" />
+              </td>
+              <td>
+                <input placeholder="Search date post" ng-model="search.datePost" />
+              </td>
+               <td>
+                <input placeholder="Search type" ng-model="search.type" />
+              </td>
+              <td>
+                <input placeholder="Search short description" ng-model="search.shortDescription" />
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr ng-repeat="post in postList | orderBy:mySortFunction | filter:search">
+              <td class="btn-like">{{post.username}}</td>
+              <td class="btn-like">{{post.group}}</td>
+              <td class="btn-like">{{post.datePost}}</td>
+              <td class="btn-like">{{post.post_type}}</td>
+              <td class="btn-like">{{post.text}}</td>
+              <td>
+                <a ng-click='deletePost(post._id)'>
+                  <strong style="margin-left:10px">(DELETE)</strong>
+                </a>
+            </td> 
+            </tr>
+          </tbody>
+        </table>
+</div>
+  </div>

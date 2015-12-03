@@ -1,0 +1,62 @@
+<style>
+    .btn-like:hover{background-color:#99FFFF;cursor:pointer;}
+    .tab {margin-left:130px;}
+        #header {margin-left:80px;margin-bottom:20px;}
+</style>
+    <div id="header">
+      <h1>Admin Dashboard</h1>
+    </div>
+    
+    <nav class="navbar navbar-default">
+      <div class="container">
+        <ul class="nav nav-tabs">
+          <li class="tab" ng-style="tabIndex == 0 && {'background-color':'#99FFFF'}"><a href="admin/users">Users</a></li>
+          <li class="tab" ng-style="tabIndex == 1 && {'background-color':'#99FFFF'}"><a href="admin/posts">Posts</a></li>
+          <li class="tab" ng-style="tabIndex == 2 && {'background-color':'#99FFFF'}"><a href="admin/interests">Interests</a></li>
+          <li class="tab" ng-style="tabIndex == 3 && {'background-color':'#99FFFF'}"><a href="admin/groups">Groups</a></li>
+        </ul>
+
+      </div>
+    </nav>
+
+  <div id="main" ng-controller="interestController">
+  
+  <div>
+  <div>
+    Sort by: 
+        <select ng-model="sortExpression">
+      <option value="name">Name</option>
+    </select>
+    </div>
+
+    <table class="table table-bordered table-condensed table-responsive table-sm">
+          <thead class="thead-inverse">
+            <tr>
+              <th>Name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>
+                <input placeholder="Search name" ng-model="search.interestName" />
+              </td>
+            </tr>
+          </tbody>
+          <tbody>
+            <tr ng-repeat="interest in interestList | orderBy:mySortFunction | filter:search">
+              <td class="btn-like">{{interest.name}}</td> <!-- groupschema there is no group description -->
+              <td>
+                <a ng-click='deleteInterest(interest.name)'>
+                  <strong style="margin-left:10px">(DELETE)</strong>
+                </a>
+            </td> 
+            </tr>
+          </tbody>
+      </table>
+
+      <form id="addInterest">
+        <input type="text" placeholder="Enter interest" name="interest">
+        <input type="submit" value="submit" ng-click="submit()">
+      </form>
+</div>
+  </div>

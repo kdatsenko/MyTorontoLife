@@ -1,0 +1,74 @@
+<div id="loginbar" ng-controller="loginController" style="z-index: 110;">
+	<div ng-if="logged == false">
+		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signin_popup" ng-click = "login_form()" >Login</button>
+		<button type="button" class="btn" data-toggle="modal" data-target="#signup_popup" ng-click = "register_form()" >Register</button>
+
+		<div id="signin_popup" role="dialog" class="modal" aria-labelledby="signin-title" ng-controller="loginController">
+	        <div class="modal-dialog" role="document">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <p id="signin_title" class="modal-title">Sign In</p>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="form-group" >
+	                        <div style="clear:both;">
+	                            <h4>Registered? Sign In:</h4><br/>
+	                        	<form>
+	                        		<p id="login-error" style="color: red" ng-show="loginError">{{login_error_msg}}</p>
+									<label>Email:</label><input id="login-email" type="text" class="form-control" placeholder="Email">
+									<label>Password:</label><input id="login-password" type="password" class="form-control" placeholder="Password">
+									<button type="button" data-dismiss="modal" class="btn btn-primary" ng-click="login()">
+										Signin
+									</button>
+	                        	</form>
+	                        	<br/>
+	                        	<h4>or Sign In via Social Media:</h4>
+	                        	<br/>
+	                            <a href="/auth/github" ng-click="github_signin()" class="btn btn-block btn-github btn-social">
+	                            <i class="fa fa-github"></i>Sign in with GitHub</a>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button class="btn btn-primary" data-dismiss="modal"
+	                    ng-click = "login_hide()">Close</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+
+	    <div id="signup_popup" class="modal" role="dialog" aria-labelledby="signin-title" ng-controller="loginController">
+	        <div class="modal-dialog" role="document">
+	            <div class="modal-content">
+	                <div class="modal-header">
+	                    <p id="signin_title" class="modal-title">Sign Up</p>
+	                </div>
+	                <div class="modal-body">
+	                    <div class="form-group" >
+	                        <div style="clear:both;">
+	                        	<form>
+	                        		<p id="signup-error" style="color: red" ng-show="registerError">{{register_error_msg}}</p>
+									<label>Email:</label><input id="signup-email" type="text" class="form-control" placeholder="Email">
+									<label>Username:</label><input id="signup-username" type="text" class="form-control" placeholder="Username">
+									<label>Password:</label><input id="signup-password"  type="password" class="form-control" placeholder="Password">
+									<label>Confirm password:</label><input id="signup-password-conf" type="password" class="form-control" placeholder="Password">
+									<button type="button" data-dismiss="modal" class="btn btn-primary" ng-click="signup()">
+										Signup
+									</button>
+	                        	</form>
+	                        </div>
+	                    </div>
+	                </div>
+	                <div class="modal-footer">
+	                    <button class="btn btn-primary" data-dismiss="modal" ng-click = "login_hide()" >Close</button>
+	                </div>
+	            </div>
+	        </div>
+	    </div>
+    </div>
+
+    <div ng-if="logged == true">
+		<button type="button" class="btn btn-primary" ng-bind="username" ng-click="profileClicked()"></button>
+		<button type="button" class="btn btn-danger" ng-click="logout()">Logout</button>
+    </div>
+</div>

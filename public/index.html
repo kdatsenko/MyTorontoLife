@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<!-- Angular App -->
+<html ng-app="crudApp">
+
+<head>
+	<base href="/"/>
+	<!-- Styles -->
+	<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css"/> -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="/stylesheets/bootstrap-social.css">
+	<link href='http://fonts.googleapis.com/css?family=Ek+Mukta:200,400,800' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="stylesheets/style.css">
+
+	<!-- JS files -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+	<!-- <script src="http://rawgit.com/danialfarid/ng-file-upload/master/dist/ng-file-upload.min.js"></script> -->
+	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+	<script src="controllers/controller.js"></script>
+	<script src="controllers/loginController.js"></script>
+	<script src="controllers/mainController.js"></script>
+	<script src="controllers/profileController.js"></script>
+	<script src="controllers/adminController.js"></script>
+</head>
+
+<!-- define top-level controller -->
+<body ng-controller="mainController">
+
+
+<div id="main" ng-controller="loginController">
+
+	<!-- angular templating -->
+	<!-- this is where content will be injected -->
+	<div ng-view></div>
+
+</div>
+
+</body>
+
+</html>
