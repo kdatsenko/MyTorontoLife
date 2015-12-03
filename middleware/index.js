@@ -28,7 +28,7 @@ module.exports = {}
  * Used for authentication for certain sensitive actions with the DB.
  * Pass admin_type as 0 or 1 for super or admin depending on action.
  */
- module.exports.checkAdmin =  function checkAdmin(request, response, admin_type) {
+ module.exports.checkAdmin =  function(request, response, admin_type) {
   if (request.session && request.session.user) {
     if (admin_type == request.session.user.accounttype){
       return true;

@@ -4,6 +4,8 @@ var router = express.Router();
 models = {};
 models.Groups = require('mongoose').model('Groups');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+var checkAdmin = require('../middleware').checkAdmin;
+
 
 /* GET group home page. */
 /*router.get('/', function(req, res, next) {
@@ -51,6 +53,7 @@ router.get('/group', function(req, res) {
 */
   //Retrieve entire list from DB
   //Authenticate the current user for Admin Status
+  
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
@@ -60,10 +63,14 @@ router.get('/group', function(req, res) {
         res.json(groups);
       });
   } else { //Get only those that are non-private
+      console.log('hello groups1 ' + models.GroupMembers);
+      console.log('hello groups2 ' + models.Groups);
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
       function(err, groups) {
+        console.log('hello groups: ' + groups);
         if (err) { return res.send(err); }
+
         res.json(groups);
       });
   }

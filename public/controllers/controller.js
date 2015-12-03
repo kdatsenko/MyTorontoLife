@@ -297,7 +297,7 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 
 });
 
-
+/*
 crudApp.controller('profileController', function ($scope, $http, $compile, $routeParams, $location) {
 	$scope.user = {
 		username: "John Cena",
@@ -307,7 +307,7 @@ crudApp.controller('profileController', function ($scope, $http, $compile, $rout
 		age: 38,
 		gender: 'male',
 		interests: [{name: "Wrestling"}, {name: "Vine"}, {name: "Memes"}]
-	}
+	};
 
 	$scope.posts = [{text: "Example post. Ideally style and structure for posts from other parts of the site can be used here to see all posts of a user."}]
 
@@ -367,7 +367,7 @@ crudApp.controller('profileController', function ($scope, $http, $compile, $rout
 	}else{
 		$scope.setUser($routeParams.username)
 	}
-})
+});*/
 
 function editModeReplace(el, type, attrs){
 	if(type == "input"){
@@ -417,7 +417,8 @@ crudApp.controller('feedController', function($scope, $location, $http) {
 
  var populateUserGroups = function(){
   	$http.get('/users/user/groups').success(function(data, status, headers, config) {
-        console.log(data);
+        $scope.user.groups = data;
+
     });
  };
 
@@ -438,12 +439,42 @@ crudApp.controller('feedController', function($scope, $location, $http) {
     });
  };
 
+  var fullGroupList = function(){
+  	$http.get('/groups').success(function(data, status, headers, config) {
+        console.log(data);
+
+    });
+  }
 
 
+
+
+/*var getGroupByID = function(group){
+GET /groups/group
+
+var getAllGroups = function(){
+GET /groups
+
+var searchByGroup = function (group)
+GET /groups/group/posts
+
+var searchByTagname = function (tagname)
+GET /tags/tag/posts
+
+
+var getPostsByInterest = function(interest){
+GET /interests/interest/posts
+
+var hashTagIndex = function(){
+GET /tags
+
+var mainFeed = function(){
+GET /dashboard*/
 
 
  var start = function (){
- 	//populateNavBar();
+ 	populateNavBar();
+ 	fullGroupList();
  }
 
  /*var populateInterests = function(){
@@ -465,9 +496,9 @@ crudApp.controller('feedController', function($scope, $location, $http) {
 			    "name" : "Bars"
 			},{
 			    "_id" : "5654b6c6e903c5aa96a19df4",
-			    "name" : "Condo"
+			    "name" : "Hello"
 			}],
-			groups:[{
+groups:[{
     "_id" : 13,
     "name" : "Toronto"
 },

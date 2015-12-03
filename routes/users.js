@@ -5,6 +5,7 @@ var router = express.Router();
 models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Groups = require('mongoose').model('Groups');
 
 /* Get user profile */
 router.get('/profile', function(req, res) {
@@ -15,7 +16,7 @@ router.get('/profile', function(req, res) {
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
-        console.log("were here "  + user + " " + err);
+        console.log("were here "  + models.Groups + " " + models.Users);
         if (err) {
           return res.send(err);
         }
@@ -192,16 +193,14 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
       console.log('in usergrouos yay');
       models.GroupMembers.find({ user: req.session.user._id}, '-_id -user')
       .populate({path: 'group', model: 'Groups', select:'_id name'})
+      .lean()
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
-        var groupObj = groups.toObject();
-        console.log(JSON.stringify(groupObj));
-        var group_array = groupObj.map(function(group_beautified){
-          return {_id: group_beautified._id, name: group_beautified.name};
+        var group_array = groups.map(function(group_beautified){
+          return {_id: group_beautified.group._id, name: group_beautified.group.name};
         });
-        console.log(JSON.stringify(group_array));
         res.json(group_array);
         //send as res
       });
