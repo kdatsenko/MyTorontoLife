@@ -1,10 +1,12 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.GroupMembers = require('mongoose').model('GroupMembers');
 models.Posts = require('mongoose').model('Posts');
 models.Interests = require('mongoose').model('Interests');
+models.Groups = require('mongoose').model('Groups');
+
 
 /* Get all Interests */
 router.get('/', function(req, res) {
@@ -49,27 +51,26 @@ router.post('/addnew', function(req, res){
 */
 router.get('/interest/posts', function(req, res) {
 
-  models.Interests.findOne({_id: req.query.interest.id, name: req.query.interest.name}, function (err, found_interest){
+  models.Interests.findOne({_id: req.query.id}, function (err, found_interest){
     if (err){
       return res.send(err);
     } else if(!found_interest){
-      return res.status(404).send({error: 'Interest ' + req.query.interest.name + ' does not exist.'});
+      return res.status(404).send({error: 'Interest ' + req.query.id + ' does not exist.'});
     }
-    models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
-
+    models.Groups.find({private_type: false}, {_id : 1}, function(err, docs) {
+       if (err) { return res.send(err); }
       // Map the docs into an array of just the _ids
       var ids_public = docs.map(function(doc) { return doc._id; }); //all the public group ids
       models.GroupMembers.find({user: req.session.user.id, group: {$nin : ids_public}}, {_id: 1}, function(err, docs){
 
         var ids_private = docs.map(function(doc) { return doc.group; });
         var merged_group_ids = ids_public.concat(ids_private);
-
         models.Posts.
         find({group: { "$in" : merged_group_ids}, interest: found_interest._id}).
         sort({date_posted: -1}).
         limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').
-        exec(function(err){
+        exec(function(err, posts){
           if (err) {
             return res.send(err);
           }

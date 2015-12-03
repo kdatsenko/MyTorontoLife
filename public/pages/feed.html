@@ -1,6 +1,6 @@
-<nav id="topNav" class="hero" ng-if="showHero">
+<!--<nav id="topNav" class="hero" ng-if="showHero">
     <h1>MyTorontoLife.ca</h1>
-</nav>
+</nav>-->
 <nav id="topNav" class="feed">
     <h1>MyTorontoLife.ca</h1>
 </nav>
@@ -18,33 +18,37 @@
 
 
         <section class="feed" ng-controller="feedController">
-
+        <!--
         <div id="leftsidebar"class="quick-links left">
           <div class="box">
-            <h1>Chris Dobson</h1>
-            <a>My Profile</a><br>
-            <a ng-if="user.isAdmin">Admin Dashboard, if admin</a><br>
-            <a>Log Out</a>
-
-          </div>
-            <div>
-                <h1>Interests</h1>
-                <ul>
-                    <li ng-repeat="interest in user.interests"><a href="{{interest.link}}">{{interest.name}}</a></li>
-                </ul>
-                <a>Customize my Interests</a>
-            </div>
+            <h1>{{state.username}}</h1>
+            <a href="" ng-if="state.is_logged" ng-click="getUserProfile(state.username)">My Profile</a>
             <br>
-            <div>
-                <h1>Groups</h1>
-                <ul>
-                    <li ng-repeat="group in user.groups"><a href="{{group.link}}">{{group.name}}</a></li>
-                </ul>
-                <a>show all public groups</a>
-            </div>
 
+            <a ng-if="state.admin && !state.admin_dashboard && state.is_logged" href="" ng-click="GetAdminDashBoard(state.username)">Admin Dashboard</a>
+            <br>
+            <a ng-if="!state.main_dashboard && state.is_logged" href="" ng-click="GetAdminDashBoard(state.username)">Dashboard</a>
+            <br>
+            <a ng-if="state.is_logged" href="" ng-click="logOut()">Log Out</a>
+          </div>
+
+        <div>
+          <h1>Interests</h1>
+          <ul>
+            <li ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a></li>
+          </ul>
         </div>
-        <div id="mainfeed" class="main-feed center">
+        <div>
+          <h1>Groups</h1>
+          <ul>
+            <li ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a></li>
+          </ul>
+          <a>show all public groups</a>
+        </div>
+
+        </div> -->
+
+       <!--<div id="mainfeed" class="main-feed center">
           <a name="feed"></a>
             <div class="box" ng-repeat="post in feed.posts">
               <div class="rating">
@@ -55,17 +59,53 @@
                 <a href="/users/{{post.user.username}}">{{post.user.username}}</a><br>
                 <span class="permalinks"><a>Yesterday</a> - Tags &amp; Interests</span>
               </div>
-              <div ng-bind-html="post.html">
+              <div ng-bind-html="posts.html">
 
               </div>
               <p>This is my post about stuff!</p>
+              
+            </div>
+
+        </div>-->
+
+        <div id="mainfeed" class="main-feed center">
+        <a name="feed"></a>
+        <div class="box" ng-repeat="post in Posts"> 
+          <div class="rating">
+            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+          </div>
+
+          <div class="profile">
+            <img src="{{post.avatarURL}}">
+            <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
+            <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">{{post.date_posted}}</a> - {{post.interestname}}</span>
+          </div>  
+          <div ng-bind-html="posts.html">
+
+          </div>
+
+          <p>{{post.short_text}}</p>
+         <!-- 
               <div class="ratings"></div>
               <p></p>
               <ul><li>Comment</li><li>Share</li></ul>
-            </div>
 
+         -->
+        
         </div>
-        <div id="rightsidebar" class="actions right">
+         
+
+      </div>
+
+
+
+
+
+
+
+
+
+       <!-- <div id="rightsidebar" class="actions right">
           <div class="box" ng-if="feed.type == 'group'">
               <h1>Group: {{feed.group.name}}</h1>
               <ul>
@@ -93,6 +133,40 @@
                 <li><a href="#">Data Attribution</a></li>
             </ul>
 
+        </div>-->
+
+
+       <div id="rightsidebar" class="actions right">
+        <!-- Group info box -->
+        <div class="box" ng-show="state.is_group_page">
+          <h1>Group: {{feed.group.name}}</h1>
+          <ul>
+            <li>List of members</li>
+          </ul>
+          <a>Add a user to this group</a>
         </div>
+        <div class="box" ng-show="state.is_showing_interest || state.is_searching">
+          <h1>Showing Results for:{{feed.tag}}</h1>
+        </div>
+
+        <div class="box">
+          <h1>Create a post</h1>
+          <ul>
+            <li  ng-click="createNewPost( 'New Announcement')">New Announcement</li>
+            <li ng-click="createNewPost( 'New question')">New question</li>
+          </ul>
+        </div>
+
+        <ul class="box footerlinks">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Email Policy</a></li>
+          <li><a href="#">Data Attribution</a></li>
+        </ul>
+      </div>
+
+
+
     </section>
     <script type="text/javascript" src="/controllers/feedController.js"></script>

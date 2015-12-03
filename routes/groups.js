@@ -1,9 +1,14 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.Groups = require('mongoose').model('Groups');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Posts = require('mongoose').model('Posts');
+
+//models.Interests = require('mongoose').model('Interests');
+//var models = require('../models/dbschema');
+
 var checkAdmin = require('../middleware').checkAdmin;
 
 
@@ -63,14 +68,10 @@ router.get('/group', function(req, res) {
         res.json(groups);
       });
   } else { //Get only those that are non-private
-      console.log('hello groups1 ' + models.GroupMembers);
-      console.log('hello groups2 ' + models.Groups);
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
       function(err, groups) {
-        console.log('hello groups: ' + groups);
         if (err) { return res.send(err); }
-
         res.json(groups);
       });
   }
@@ -198,7 +199,8 @@ router.delete('/groups/group/:id', function(req, res) {
 /* Get Group Posts */
 router.get('/group/posts', function(req, res) {
 //auth: only groups where the user is a member, or public
- models.Group.findById(req.query.groupid, function(err, group){
+  //console.log();
+ models.Groups.findById(req.query.groupid, function(err, group){
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       if (err){
         return res.send(err);

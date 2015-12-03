@@ -52,7 +52,7 @@ var nameValidator = [
 
 var groupsSchema = new Schema({
 	name: {type: String, unique: true, required: '{PATH} is required.', validate: nameValidator},
-	private_type: {type: Boolean, default: false},//True = private, False public
+	private_type: {type: Boolean, default: true},//True = private, False public
   group_creator: {type: ObjectId, required: true, ref: 'Users'},
 	description: {type: String, default: ''}
 });
@@ -85,6 +85,7 @@ var postsSchema = new Schema({
   post_type: {type: ObjectId, required: true, ref: 'Types'},
 	group: {type: ObjectId, required: true, ref: 'Groups'},
 	text: {type: String, required: '{PATH} is required.'},
+  short_text: {type: String, required: '{PATH} is required.'},
 	username: {type: String, required: true},
 	userid: {type: ObjectId, required: true, ref: 'Users'},
 	date_posted: {type: Date, default: Date.now},
@@ -158,12 +159,13 @@ groupsSchema.pre('remove', function(next) {
   });
 });
 
-postsSchema.pre('remove', function(next) {
+/*postsSchema.pre('remove', function(next) {
   PostRatings.remove({postid: this._id}).exec();
-});
+});*/
 
 postsSchema.pre('save', function (next) {
   this.short_text = this.text.substring(0, 200);
+  console.log('this.short_text: '  + this.short_text);
   next();
 });
 
@@ -210,7 +212,7 @@ var PostRatings = mongoose.model('PostRatings', postsRatings);
 module.exports = {
     Interests: Interests,
     Users: Users,
-    Types: PostTypes,
+    PostTypes: PostTypes,
     Groups: Groups,
     GroupMembers: GroupMembers,
     Hashtags: Hashtags,

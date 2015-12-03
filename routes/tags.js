@@ -1,10 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.Groups = require('mongoose').model('Groups');
 models.HashTags = require('mongoose').model('Hashtags');
-
+models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Posts = require('mongoose').model('Posts');
 
 /*
 Get Hash Tags (Hash tag index)
@@ -13,14 +14,15 @@ For now, I'll use date_last_used first, get tags used less than 100 days ago, or
 by use_count descending, and extract the top 100 of the list.
 */
 router.get('/', function(req, res) {
-  var today = moment();
-  var daysago = moment(today).subtract(100, 'days')
+
+  var cutoff = new Date();
+  cutoff.setDate(-100);
   models.HashTags.
   find({}).
-  where('last_used').gt(daysago.toDate()).
+  where('last_used').gt(cutoff).
   sort({ count: -1 }).
   limit(100).
-  select('name').
+  select('name last_used').
   exec(function(err, tags){
     if (err) {
       return res.send(err);
@@ -39,7 +41,7 @@ router.get('/tag/posts', function(req, res) {
         var ids_private = docs.map(function(doc) { return doc.group; });
         var merged_group_ids = ids_public.concat(ids_private);
         models.Posts.
-        find({hashtags: { "$in" : [tagname]}, group: {"$in" : merged_group_ids}}).
+        find({'hashtags.name' : { "$in" : [req.query.tagname]}, group: {"$in" : merged_group_ids}}).
         sort({ date_posted: -1 }).
         limit(100).
         select('post_type group short_text username userid date_posted averagerating numberofratings').

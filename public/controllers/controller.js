@@ -52,18 +52,35 @@ crudApp.config(function($routeProvider, $locationProvider) {
       $locationProvider.html5Mode(true);
   });
 
-//////////////////////////////////
-//Added by Jim
+
 
 crudApp.config(function ($routeProvider, $locationProvider) {
 	
-
 	$locationProvider.html5Mode({enabled: true,requireBase: false});
 });
 
 
+ crudApp.controller('mainController', function($scope, $location, $http) {
 
- crudApp.controller('mainController', function($scope, $location) {
+ 	$scope.showNavBar = false;
+ 	$scope.$on("update_nav_bar", function(event, show){
+			$scope.showNavBar = show;
+			console.log('I am triggered!');
+			populateNavBar();
+ 			fullGroupList();
+ 			$scope.getPostByInterest(22);
+
+
+			/* Trigger the fill in methods */
+	});
+
+$scope.$on("update_test", function(event){
+			console.log('update_test I am triggered! ' + $scope.state.is_group_page);
+
+
+			/* Trigger the fill in methods */
+	});
+	
 
  	/*
 		1. Dashboard
@@ -84,6 +101,219 @@ crudApp.config(function ($routeProvider, $locationProvider) {
   	loggedIn: false
   };*/
 
+   /*
+
+1. Dashboard
+		- populate the main feed (different methods)
+		- populate the side bar for the user
+		- populate interests, groups
+		- populate name, admin/not admin
+>>>>>>> origin/chris
+
+ */
+ $scope.state = {
+        username: 'Chris',
+         admin: true,
+         super_admin: true,
+         profile_is_admin: true,
+         main_dashboard :true,
+         admin_dashboard : false,
+         is_logged : true, 
+         searched_by : "smart_search",
+         searched_id: "",
+         is_group_page: false,
+         is_showing_interest: false,
+
+         //The search bar is in the scope of the feedController
+         //Question: if we overwrite is_showing_interest in feedContrl, will it be 
+      };
+
+   $scope.user = {
+		interests : [{
+			    "_id" : "5654b6c6e903c5aa96a19df2",
+			    "name" : "Food"
+			},
+			{
+			    "_id" : "5654b6c6e903c5aa96a19df3",
+			    "name" : "Bars"
+			},{
+			    "_id" : "5654b6c6e903c5aa96a19df4",
+			    "name" : "Hello"
+			}],
+		groups:[{
+		    "_id" : 13,
+		    "name" : "Toronto"
+		},
+		{
+		    "_id" : 14,
+		    "name" : "Etobicoke"
+		}]
+	};
+
+    
+    
+$scope.logOut = function() {
+ alert('logOut');
+}   
+    
+  
+/*var getGroupByID = function(group){
+GET /groups/group
+
+var getAllGroups = function(){
+GET /groups
+
+var searchByGroup = function (group)
+GET /groups/group/posts
+
+
+
+
+var getPostsByInterest = function(interest){
+GET /interests/interest/posts
+
+var hashTagIndex = function(){
+GET /tags
+
+var searchByTagname = function (tagname)
+GET /tags/tag/posts
+
+var mainFeed = function(){
+GET /dashboard*/
+
+ $scope.getPostByInterest = function(interest_id) {
+
+ //alert(interest_id);
+
+	$http({
+  		method: 'GET',
+        url: '/dashboard', //get all user emails & displayname
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+
+
+ /*$http({
+  		method: 'GET',
+        url: '/tags', //get all user emails & displayname
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+
+
+  $http({
+  		method: 'GET',
+        url: '/tags/tag/posts', //get all user emails & displayname
+        params: {tagname: 'Cool'}
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+
+
+ $http({
+  		method: 'GET',
+        url: '/interests/interest/posts', //get all user emails & displayname
+        params: {id: interest_id}
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });*/
+
+
+
+
+};
+
+
+
+
+ 
+ $scope.GetAdminDashBoard = function(user_name) {
+ alert(user_name);
+}
+ $scope.getUserProfile = function(user_name) {
+ alert(user_name);
+}
+
+ var populateNavBar = function(){
+	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
+    	var account = data.user.accounttype;
+    	if (account == 0){
+    		$scope.state.admin = true;
+         	$scope.state.super_admin = true;
+    	} else if (account == 1){
+    		$scope.state.admin = true;
+         	$scope.state.super_admin = false;
+         } else {
+         	$scope.state.admin = false;
+         	$scope.state.super_admin = false;
+         }
+   		//var username = data.user.username; //Should be a JSON object
+   		$scope.state.username = data.user.username;
+    	//var id = data.user._id;
+		populateInterests(data.user.username);
+		populateUserGroups();
+    });
+ };
+
+ var populateUserGroups = function(){
+  	$http.get('/users/user/groups').success(function(data, status, headers, config) {
+        $scope.user.groups = data;
+
+    });
+ };
+
+ var populateInterests = function(username){
+ 	$http({
+  		method: 'GET',
+        url: '/users/profile', //get all user emails & displayname
+        params: {username: username}
+    })
+  	.then(function successCallback(response) {
+  		$scope.user.interests = response.data.interests;
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+ };
+
+  var fullGroupList = function(){
+  	$http.get('/groups').success(function(data, status, headers, config) {
+       // console.log(data);
+
+    });
+  }
+
+
+
+
+
+  
 
 
 
@@ -109,8 +339,10 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 
 
 	$scope.login = function(){
-		var email = $("#login-email").val()
-		var password = $("#login-password").val()
+		//var email = $("#login-email").val()
+		//var password = $("#login-password").val()
+		var email = 'adele@gmail.com';
+		var password = 'dddd';
 
 		if(!email){
 			$("#login-error").html("Email required!")
@@ -144,12 +376,15 @@ crudApp.config(function ($routeProvider, $locationProvider) {
     	};
 		$http.post('/auth/local/login', data).success(function(response) {
     		 $location.path('/feed');
+    		 $scope.$emit('update_nav_bar', true);
     	}).error(function (data, status, headers, config) {
     		$scope.login_error_msg = data.message;
         	$scope.loginError = true;
       	});
 
 	}
+
+
 
 
 
@@ -282,7 +517,7 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 				//$scope.$apply()
 			}
 		})*/
-
+		$scope.login(); //Katie
 		$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
         	$scope.logged = data.logged
         	if(data.user){
@@ -297,7 +532,11 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 
 });
 
-/*
+
+
+
+
+
 crudApp.controller('profileController', function ($scope, $http, $compile, $routeParams, $location) {
 	$scope.user = {
 		username: "John Cena",
@@ -367,7 +606,7 @@ crudApp.controller('profileController', function ($scope, $http, $compile, $rout
 	}else{
 		$scope.setUser($routeParams.username)
 	}
-});*/
+});
 
 function editModeReplace(el, type, attrs){
 	if(type == "input"){
@@ -392,121 +631,143 @@ crudApp.directive("ngGroup", function(){
 	}
 })
 
+
+
 crudApp.controller('feedController', function($scope, $location, $http) {
- /*
 
-1. Dashboard
-		- populate the main feed (different methods)
-		- populate the side bar for the user
-		- populate interests, groups
-		- populate name, admin/not admin
->>>>>>> origin/chris
 
- */
 
- var populateNavBar = function(){
-	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
-		console.log(data);
-    	var account = data.user.accounttype;
-   		var username = data.user.username; //Should be a JSON object
-    	var id = data.user._id;
-		populateInterests(data.user.username);
-		populateUserGroups();
-    });
- };
 
- var populateUserGroups = function(){
-  	$http.get('/users/user/groups').success(function(data, status, headers, config) {
-        $scope.user.groups = data;
+$scope.state = {
+	is_searching: false
+};
 
-    });
- };
 
- var populateInterests = function(username){
- 	$http({
+ $scope.Groups = [
+      {_id: "1", name: "Etobicoke", description :""},
+      {_id: "565b5911afaf8bac32029661" , name: "Toronto", description :""},
+      {_id: "3", name: "UofT", description :""},
+      {_id: "4", name: "a new group", description :""},
+      {_id: "65b5911afaf8bac32029672", name: "Announcement", description :""}
+    ];	
+     
+    
+    	
+    		 $scope.Interests = [
+      {_id: "aaaa", name: "fishing"},
+      {_id: "bbbb" , name: "cats"},
+      {_id: "cccc", name: "dogs"},
+      {_id: "dddd", name: "real estate"},
+      {_id: "565b5911afaf8bac3202966c", name: "Food"}
+    ];	
+    
+  $scope.Posts = [
+     {_id: "aaaa5", 
+      username: "Chris" ,
+      short_text: 'hey',
+       avatarURL : "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50",  
+      date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+      
+      interestname : 'Cooking',
+      groupname: 'Toronto', 
+      averagerating: 3.5,
+       hashtags: ['great', 'cool', 'iheartmyTO']} , 
+        {_id: "aaaa6", 
+      username: "Adam", 
+      avatarURL : "https://i1.wp.com/slack.global.ssl.fastly.net/3654/img/avatars/ava_0001-72.png?ssl=1",  
+      date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+      short_text: 'hello!',
+      interestname : 'CS',
+      groupname: 'Etobicoke', 
+      averagerating: 5,
+       hashtags: ['wellthatwasfun', 'iheartmyTO']},
+      {_id: "aaaa7", 
+      username: "Jim", 
+      avatarURL : "https://avatars.slack-edge.com/2015-11-18/14843332005_64782944e2c667c5e73f_72.jpg",  
+      date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+      short_text: 'hello world!',
+      interestname : 'Toronto',
+      groupname: 'SadUniLife', 
+      averagerating: 4.5,
+       hashtags: ['wellthatwasfun', 'wholetthedogsoutwhowhowho']},
+      {_id: "aaaa8", 
+      username: "Katie", 
+      avatarURL : "https://secure.gravatar.com/avatar/524e5d5e8c92b9dcf1ad7f6bd582eb3c.jpg",  
+      date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+      short_text: 'Want Christmas and kittens!',
+      interestname : 'Etobicoke',
+      groupname: 'EvenSaddderUniLife', 
+      averagerating: 4.5,
+       hashtags: ['adeleonstage', 'lanaisofftotheraces']} 
+    ];
+   
+   $scope.showHero = true;
+
+
+     
+   
+
+
+
+
+
+ $scope.getUserProfile = function(user_name) {
+ 	alert(($scope.state.is_searching | $scope.state.is_showing_interest));
+ 	alert(user_name);
+}
+
+ $scope.getPostbyID = function(post_id) {
+ alert(post_id);
+} 
+
+ $scope.createNewPost = function(post_type) {
+ alert(post_type);
+}
+
+
+ var testScope = function(){
+
+ 	$scope.state.is_group_page = true;
+ 	$scope.$emit('update_test');
+ }
+
+ var populateFeed = function (){
+ 	 	$http({
   		method: 'GET',
-        url: '/users/profile', //get all user emails & displayname
-        params: {username: username}
+        url: '/groups/group', //get all user emails & displayname
+        params: {_id: group_id}
     })
   	.then(function successCallback(response) {
-  		console.log(response.data.interests);
-  		$scope.user.interests = response.data.interests;
+  		console.log(response);
 
     },
     function errorCallback(response) {
     	console.log(response);
 
     });
- };
 
-  var fullGroupList = function(){
-  	$http.get('/groups').success(function(data, status, headers, config) {
-        console.log(data);
+    $http({
+  		method: 'GET',
+        url: '/groups/group/posts', //get all user emails & displayname
+        params: {groupid: group_id}
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
 
     });
-  }
-
-
-
-
-/*var getGroupByID = function(group){
-GET /groups/group
-
-var getAllGroups = function(){
-GET /groups
-
-var searchByGroup = function (group)
-GET /groups/group/posts
-
-var searchByTagname = function (tagname)
-GET /tags/tag/posts
-
-
-var getPostsByInterest = function(interest){
-GET /interests/interest/posts
-
-var hashTagIndex = function(){
-GET /tags
-
-var mainFeed = function(){
-GET /dashboard*/
-
-
- var start = function (){
- 	populateNavBar();
- 	fullGroupList();
  }
 
- /*var populateInterests = function(){
- 	$http.get('/users/profile').success(function(data, status, headers, config) {
-        	console.log(data);
-    });
- };*/
 
 
 
 
-  $scope.user = {
-		interests : [{
-			    "_id" : "5654b6c6e903c5aa96a19df2",
-			    "name" : "Food"
-			},
-			{
-			    "_id" : "5654b6c6e903c5aa96a19df3",
-			    "name" : "Bars"
-			},{
-			    "_id" : "5654b6c6e903c5aa96a19df4",
-			    "name" : "Hello"
-			}],
-groups:[{
-    "_id" : 13,
-    "name" : "Toronto"
-},
-{
-    "_id" : 14,
-    "name" : "Etobicoke"
-}]
-	};
+
+
+	
 	$scope.showHero = true;
 
   $scope.feed = {
@@ -530,7 +791,7 @@ groups:[{
 
 
 
-  start();
+  //start();
 
 });
 

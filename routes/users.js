@@ -2,10 +2,10 @@ var express = require('express');
 var router = express.Router();
 
 
-models = {};
+var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
-models.Groups = require('mongoose').model('Groups');
+
 
 /* Get user profile */
 router.get('/profile', function(req, res) {
@@ -16,7 +16,6 @@ router.get('/profile', function(req, res) {
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
-        console.log("were here "  + models.Groups + " " + models.Users);
         if (err) {
           return res.send(err);
         }
@@ -190,7 +189,6 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      console.log('in usergrouos yay');
       models.GroupMembers.find({ user: req.session.user._id}, '-_id -user')
       .populate({path: 'group', model: 'Groups', select:'_id name'})
       .lean()
