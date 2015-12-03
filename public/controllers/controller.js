@@ -1,6 +1,26 @@
 // create the module
 var crudApp = angular.module('crudApp', ['ngRoute']);
 
+/* Service to share data between controllers. Used to share user email
+for navigation to and display of profile page. */
+crudApp.service('sharedService', function() {
+	var _dataObj = {};
+
+	var setData = function(newObj) {
+		_dataObj = newObj;
+	};
+
+	var getData = function(){
+		return _dataObj;
+	};
+
+	return {
+		getData: getData,
+		setData: setData
+	};
+
+});
+
 /* Configuration of routes. */
 crudApp.config(function($routeProvider, $locationProvider) {
 	$routeProvider
@@ -60,21 +80,19 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 });
 
 
- crudApp.controller('mainController', function($scope, $location, $http) {
+ crudApp.controller('mainController', function($scope, $location, $http, $route, sharedService) {
 
  	$scope.showNavBar = false;
  	$scope.$on("update_nav_bar", function(event, show){
 			$scope.showNavBar = show;
 			console.log('I am triggered!');
 			populateNavBar();
- 			fullGroupList();
- 			$scope.getPostByInterest(22);
-
+ 			
 
 			/* Trigger the fill in methods */
 	});
 
-$scope.$on("update_test", function(event){
+	$scope.$on("update_test", function(event){
 			console.log('update_test I am triggered! ' + $scope.state.is_group_page);
 
 
@@ -88,30 +106,9 @@ $scope.$on("update_test", function(event){
 		- populate the side bar for the user
 		- populate interests, groups
 		- populate name, admin/not admin
+	 */
 
-
-  // Initialize the model object
- /* $scope.firstModelObj = {
-  	account_name: "",
-  	is_admin: false,
-  	display_name: "",
-  	email: "",
-  	show_logout: false,
-  	show_name: false,
-  	loggedIn: false
-  };*/
-
-   /*
-
-1. Dashboard
-		- populate the main feed (different methods)
-		- populate the side bar for the user
-		- populate interests, groups
-		- populate name, admin/not admin
->>>>>>> origin/chris
-
- */
- $scope.state = {
+ 	$scope.state = {
         username: 'Chris',
          admin: true,
          super_admin: true,
@@ -156,107 +153,27 @@ $scope.logOut = function() {
  alert('logOut');
 }   
     
-  
-/*var getGroupByID = function(group){
-GET /groups/group
-
-var getAllGroups = function(){
-GET /groups
-
-var searchByGroup = function (group)
-GET /groups/group/posts
-
-
-
-
-var getPostsByInterest = function(interest){
-GET /interests/interest/posts
-
-var hashTagIndex = function(){
-GET /tags
-
-var searchByTagname = function (tagname)
-GET /tags/tag/posts
-
-var mainFeed = function(){
-GET /dashboard*/
 
  $scope.getPostByInterest = function(interest_id) {
+	 alert(interest_id);
 
- //alert(interest_id);
+ };
 
-	$http({
-  		method: 'GET',
-        url: '/dashboard', //get all user emails & displayname
-    })
-  	.then(function successCallback(response) {
-  		console.log(response);
-
-    },
-    function errorCallback(response) {
-    	console.log(response);
-
-    });
-
-
- /*$http({
-  		method: 'GET',
-        url: '/tags', //get all user emails & displayname
-    })
-  	.then(function successCallback(response) {
-  		console.log(response);
-
-    },
-    function errorCallback(response) {
-    	console.log(response);
-
-    });
-
-
-  $http({
-  		method: 'GET',
-        url: '/tags/tag/posts', //get all user emails & displayname
-        params: {tagname: 'Cool'}
-    })
-  	.then(function successCallback(response) {
-  		console.log(response);
-
-    },
-    function errorCallback(response) {
-    	console.log(response);
-
-    });
-
-
- $http({
-  		method: 'GET',
-        url: '/interests/interest/posts', //get all user emails & displayname
-        params: {id: interest_id}
-    })
-  	.then(function successCallback(response) {
-  		console.log(response);
-
-    },
-    function errorCallback(response) {
-    	console.log(response);
-
-    });*/
-
-
-
-
+$scope.getPostByGroup = function(group_id){
+	console.log('getPostByGroup: ' + group_id);
+	$scope.state.is_group_page = true;
+	sharedService.setData({groupid : group_id});
+  	$location.path("/feed");
+  	$route.reload();
 };
 
-
-
-
- 
  $scope.GetAdminDashBoard = function(user_name) {
  alert(user_name);
-}
+};
  $scope.getUserProfile = function(user_name) {
  alert(user_name);
-}
+ /* Navigate to User Profile page with this username. */
+};
 
  var populateNavBar = function(){
 	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
@@ -300,20 +217,7 @@ GET /dashboard*/
     	console.log(response);
 
     });
- };
-
-  var fullGroupList = function(){
-  	$http.get('/groups').success(function(data, status, headers, config) {
-       // console.log(data);
-
-    });
-  }
-
-
-
-
-
-  
+ };  
 
 
 
@@ -633,14 +537,9 @@ crudApp.directive("ngGroup", function(){
 
 
 
-crudApp.controller('feedController', function($scope, $location, $http) {
+crudApp.controller('feedController', function($scope, $location, $http, sharedService) {
 
 
-
-
-$scope.state = {
-	is_searching: false
-};
 
 
  $scope.Groups = [
@@ -661,6 +560,15 @@ $scope.state = {
       {_id: "565b5911afaf8bac3202966c", name: "Food"}
     ];	
     
+
+
+/*
+group: "5660cdaa20bcd1782ec2225e"
+Missing: groupname - Etobioke ---- we just jave groupid
+avatarURL : "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50", 
+*/
+
+
   $scope.Posts = [
      {_id: "aaaa5", 
       username: "Chris" ,
@@ -725,14 +633,96 @@ $scope.state = {
 }
 
 
- var testScope = function(){
+/*var getGroupByID = function(group){  YES
+GET /groups/group
 
- 	$scope.state.is_group_page = true;
- 	$scope.$emit('update_test');
- }
+var searchByGroup = function (group) YES
+GET /groups/group/posts
 
- var populateFeed = function (){
- 	 	$http({
+var getPostsByInterest = function(interest){  YES
+GET /interests/interest/posts
+
+var hashTagIndex = function(){ YES
+GET /tags
+
+var searchByTagname = function (tagname) YES
+GET /tags/tag/posts
+
+var mainFeed = function(){ YES
+GET /dashboard
+
+
+var getAllGroups = function(){ NOT DONE YET
+GET /groups 
+
+*/
+
+ var getPostsByInterest = function(interest_id) {
+	 $http({
+	  		method: 'GET',
+	        url: '/interests/interest/posts', //get all user emails & displayname
+	        params: {id: interest_id}
+	    })
+	  	.then(function successCallback(response) {
+	  		console.log(response);
+
+	    },
+	    function errorCallback(response) {
+	    	console.log(response);
+
+	    });
+ };
+
+  var getMainFeedPosts = function() {
+	$http({
+  		method: 'GET',
+        url: '/dashboard', //get all user emails & displayname
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+  };
+
+  var getTagIndex = function() {
+  	$http({
+  		method: 'GET',
+        url: '/tags', //get all user emails & displayname
+    })
+  	.then(function successCallback(response) {
+  		console.log(response);
+
+    },
+    function errorCallback(response) {
+    	console.log(response);
+
+    });
+  };
+
+	var getPostsByHashTag = function() {
+		$http({
+	  		method: 'GET',
+	        url: '/tags/tag/posts', //get all user emails & displayname
+	        params: {tagname: 'Cool'}
+	    })
+	  	.then(function successCallback(response) {
+	  		console.log(response);
+
+	    },
+	    function errorCallback(response) {
+	    	console.log(response);
+
+	    });
+	};
+
+
+
+var getGroupByID = function(group_id){
+	$http({
   		method: 'GET',
         url: '/groups/group', //get all user emails & displayname
         params: {_id: group_id}
@@ -745,20 +735,42 @@ $scope.state = {
     	console.log(response);
 
     });
+};
 
-    $http({
+var getGroupPosts = function(group_id){
+	$http({
   		method: 'GET',
         url: '/groups/group/posts', //get all user emails & displayname
         params: {groupid: group_id}
     })
   	.then(function successCallback(response) {
   		console.log(response);
+  		$scope.Posts = response.data;
 
     },
     function errorCallback(response) {
     	console.log(response);
 
     });
+};
+
+
+  var fullGroupList = function(){
+  	$http.get('/groups').success(function(data, status, headers, config) {
+       // console.log(data);
+    });
+  };
+
+ var testScope = function(){
+
+ 	$scope.state.is_group_page = true;
+ 	$scope.$emit('update_test');
+ }
+
+ var populateFeed = function (){
+ 	
+
+    
  }
 
 
@@ -789,9 +801,20 @@ $scope.state = {
     ]
   }
 
+  var start = function(){
+  	console.log('START ' + $scope.state + ' ');
+  	console.log($scope.state);
+  	if ($scope.state.is_group_page){
+  		var groupid = (sharedService.getData()).groupid;
+  		getGroupPosts(groupid);
+
+  	}
+
+  };
 
 
-  //start();
+
+  start();
 
 });
 
@@ -1035,3 +1058,5 @@ crudApp.controller('userController', function ($scope, $http, $location) {
 	 	});
 	 };
 });
+
+
