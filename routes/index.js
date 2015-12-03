@@ -40,6 +40,4 @@ router.use([login,
             middleware.sendAngularHtml]);
 
 
-
-
 module.exports = router;
