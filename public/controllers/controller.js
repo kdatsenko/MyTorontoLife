@@ -27,7 +27,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
       // route for the home page
 		 .when('/', {
       	templateUrl : 'pages/feed.html',
-      	controller  : 'feedController'
+      	controller  : 'dashboardController'
      })
      .when('/login', {
       	templateUrl : 'pages/login.html',
@@ -73,19 +73,14 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	templateUrl : 'pages/postpermalink.html',
       	controller  : 'PostPermalinkController'
       })
-
-	  .when('/', {
-      	templateUrl : 'pages/login.html',
-      	controller  : 'loginController'
+			.when('/tags', {
+				templateUrl : 'pages/list.html',
+      	controller  : 'tagsListController'
+			})
+	  .otherwise({
+      	templateUrl : 'pages/notfound.html'
       });
 
 
       $locationProvider.html5Mode(true);
   });
-
-
-
-crudApp.config(function ($routeProvider, $locationProvider) {
-
-	$locationProvider.html5Mode({enabled: true,requireBase: false});
-});

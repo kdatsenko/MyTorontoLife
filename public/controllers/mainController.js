@@ -3,6 +3,7 @@ var crudApp = angular.module('crudApp');
 
  crudApp.controller('mainController', function($scope, $location, $http, $route, sharedService) {
 
+  $scope.showHero = false;
  	$scope.showNavBar = false;
  	$scope.$on("update_nav_bar", function(event, show){
 			$scope.showNavBar = show;

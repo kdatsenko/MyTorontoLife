@@ -59,7 +59,7 @@ var crudApp = angular.module('crudApp');
       	};
   		$http.post('/auth/local/login', data).success(function(response) {
   			 $scope.state.is_logged = true;
-      		 $location.path('/feed');
+      		//  $location.path('/feed');
       		 $scope.$emit('update_nav_bar', true);
       	}).error(function (data, status, headers, config) {
       		$scope.login_error_msg = data.message;
