@@ -130,7 +130,7 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 	        return
 	    }
 	    //$scope.saveEdits({groups: $scope.groups.concat([this.selectedGroup])}, function () {
-		$http.post('/groups/groups/group/addmember', {group: $scope.groupCtrl.selectedGroup})
+		$http.post('/groups/group/addmember', {group: $scope.groupCtrl.selectedGroup})
 		.success(function (data, status, headers, config) {
 			$scope.groups.push($scope.groupCtrl.selectedGroup)
 	        $scope.groupCtrl.selectedGroup = null
@@ -233,19 +233,6 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 		})
 	}else{
 		$scope.setUser($routeParams.username)
-	}
-})
-
-crudApp.directive("ngGroup", function(){
-	return function(scope, element, attrs){
-		angular.element(element).hover(function(){
-			//$(this).stop(true, true)
-			$(this).find(".group-description").stop(true)
-			$(this).find(".group-description").show('fast')
-		}, function(){
-			$(this).find(".group-description").stop(true)
-			$(this).find(".group-description").hide('fast')
-		})
 	}
 })
 

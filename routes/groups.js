@@ -89,7 +89,7 @@ router.get('/group', function(req, res) {
 
 
 /* Create a new group */
-router.post('/groups/addnew', function(req, res) {
+router.post('/addnew', function(req, res) {
   var group = new models.Group(req.body.group); //create new
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
@@ -107,7 +107,7 @@ router.post('/groups/addnew', function(req, res) {
 });
 
 /* Update group - only group creator can do this. */
-router.put('/groups/group', function(req, res){
+router.put('/group', function(req, res){
   models.Groups.findOne({ _id: req.body._id }, function(err, group) {
     if (err) {
       return res.send(err);
@@ -146,7 +146,7 @@ router.put('/groups/group', function(req, res){
 //if group creator is not the req.id, then we know what type of request it is
 
 
-router.post('/groups/group/addmember', function(req, res){
+router.post('/group/addmember', function(req, res){
     models.Groups.findOne({ _id: req.body.group._id }, function(err, group) {
       if (err){
         return res.send(err);
@@ -190,14 +190,48 @@ var addGroupMember = function (req, res, group){
     //req.body.user._id = id of user to add in req JSON body
     models.GroupMembers.findOneAndUpdate({user: req.body.user._id, group: group._id},
       {user: req.body.user._id, group: group._id}, { upsert: true }, function(err, membership){
-      res.json({ message: 'Joined group!', result: membership});
+      if (err){ return res.send(err); }
+      res.json({ message: 'Joined group!'});
     });
 };
+
+
+router.put('/group/removemember', function(req, res){
+    models.Groups.findOne({ _id: req.body.group._id }, function(err, group) {
+      if (err){
+        return res.send(err);
+      } else if (!group){
+        return res.status(404).send({error: 'The group with id ' + req.body.group._id + ' does not exist'});
+      }
+      if (group.private_type == true & (group.group_creator == req.session.user._id | checkAdmin(req, res, 0) | checkAdmin(req, res, 1))){
+        removeGroupMember(req, res, group);
+      } else if (group.private_type == false){
+        leaveGroup(req, res, group);
+      } else {
+        return res.status(403).send({error: 'Private group: Unauthorized account type'});
+      }
+    });
+
+});
+
+var leaveGroup = function (req, res, group){
+    models.GroupMembers.findOneAndRemove({user: req.session.user._id, group: group._id}, function(err, membership){
+      if (err){ return res.send(err); }
+      res.json({ message: 'Member left the group!' });
+    });
+};
+
+//group creator add member
+var removeGroupMember = function (req, res, group){
+    /* Unimplemented */
+};
+
+
 
 /**
  * Delete this group from the DB system.
  */
-router.delete('/groups/group/:id', function(req, res) {
+router.delete('/group/:id', function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //Action only allowed for Admins.
     return res.status(403).send({error: 'Unauthorized account type'});
   }

@@ -1,3 +1,127 @@
+
+<!--<nav id="topNav" class="hero" ng-if="showHero">
+    <h1>MyTorontoLife.ca</h1>
+</nav>-->
+<nav id="topNav" class="feed">
+    <h1>MyTorontoLife.ca</h1>
+</nav>
+
+    <section class="hero" ng-if="showHero">
+    <div class="bg"></div>
+    <div class="content">
+        <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
+        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
+        <form ng-submit="submitSearch()">
+          <input type="text" ng-model="search.tag" placeholder="Search for a Neighbourhood, Topic or Address"/>
+        </form>
+
+
+
+
+
+
+
+
+        <br>
+    </div>
+    </section>
+
+
+        <section class="feed" ng-controller="feedController">
+
+        <div id="mainfeed" class="main-feed center">
+        <a name="feed"></a>
+        <div class="box" ng-repeat="post in Posts"> 
+          <div class="rating">
+            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+          </div>
+
+          <div class="profile">
+            <img src="{{post.userid.imageurl}}">
+            <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
+            <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">{{post.date_posted}}</a> - 
+            <a href="" ng-click="onInterestClick(post.interest._id)">{{post.interest.name}}</a>
+            </span>
+            <br>
+            <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
+              <a href=""> {{ tag.name }} </a>
+            </span>
+            <br>
+            <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
+          </div>  
+          <div ng-bind-html="posts.html">
+
+          </div>
+
+          <p>{{post.short_text}}</p>
+         <!-- 
+              <div class="ratings"></div>
+              <p></p>
+              <ul><li>Comment</li><li>Share</li></ul>
+
+         -->
+        
+        </div>
+
+      </div>
+
+
+       <div id="rightsidebar" class="actions right">
+        <!-- Group info box -->
+        <div class="box" ng-show="state.is_group_page">
+          <h1>Group: {{group.name}}</h1>
+          <ul>
+<li>
+<div ng-init="limit = 150; moreShown = false">
+    {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
+    <a ng-show="group.description.length > limit && !moreShown"
+      href ng-click="limit=limit=300; moreShown = true">  
+      More
+    </a>
+    <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
+</div>
+</li>
+
+           <!-- <div id="group_description">{{group.description}}</div>-->
+            <!--<a ng-if=""><li>Add me to this group</li></a>-->
+          </ul>
+          <ul ng-show="!is_group_member">
+            <li ng-click="addToGroup()">Add me to this group</li>
+            <!--<a ng-if=""><li>Add me to this group</li></a>-->
+          </ul>
+          <ul ng-show="is_group_member">
+            <li ng-click="removeFromGroup()">Leave this group</li>
+            <!--<a ng-if=""><li>Add me to this group</li></a>-->
+          </ul>
+          <!--<a ng-if="">Add me to this group</a>-->
+        </div>
+        <div class="box" ng-show="state.is_showing_interest || state.is_searching">
+          <h1>Showing Results for:{{search_tag}}</h1>
+        </div>
+
+        <div class="box">
+          <h1>Create a post</h1>
+          <ul>
+            <li  ng-click="createNewPost( 'New Announcement')">New Announcement</li>
+            <li ng-click="createNewPost( 'New question')">New question</li>
+          </ul>
+        </div>
+
+        <ul class="box footerlinks">
+          <li><a href="#">About</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Email Policy</a></li>
+          <li><a href="#">Data Attribution</a></li>
+        </ul>
+      </div>
+
+
+
+    </section>
+    
+<!--=======
+<script type="text/javascript" src="/controllers/feedController.js"></script>
 <section class="feed" ng-controller="feedController">
   <div id="leftsidebar"class="quick-links left">
     <div ng-include="src='/angular_partials/userbox_profile.html'" class="box"></div>
@@ -21,5 +145,6 @@
         <li><a href="#">Email Policy</a></li>
         <li><a href="#">Data Attribution</a></li>
       </ul> -->
-    </div>
+    <!--</div>
 </section>
+>>>>>>> chris/chris-->

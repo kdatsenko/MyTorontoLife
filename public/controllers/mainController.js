@@ -3,33 +3,7 @@ var crudApp = angular.module('crudApp');
 
  crudApp.controller('mainController', function($scope, $location, $http, $route, sharedService) {
 
-  $scope.showHero = false;
  	$scope.showNavBar = false;
- 	$scope.$on("update_nav_bar", function(event, show){
-			$scope.showNavBar = show;
-			console.log('I am triggered!');
-			populateNavBar();
-
-
-			/* Trigger the fill in methods */
-	});
-
-	$scope.$on("update_test", function(event){
-			console.log('update_test I am triggered! ' + $scope.state.is_group_page);
-
-
-			/* Trigger the fill in methods */
-	});
-
-
- 	/*
-		1. Dashboard
-		- populate the main feed (different methods)
-		- populate the side bar for the user
-		- populate interests, groups
-		- populate name, admin/not admin
-	 */
-
  	$scope.state = {
         username: 'Chris',
          admin: true,
@@ -37,16 +11,16 @@ var crudApp = angular.module('crudApp');
          profile_is_admin: true,
          main_dashboard: true,
          admin_dashboard : false,
-         is_logged : true,
+         is_logged : true, 
          is_searching: false,
          is_group_page: false,
          is_showing_interest: false,
 
          //The search bar is in the scope of the feedController
-         //Question: if we overwrite is_showing_interest in feedContrl, will it be
+         //Question: if we overwrite is_showing_interest in feedContrl, will it be 
       };
 
-   $scope.user = {
+         $scope.user = {
 		interests : [{
 			    "_id" : "5654b6c6e903c5aa96a19df2",
 			    "name" : "Food"
@@ -69,16 +43,52 @@ var crudApp = angular.module('crudApp');
 	};
 
 
+    $scope.$on("update_nav_bar", function(event, show){
+			$scope.showNavBar = show;
+			console.log('I am triggered!');
+			populateNavBar();
+			/* Trigger the fill in methods */
+	});
 
+	$scope.$on("update_state_to_search", function(event, tagname){
+		console.log('update_test I am triggered! ' + tagname);
+		resetStateVariables();
+		$scope.state.is_searching = true;
+		sharedService.setData({tag : tagname});
+  		$location.path("/feed");
+  		$route.reload();
+	});
+
+	$scope.$on("update_state_to_group", function(event, groupid){
+		$scope.getPostByGroup(groupid);
+	});
+
+	$scope.$on("update_state_to_interest", function(event, interestid){
+		$scope.getPostByInterest(interestid);
+	});
+
+	/*$scope.$on("goto_profile", function(event, username){
+		$scope.getUserProfile(username);
+	});
+
+	$scope.$on("goto_post", function(event, postid){
+		$scope.getPostPage(postid);
+	});*/
+
+
+
+    
+    
 $scope.logOut = function() {
  alert('logOut');
-}
-
+}   
+    
 
  $scope.getPostByInterest = function(interest_id) {
  	 resetStateVariables();
 	 $scope.state.is_showing_interest = true;
 	 sharedService.setData({interestid : interest_id});
+	 console.log("THIS IS THE INTERESR!!!!! " + interest_id);
 	 $location.path("/feed");
   	 $route.reload();
 
@@ -95,14 +105,14 @@ $scope.getPostByGroup = function(group_id){
 
  $scope.getAdminDashBoard = function() {
  	alert('Admin Dash!');
-
+ 	
 };
 
 $scope.getMainDashBoard = function() {
 	resetStateVariables();
- 	$scope.state.main_dashboard = true;
+ 	$scope.state.main_dashboard = true; 
  	$location.path("/feed");
-  	$route.reload();
+  	$route.reload();	
 };
 
 
@@ -119,6 +129,10 @@ var resetStateVariables = function () {
  $scope.getUserProfile = function(user_name) {
  alert(user_name);
  /* Navigate to User Profile page with this username. */
+};
+
+$scope.getPostPage = function (postid){
+	alert(postid);
 };
 
  var populateNavBar = function(){
@@ -163,6 +177,8 @@ var resetStateVariables = function () {
     	console.log(response);
 
     });
- };
+ };  
+
+
 
  });

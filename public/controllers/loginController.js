@@ -22,10 +22,10 @@ var crudApp = angular.module('crudApp');
 
 
   	$scope.login = function(){
-  		//var email = $("#login-email").val()
-  		//var password = $("#login-password").val()
-  		var email = 'adele@gmail.com';
-  		var password = 'dddd';
+  		var email = $("#login-email").val()
+  		var password = $("#login-password").val()
+  		//var email = 'adele@gmail.com';
+  		//var password = 'dddd';
 
   		if(!email){
   			$("#login-error").html("Email required!")
@@ -59,7 +59,7 @@ var crudApp = angular.module('crudApp');
       	};
   		$http.post('/auth/local/login', data).success(function(response) {
   			 $scope.state.is_logged = true;
-      		//  $location.path('/feed');
+      	  $location.path('/feed');
       		 $scope.$emit('update_nav_bar', true);
       	}).error(function (data, status, headers, config) {
       		$scope.login_error_msg = data.message;
@@ -204,7 +204,7 @@ var crudApp = angular.module('crudApp');
   				//$scope.$apply()
   			}
   		})*/
-  		$scope.login(); //Katie
+  		//$scope.login(); //Katie
   		$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
           	$scope.logged = data.logged
           	if(data.user){
