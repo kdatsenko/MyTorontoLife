@@ -12,7 +12,7 @@ models.Posts = require('mongoose').model('Posts');
 Get feed from groups: Get most recent feed from all user's groups
 */
 var getGroupFeed = function (req, res) {
-  models.GroupMembers.find({user: req.session.user._id}, 'group').exec(function(err, docs){
+  models.GroupMembers.find({user: req.session.useid}, 'group').exec(function(err, docs){
       if (err){
         return res.send(err);
       } else if (!docs){

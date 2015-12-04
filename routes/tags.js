@@ -37,7 +37,7 @@ router.get('/tag/posts', function(req, res) {
   models.Groups.find({private_type: false}, {_id: 1}, function(err, docs) {
       // Map the docs into an array of just the _ids
       var ids_public = docs.map(function(doc) { return doc._id; }); //all the public group ids
-      models.GroupMembers.find({user: req.session.user.id, group: {$nin : ids_public}}, {_id: 1}, function(err, docs){
+      models.GroupMembers.find({user: req.session.user._id, group: {$nin : ids_public}}, {_id: 1}, function(err, docs){
         var ids_private = docs.map(function(doc) { return doc.group; });
         var merged_group_ids = ids_public.concat(ids_private);
         models.Posts.

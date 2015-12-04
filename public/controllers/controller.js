@@ -702,7 +702,8 @@ GET /groups
 	    })
 	  	.then(function successCallback(response) {
 	  		console.log(response);
-  			$scope.Posts = response.data;
+  			$scope.Posts = response.data.posts;
+  			$scope.search_tag = response.data.interest;
 
 
 	    },
@@ -750,6 +751,7 @@ GET /groups
 	    })
 	  	.then(function successCallback(response) {
 	  		console.log(response);
+	  		//$scope.search_tag = response.data.interest;
 
 	    },
 	    function errorCallback(response) {
@@ -817,7 +819,7 @@ var getGroupPosts = function(group_id){
 
   var fullGroupList = function(){
   	$http.get('/groups').success(function(data, status, headers, config) {
-       // console.log(data);
+  		console.log(data);  
     });
   };
 
@@ -875,7 +877,7 @@ var getGroupPosts = function(group_id){
   	} else if ($scope.state.main_dashboard){
   		//getMainFeedPosts();
   	}
-
+  	fullGroupList();
  
 
   };

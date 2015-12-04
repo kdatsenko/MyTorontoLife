@@ -25,7 +25,6 @@ var checkAdmin = require('../middleware').checkAdmin;
 router.get('/group', function(req, res) {
   //if admin, go ahead
   //Check group privacy, and members of the group => if user included, display
-  console.log('HERE IN GROUPS SANTA CLAUS!!! ')
   models.Groups.findOne({ _id: req.query._id }, function(err, found_group) {
     if (err) {
       return res.send(err);
@@ -56,7 +55,7 @@ router.get('/group', function(req, res) {
 */
   //Retrieve entire list from DB
   //Authenticate the current user for Admin Status
-  
+  console.log('HERE IN /GROUPS SANTA CLAUS!!! ')
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
@@ -71,6 +70,7 @@ router.get('/group', function(req, res) {
       function(err, groups) {
         if (err) { return res.send(err); }
         res.json(groups);
+        console.log(JSON.stringify(groups))
       });
   }
 });

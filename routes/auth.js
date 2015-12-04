@@ -90,7 +90,7 @@ router.get('/loggedInUser', function(req, res, next){
 function setSession(req, res, user){
 	// Set session, currently just a place holder!
 	var cleanUser = {
-    	id: user._id,
+    	_id: user._id,
     	email:  user.email,
     	username: user.username,
     	accounttype: user.accounttype //Exists to personalize user experience
