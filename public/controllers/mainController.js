@@ -14,7 +14,7 @@ var crudApp = angular.module('crudApp');
          is_logged : true, 
          is_searching: false,
          is_group_page: false,
-         is_showing_interest: false,
+         is_showing_interest: false
 
          //The search bar is in the scope of the feedController
          //Question: if we overwrite is_showing_interest in feedContrl, will it be 
@@ -122,16 +122,18 @@ var resetStateVariables = function () {
 	$scope.state.is_group_page = false;
 	$scope.state.main_dashboard = false;
 	$scope.state.admin_dashboard = false;
-	$scope.state.admin_dashboard = false;
 	$scope.state.is_searching = false;
 };
 
  $scope.getUserProfile = function(user_name) {
- alert(user_name);
+ 	resetStateVariables();
+ 	sharedService.setData({username : user_name});
+ 	$location.path('/profile');
  /* Navigate to User Profile page with this username. */
 };
 
 $scope.getPostPage = function (postid){
+
 	alert(postid);
 };
 
