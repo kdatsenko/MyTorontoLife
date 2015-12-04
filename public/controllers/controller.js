@@ -58,7 +58,11 @@ crudApp.config(function($routeProvider, $locationProvider) {
 			.when('/create-post', {
       	templateUrl : 'pages/newpost.html',
       	controller  : 'newPostController'
-      });
+      })
+
+			.otherwise({
+      templateUrl: 'pages/notfound.html'
+    });
 
       $locationProvider.html5Mode(true);
   });

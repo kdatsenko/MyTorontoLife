@@ -210,12 +210,12 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
 
- var hashtags = [{_id: hashtag_ids[0], name: 'Cool'},
-                  {_id: hashtag_ids[1], name: 'Interesting'},
-                  {_id: hashtag_ids[2], name: 'Coolerthanyourcity'},
-                  {_id: hashtag_ids[3], name: 'greatlandscapes'},
-                  {_id: hashtag_ids[4], name: 'someonecalltheplumber'},
-                  {_id: hashtag_ids[5], name: 'lostatsomewhere'}];
+ var hashtags = [{_id: hashtag_ids[0], name: 'Cool', last_used: new Date()},
+                  {_id: hashtag_ids[1], name: 'Interesting', last_used: new Date()},
+                  {_id: hashtag_ids[2], name: 'Coolerthanyourcity', last_used: new Date()},
+                  {_id: hashtag_ids[3], name: 'greatlandscapes', last_used: new Date()},
+                  {_id: hashtag_ids[4], name: 'someonecalltheplumber', last_used: new Date()},
+                  {_id: hashtag_ids[5], name: 'lostatsomewhere', last_used: new Date()}];
 
 
 
