@@ -1,98 +1,25 @@
-<nav id="topNav" class="hero" ng-if="showHero">
-    <h1>MyTorontoLife.ca</h1>
-</nav>
-<nav id="topNav" class="feed">
-    <h1>MyTorontoLife.ca</h1>
-</nav>
+<section class="feed" ng-controller="feedController">
+  <div id="leftsidebar"class="quick-links left">
+    <div ng-include="src='/angular_partials/userbox_profile.html'" class="box"></div>
+    <div ng-include="src='/angular_partials/userbox_interests.html'" class="box"></div>
+    <div ng-include="src='/angular_partials/userbox_groups.html'" class="box"></div>
+  </div>
+  <div id="mainfeed" ng-include="src='/angular_partials/PostFeed.html'" class="main-feed center">
 
-    <section class="hero" ng-if="showHero">
-    <div class="bg"></div>
-    <div class="content">
-        <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
-        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
-        <form>
-            <input type="text" placeholder="Search for a Neighbourhood, Topic or Address">
-        </form>
+  </div>
+
+  <div id="rightsidebar" class="actions right">
+
+      <ng-include src="'/angular_partials/feed_currentGroup.html'" ></ng-include>
+      <ng-include src="'/angular_partials/feed_searchResults.html'" ></ng-include>
+      <ng-include src="'/angular_partials/feed_createpost.html'" ></ng-include>
+
+      <!-- <ul class="box footerlinks">
+        <li><a href="#">About</a></li>
+        <li><a href="#">Terms of Service</a></li>
+        <li><a href="#">Partners</a></li>
+        <li><a href="#">Email Policy</a></li>
+        <li><a href="#">Data Attribution</a></li>
+      </ul> -->
     </div>
-    </section>
-
-
-        <section class="feed" ng-controller="feedController">
-
-        <div id="leftsidebar"class="quick-links left">
-          <div class="box">
-            <h1>Chris Dobson</h1>
-            <a>My Profile</a><br>
-            <a ng-if="user.isAdmin">Admin Dashboard, if admin</a><br>
-            <a>Log Out</a>
-
-          </div>
-            <div>
-                <h1>Interests</h1>
-                <ul>
-                    <li ng-repeat="interest in user.interests"><a href="{{interest.link}}">{{interest.name}}</a></li>
-                </ul>
-                <a>Customize my Interests</a>
-            </div>
-            <br>
-            <div>
-                <h1>Groups</h1>
-                <ul>
-                    <li ng-repeat="group in user.groups"><a href="{{group.link}}">{{group.name}}</a></li>
-                </ul>
-                <a>show all public groups</a>
-            </div>
-
-        </div>
-        <div id="mainfeed" class="main-feed center">
-          <a name="feed"></a>
-            <div class="box" ng-repeat="post in feed.posts">
-              <div class="rating">
-              <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
-              </div>
-              <div class="profile">
-                <img src="{{post.user.imageurl}}">
-                <a href="/users/{{post.user.username}}">{{post.user.username}}</a><br>
-                <span class="permalinks"><a>Yesterday</a> - Tags &amp; Interests</span>
-              </div>
-              <div ng-bind-html="post.html">
-
-              </div>
-              <p>This is my post about stuff!</p>
-              <div class="ratings"></div>
-              <p></p>
-              <ul><li>Comment</li><li>Share</li></ul>
-            </div>
-
-        </div>
-        <div id="rightsidebar" class="actions right">
-          <div class="box" ng-if="feed.type == 'group'">
-              <h1>Group: {{feed.group.name}}</h1>
-              <ul>
-                <li>List of members</li>
-              </ul>
-              <a>Add a user to this group</a>
-          </div>
-          <div class="box" ng-if="feed.type=='tag'">
-              <h1>Showing Results for: {{feed.tag}}</h1>
-          </div>
-
-            <div class="box">
-                <h1>Create a post</h1>
-                <ul>
-                  <li>New Announcement</li>
-                  <li>New question</li>
-                </ul>
-            </div>
-
-            <ul class="box footerlinks">
-                <li><a href="#">About</a></li>
-                <li><a href="#">Terms of Service</a></li>
-                <li><a href="#">Partners</a></li>
-                <li><a href="#">Email Policy</a></li>
-                <li><a href="#">Data Attribution</a></li>
-            </ul>
-
-        </div>
-    </section>
-    <script type="text/javascript" src="/controllers/feedController.js"></script>
+</section>

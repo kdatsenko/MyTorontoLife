@@ -28,7 +28,7 @@ module.exports = {}
  * Used for authentication for certain sensitive actions with the DB.
  * Pass admin_type as 0 or 1 for super or admin depending on action.
  */
- module.exports.checkAdmin =  function checkAdmin(request, response, admin_type) {
+ module.exports.checkAdmin =  function(request, response, admin_type) {
   if (request.session && request.session.user) {
     if (admin_type == request.session.user.accounttype){
       return true;
@@ -99,7 +99,7 @@ module.exports.requireUser = function(userType){
       if(
         (
            userType.toLowerCase() == "superadmin" &&
-           request.session.user.accounttype == 2
+           request.session.user.accounttype == 0
         )
         ||
         (
@@ -107,7 +107,7 @@ module.exports.requireUser = function(userType){
           (
             request.session.user.accounttype == 1
             ||
-            request.session.user.accounttype == 2
+            request.session.user.accounttype == 0
           )
         )
         ||
@@ -184,11 +184,15 @@ module.exports.verifyUser = function(req, res, next) {
 	}
 }
 
-module.exports.sendAngularHtml = function (request, response, next) {
-  if(request.accepts(['html', 'json']) == 'html'){
-     response.sendFile(path.join('public', 'index.html'), {root: __dirname+"/.."});
-  }
-  else{
-    next();
+module.exports.sendAngularHtml = function(filename, force){
+  if(typeof filename == "boolean"){force = filename;}
+  if(!filename || typeof filename == "boolean") {filename = 'index.html';}
+  return function (request, response, next) {
+    if(request.accepts(['html', 'json']) == 'html' || force){
+       response.sendFile(path.join('public', filename), {root: __dirname+"/.."});
+    }
+    else{
+      next();
+    }
   }
 }

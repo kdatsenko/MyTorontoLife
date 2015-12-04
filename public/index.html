@@ -6,7 +6,7 @@
 <head>
 	<base href="/">
 	<!-- Styles -->
-	<!--<link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css"/>-->
+	<!-- <link rel="stylesheet" href="https://cdn.rawgit.com/twbs/bootstrap/v4-dev/dist/css/bootstrap.css"/> -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/stylesheets/bootstrap-social.css">
@@ -22,21 +22,50 @@
 	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js"></script>
 	<!-- <script src="http://rawgit.com/danialfarid/ng-file-upload/master/dist/ng-file-upload.min.js"></script> -->
 	<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-route.js"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js" integrity="sha512-K1qjQ+NcF2TYO/eI3M6v8EiNYZfA95pQumfvcVrTHtwQVDG+aHRqLi/ETn2uB+1JqwYqVG3LIvdm9lj6imS/pQ==" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 	<script src="controllers/controller.js"></script>
+  <script src="controllers/adminController.js"></script>
+	<script src="controllers/dashboardController.js"></script>
+	<script src="controllers/feedController.js"></script>
+	<script src="controllers/groupController.js"></script>
+	<script src="controllers/interestController.js"></script>
+	<script src="controllers/loginController.js"></script>
+	<script src="controllers/mainController.js"></script>
+	<script src="controllers/newPostController.js"></script>
+	<script src="controllers/postController.js"></script>
+	<script src="controllers/permalinkController.js"></script>
+	<script src="controllers/profileController.js"></script>
+	<script src="controllers/tagsListController.js"></script>
+	<script src="controllers/userController.js"></script>
 </head>
 
 <!-- define top-level controller -->
 <body ng-controller="mainController">
+	<nav id="topNav" class="hero" ng-if="showHero">
+	    <h1>MyTorontoLife.ca</h1>
+	</nav>
+	<nav id="topNav" class="feed">
+	    <ng-include style="float:right" src="'/angular_partials/loginbar.html'">
 
+	    </ng-include>
+			<h1><a href='/' style="color: white">MyTorontoLife.ca</a></h1>
 
-<div id="main" ng-controller="loginController">
-
+	</nav>
+	    <section class="hero" ng-if="showHero">
+	    <div class="bg"></div>
+	    <div class="content">
+	        <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
+	        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
+	        <form>
+	            <input type="text" placeholder="Search for a Neighbourhood, Topic or Address">
+	        </form>
+	    </div>
+	    </section>
 	<!-- angular templating -->
 	<!-- this is where content will be injected -->
-	<div ng-view></div>
+	<div ng-view>
+	</div>
 
-</div>
 
 </body>
 

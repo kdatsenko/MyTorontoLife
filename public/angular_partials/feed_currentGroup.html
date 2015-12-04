@@ -1,0 +1,12 @@
+<div class="box" ng-show="state.is_group_page">
+  <h1>Group: {{group.name}}</h1>
+  <ul>
+    <li>List of members</li>
+    <!--<a ng-if=""><li>Add me to this group</li></a>-->
+  </ul>
+  <ul ng-if="!is_group_member">
+    <li>Add me to this group</li>
+    <!--<a ng-if=""><li>Add me to this group</li></a>-->
+  </ul>
+  <!--<a ng-if="">Add me to this group</a>-->
+</div>

@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-models = {};
+var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 models.HashTags = require('mongoose').model('Hashtags');
@@ -13,7 +13,7 @@ models.PostRatings = require('mongoose').model('PostRatings');
 router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
-    models.GroupMembers.findOne({user: req.session.user.id, group: req.body.post.group}, function(err, usergroup) {
+    models.GroupMembers.findOne({user: req.session.user._id, group: req.body.post.group}, function(err, usergroup) {
       if (err) {
         return res.send(err);
       }
@@ -49,7 +49,7 @@ router.post('/addnew', function(req, res){
 Rights: admin, public or by private member
 */
 router.get('/post', function(req, res) {
-    models.Posts.findOne({ _id: req.query._id })
+    models.Posts.findOne({ _id: req.query.id })
     .populate({
     path: 'post_type'
     //populate: { path: 'interests' }
@@ -73,7 +73,7 @@ router.get('/post', function(req, res) {
       }
       //Authorization check
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.group.private_type){
-        models.GroupMembers.findOne({group: post.group, user: req.session.user.id}, function(err, user){
+        models.GroupMembers.findOne({group: post.group, user: req.session.user._id}, function(err, user){
           if (err){
             return res.send(err);
           } if (!user){
@@ -93,7 +93,7 @@ router.get('/post', function(req, res) {
 
 /* Fill in the user's rating for this post */
 var getPostRating = function (req, res, post){
-  models.PostRatings.findOne({userid: req.session.user.id, postid: post._id}, function(err, post_rating) {
+  models.PostRatings.findOne({userid: req.session.user._id, postid: post._id}, function(err, post_rating) {
     if (err){
       return res.send(err);
     } else if (!post_rating){
@@ -115,7 +115,7 @@ router.put('/post', function(req, res){
     } else if (!post){
       return res.status(404).send({error: 'Post does not exist.'});
     }
-    if (post.userid == req.session.user.id){ //check if postcreator is is the user
+    if (post.userid == req.session.user._id){ //check if postcreator is is the user
       for (property in req.body) {
         post[property] = req.body[property];
       }
@@ -142,7 +142,7 @@ router.put('/post', function(req, res){
 /* User add a comment to a post.*/
 router.post('/post/addcomment', function(req, res){
   //to post a comment, user must be a member of the group
-  models.GroupMembers.findOne({user: req.session.user.id, group: req.body.comment.group}, function(err, usergroup) {
+  models.GroupMembers.findOne({user: req.session.user._id, group: req.body.comment.group}, function(err, usergroup) {
         if (err) {
           return res.send(err);
         }
@@ -150,7 +150,7 @@ router.post('/post/addcomment', function(req, res){
           return res.status(403).send({error: 'Commenting on this post is unauthorized for this user'});
         } else {
           var commentObj = {
-            userid: req.session.user.id,
+            userid: req.session.user._id,
             username: req.session.user.username,
             text: req.body.comment.text
           };
@@ -184,24 +184,24 @@ router.post('/post/rate', function(req, res){
       return res.send(err); //ERROR
     } else if (!post){
       return res.status(403).send({error: "Cannot authorize action rating: Post ref does not exist"});
-    } else if (post.userid == req.session.user.id) {
+    } else if (post.userid == req.session.user._id) {
       return res.status(403).send({error: "A user cannot rate their own post"});
     }
-    models.GroupMembers.findOne({user: req.session.user.id, group: req.body.rating.groupid}, function(err, usergroup) {
+    models.GroupMembers.findOne({user: req.session.user._id, group: req.body.rating.groupid}, function(err, usergroup) {
       if (err){
         return res.send(err);
       } else if (!usergroup){
         return res.status(403).send({error: 'Rating on this post is unauthorized for this user.'});
       }
         //check that a rating does not already exist this user and post id
-        models.PostRatings.findOne({postid: post._id, userid: req.session.user.id}, function(err, post_rating) {
+        models.PostRatings.findOne({postid: post._id, userid: req.session.user._id}, function(err, post_rating) {
           if(err){
             return res.send(err);
           }
           else if (!post_rating){ //a rating by this user for this post does not exist yet
             //CREATE NEW
             var in_rating = new models.PostRatings({postid: post._id,
-                                                      userid: req.session.user.id,
+                                                      userid: req.session.user._id,
                                                       rating: req.body.rating.stars}); //create new
             in_rating.save(function(err) { //SAVE NEW
               if (err) {
@@ -283,7 +283,7 @@ var modifyPostRatingHelper = function(postObj, numstars, subtract){
  */
 router.delete('/post/:id', function(req, res) {
   models.Posts.findById(req.params.id, function(err, post){
-      if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.userid != req.session.user.id){ //Action only allowed for Admins.
+      if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.userid != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       post.remove(function(err, post) {

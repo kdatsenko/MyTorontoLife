@@ -18,7 +18,7 @@ module.exports = function () {
 			if(err){
 				return done(err)
 			}
-			
+
 			if(existingUser){
 				// User with this email already exists
 				// 			err   user     info
@@ -34,7 +34,6 @@ module.exports = function () {
 						// There already exists a user with this username
 						return done(null, false, {message: "Username already in use!"})
 					}else{
-						console.log(req.body.username)
 						var user = new User()
 
 						user.email = email
@@ -62,7 +61,6 @@ module.exports = function () {
 			if(err){
 				return done(err)
 			}
-
 			// No user found
 			if(!existingUser){
 				return done(null, false, {message: "No user found with those credentials!"})
@@ -72,10 +70,6 @@ module.exports = function () {
 			if(!validPassword(password, existingUser)){
 				return done(null, false, {message: 'Invalid password! Try again!'})
 			}
-			/*if (!(password == existingUser.password)){
-				return done(null, false, {message: 'Invalid password! Try again!'})
-			}*/
-
 
 			return done(null, existingUser)
 		})

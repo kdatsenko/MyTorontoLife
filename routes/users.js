@@ -10,16 +10,16 @@ var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
+
 /* Get user profile */
 router.get('/profile', function(req, res) {
-      console.log("We're here req.session.user" + req.session.user + "");
+
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
-        console.log("were here "  + user + " " + err);
         if (err) {
           return res.send(err);
         }
@@ -28,6 +28,13 @@ router.get('/profile', function(req, res) {
         }
         res.json(user);
       });
+});
+
+/* Get a few credential feilds for the user with the email stored in the session. */
+router.get('/credentials', function(req, res){
+  var sess = req.session.user;
+  return res.json({_id: sess._id, username: sess.username, accounttype: sess.accounttype});
+
 });
 
 
@@ -180,16 +187,25 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      if(!req.query.id){
-        return res.sendError(400, "No query defined")
+      var id;
+      if(req.query.id){
+          id = req.query.id
+      }else{
+          id = res.session.user._id
       }
-      models.GroupMembers.find({ user: req.query.id}, '-_id -user')
-      .populate('group', '-group_creator -private_type')
+      models.GroupMembers.find({ user: id}, '-_id -user')
+      .populate({path: 'group', model: 'Groups', select:'_id name description'})
+      .lean()
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
-        res.sendData(groups)
+        var group_array = groups.map(function(group_beautified){
+          return {_id: group_beautified.group._id,
+               name: group_beautified.group.name,
+               description: group_beautified.group.description};
+        });
+        res.json(group_array);
         //send as res
       });
 });

@@ -1,0 +1,11 @@
+<div ng-controller="mainController">
+<h1>{{state.username}}</h1>
+  <a href="" ng-if="state.is_logged" ng-click="getUserProfile(state.username)">My Profile</a>
+  <br>
+
+  <a ng-if="state.admin && !state.admin_dashboard && state.is_logged" href="" ng-click="GetAdminDashBoard(state.username)">Admin Dashboard</a>
+  <br>
+  <a ng-if="!state.main_dashboard && state.is_logged" href="" ng-click="GetAdminDashBoard(state.username)">Dashboard</a>
+  <br>
+  <a ng-if="state.is_logged" href="" ng-click="logOut()">Log Out</a>
+</div>
