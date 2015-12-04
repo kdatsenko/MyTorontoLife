@@ -2,6 +2,8 @@ var express = require('express');
 var router = express.Router();
 var middleware = require('../middleware');
 var crypt = require('../config/bcrypt')
+var fs = require('fs');
+var path = require('path');
 
 
 models = {};
@@ -98,7 +100,7 @@ var changePasswordRegular = function (user, res){
     if (err) {
       return res.send(err);
     }
-    
+
     if (crypt.validPassword(update_user.password, user.old_password)){
       return res.status(422).send({error: 'Incorrect password submission.'});
     }
@@ -119,47 +121,40 @@ var changePasswordRegular = function (user, res){
 /** Uploads an image file to the server, tranfers it to public/images folder,
  *  update the DB profile imageurl for this user.
  */
-/* router.post('/fileupload', multipartyMiddleware, function(req, res) {
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.email == req.body.email)){
+router.post('/fileupload', function(req, res) {
+  if (!middleware.checkAdmin(req, res, 1) && !middleware.checkAdmin(req, res, 0) && !(req.session.user._id == req.body._id)){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  var file = req.files.file;
-  console.log(file.name);
-  console.log(file.type);
-  console.log(file.path);
+  var file = req.body.file; // Data URL
 
-    // get the temporary location of the file
-    var tmp_path = file.path;
-    // set where the file should actually exists - in this case it is in the "images" directory
-    var target_path = './public/images/' + file.name;
-    var relpath_html = '../images/' + file.name;
+  var regex = /^data:.+\/(.+);base64,(.*)$/; //Ext in first grpup, data in second
 
-    // move the file from the temporary location to the intended location
-    fs.rename(tmp_path, target_path, function(err) {
-      if (err)
-        return res.send(err);
-        // delete the temporary file, so that the explicitly set temporary
-        //upload dir does not get filled with unwanted files
-        fs.unlink(tmp_path, function() {
-          if (err) return res.send(err);
-          res.send({relpath: relpath_html});
-        });
-        //Modify the DB to include the right link
-        models.User.findOne({ email: req.body.email }, function(err, user) {
-          if (err)
-            return console.log(err);
-        user.imageurl = relpath_html; //change image link
-        // save the user
-        user.save(function(err) {
-          if (err) {
-            return console.log(err);
+  var matches = file.match(regex);
+  var ext = matches[1];
+  var data = matches[2];
+
+  if(!(/(gif|jpg|jpeg|tiff|png)$/i).test(ext)){
+      return res.status(415).send({error: "Invalid file type"})
+  }
+  var buffer = new Buffer(data, 'base64');
+
+  var filename = req.session.user._id + Math.random().toString(36).slice(2, 34) + '.' + ext
+
+  fs.writeFile(path.join(__dirname, "../public/images/" + filename), buffer, function (err) {
+      if(err){
+          throw err
+      }
+
+      models.Users.findOneAndUpdate({_id: req.body._id}, {imageurl: "/images/" + filename}, function (err, raw) {
+          if(err){
+              throw err
           }
-          console.log("User " + user.email + " image updated!");
-        });
-    });
-    });
 
-});*/
+          res.status(200).send({newURL: "/images/" + filename})
+      })
+  });
+
+});
 
 /* Get all a list of all users' email, username (for Admin) */
  router.get('/', function(req, res) {
@@ -226,7 +221,7 @@ router.get('/hasEditPermission', function(req, res, next){
   if(!req.session.user){
     res.status(401).send({error: "Not logged in"})
   }
-  
+
   models.Users.findOne({username: username}, function(err, foundUser){
     if(err){
       throw err;

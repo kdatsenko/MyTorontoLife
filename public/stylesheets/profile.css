@@ -41,3 +41,11 @@
 .error{
 	color: #EE1423;
 }
+
+.margin-sp-down{
+	margin-bottom: 0.5em;
+}
+
+.margin-sp-up{
+	margin-top: 0.5em;
+}
