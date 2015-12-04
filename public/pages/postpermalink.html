@@ -1,1 +1,16 @@
-<div></div>
+<section class="feed">
+
+  <div id="leftsidebar"class="quick-links left">
+    <div ng-include="src='/angular_partials/userbox_profile.html'" class="box"></div>
+    <div ng-include="src='/angular_partials/userbox_interests.html'" class="box"></div>
+    <div ng-include="src='/angular_partials/userbox_groups.html'" class="box"></div>
+  </div>
+  <div id="mainfeed" class="main-feed center" ng-controller="permalinkController">
+    <ng-include src="'/angular_partials/post.html'">
+
+    </ng-include>
+  </div>
+
+  <div id="rightsidebar" class="actions right">
+  </div>
+</section>

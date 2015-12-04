@@ -69,9 +69,9 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	controller  : 'interestsController'
       })
 
-			.when('/permalink/', {
+			.when('/permalink/:post_id', {
       	templateUrl : 'pages/postpermalink.html',
-      	controller  : 'PostPermalinkController'
+      	controller  : 'permalinkController'
       })
 			.when('/tags', {
 				templateUrl : 'pages/list.html',

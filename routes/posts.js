@@ -49,7 +49,7 @@ router.post('/addnew', function(req, res){
 Rights: admin, public or by private member
 */
 router.get('/post', function(req, res) {
-    models.Posts.findOne({ _id: req.query._id })
+    models.Posts.findOne({ _id: req.query.id })
     .populate({
     path: 'post_type'
     //populate: { path: 'interests' }
