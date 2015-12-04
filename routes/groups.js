@@ -55,7 +55,6 @@ router.get('/group', function(req, res) {
 */
   //Retrieve entire list from DB
   //Authenticate the current user for Admin Status
-  console.log('HERE IN /GROUPS SANTA CLAUS!!! ')
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
