@@ -36,7 +36,7 @@ router.use([login,
             middleware.installHelpers,
             middleware.setupCORS,
             api,
-            middleware.sendAngularHtml(true)]);
+            middleware.sendAngularHtml()]);
 
 
 module.exports = router;

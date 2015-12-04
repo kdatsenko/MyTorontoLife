@@ -1,4 +1,8 @@
 <div class="box">
+  <div ng-hide="post">
+    Post loading...
+  </div>
+  <div ng-show="post">
   <div class="rating">
     <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
   </div>
@@ -6,7 +10,7 @@
 <div class="profile">
   <img src="{{post.userid.imageurl}}">
   <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
-  <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">{{post.date_posted}}</a> - {{post.interest.name}}
+  <span class="permalinks"><a href="/permalink/{{post._id}}" >{{post.date_posted}}</a> - {{post.interest.name}}
   </span>
   <a a href="" ng-click="">{{post.group.name}}</a><br>
 </div>
@@ -21,4 +25,5 @@
     <ul><li>Comment</li><li>Share</li></ul>
 
 -->
+</div>
 </div>
