@@ -12,7 +12,7 @@ models.Posts = require('mongoose').model('Posts');
 Get feed from groups: Get most recent feed from all user's groups
 */
 var getGroupFeed = function (req, res) {
-  models.GroupMembers.find({user: req.session.user.id}, 'group').exec(function(err, docs){
+  models.GroupMembers.find({user: req.session.useid}, 'group').exec(function(err, docs){
       if (err){
         return res.send(err);
       } else if (!docs){
@@ -20,10 +20,22 @@ var getGroupFeed = function (req, res) {
         return res.json('');
       }
       var group_ids = docs.map(function(obj) { return obj.group; });
-      models.Posts.find({group: { "$in" : group_ids}})
+      models.Posts.find({group: { "$in" : group_ids}}).
+      populate({
+        path: 'userid',
+        select: 'imageurl'
+      }).
+      populate({
+        path: 'interest',
+        select: 'name'
+      }).
+      populate({
+        path: 'group',
+        select: 'name'
+      })
       .sort({ date_posted: -1 })
       .limit(100)
-      .select('post_type group short_text username userid date_posted averagerating numberofratings')
+      .select('post_type group short_text username userid date_posted averagerating interest hashtags numberofratings')
       .exec(function(err, posts){
         if (err){
           return res.send(err);
@@ -46,7 +58,7 @@ Function: getGroupFeed
 
 */
 router.get('/', function(req, res) {
-  models.Users.findOne({_id: req.session.user.id}).exec(function(err, docs){
+  models.Users.findOne({_id: req.session.user._id}).exec(function(err, docs){
      if (err){
         return res.send(err);
      }
@@ -56,7 +68,7 @@ router.get('/', function(req, res) {
         getGroupFeed(req, res);
         return;
      }
-     models.GroupMembers.find({user: req.session.user.id}, 'group').exec(function(err, docs){
+     models.GroupMembers.find({user: req.session.user._id}, 'group').exec(function(err, docs){
         if (err){
           return res.send(err);
         } else if (!docs){
@@ -65,9 +77,8 @@ router.get('/', function(req, res) {
           return;
         }
         var group_ids = docs.map(function(obj) { return obj.group; });
-
         //find all users with interests (a, b or c) AND in a group of (1, 2, or 3)
-        models.Users.find({ _id: {$ne: req.session.user.id}, interests: { "$in" : interest_ids} }, '_id').exec(function(err, docs){
+        models.Users.find({ _id: {$ne: req.session.user._id}, interests: { "$in" : interest_ids} }, '_id').exec(function(err, docs){
           if (err){
             return res.send(err);
           } else if (!docs){
@@ -78,7 +89,8 @@ router.get('/', function(req, res) {
           }
 
            var user_ids = docs.map(function(obj) { return obj._id; });
-           models.GroupMembers.find({user: {$ne: req.session.user.id}, group: { "$in" : group_ids}, user: { "$in" : user_ids} }, '_id').exec(function(err, docs){
+           
+           models.GroupMembers.find({user: {$ne: req.session.user._id, "$in" : user_ids}, group: { "$in" : group_ids} }, 'user').exec(function(err, docs){
             if (err){
               return res.send(err);
             } else if(!docs){
@@ -101,9 +113,8 @@ router.get('/', function(req, res) {
                 return;
               }
               var temppostids = docs.map(function(obj) { return obj.postid; });
-
               //Get all posts that 'this' user has not seen before (via rating).
-              models.PostRatings.find({postid: { "$in" : temppostids}, user : req.session.user.id}, 'postid').exec(function(err, docs){
+              models.PostRatings.find({postid: { "$in" : temppostids}, userid: req.session.user._id}, 'postid').exec(function(err, docs){
                 if (err) { return res.send(err); }
                 var finalpostids = [];
                 if(!docs) { //this user has not rated anything, safe to skip additional "already seen" check
@@ -123,7 +134,6 @@ router.get('/', function(req, res) {
                       }
                   } //END OUTER FOR temppostids
                 }
-
                 if (finalpostids.length == 0){
                   //no special posts, give up
                   //GOTO: Group feed for this user!
@@ -131,15 +141,29 @@ router.get('/', function(req, res) {
                   return;
                 }
 
-                var today = moment();
-                var daysago = moment(today).subtract(100, 'days');
+                var cutoff = new Date();
+                cutoff.setDate(-100);
 
                 models.Posts
-                .find({_id : {"$in" : finalpostids}})
-                .where('date_posted').gt(daysago.toDate())
+                .find({_id : {"$in" : finalpostids}}).
+                populate({
+                  path: 'userid',
+                  select: 'imageurl'
+                }).
+                populate({
+                  path: 'interest',
+                  select: 'name'
+                }).
+                populate({
+                  path: 'group',
+                  select: 'name'
+                })
+                .where('date_posted').gt(cutoff)
+                .sort({ date_posted: -1 })
                 .limit(100)
-                .select('post_type group short_text username userid date_posted averagerating numberofratings')
+                .select('post_type group short_text username userid date_posted averagerating hashtags umberofratings')
                 .exec(function(err, posts){
+
                   if (err) {return res.send(err); }
                   if (!posts){
                     //no special posts, give up

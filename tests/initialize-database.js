@@ -318,7 +318,7 @@ var postsRatings = [
   ];
 
 models.Interests.collection.insert(interests, onInsert);
-models.Types.collection.insert(postTypes, onInsert);
+models.PostTypes.collection.insert(postTypes, onInsert);
 
  models.Groups.collection.insert(groups, onInsert);
  models.GroupMembers.collection.insert(usergroups, onInsert);

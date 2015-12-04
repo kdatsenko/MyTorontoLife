@@ -8,7 +8,6 @@ router.get('/github', passport.authenticate('github', { scope: [ 'user:email' ] 
 
 router.get('/github/callback', function(req, res, next){
 	passport.authenticate('github', function(err, user, info){
-		console.log(err, user, info)
 		if(err){
 			// res.redirect('/')
 			throw err;
@@ -25,7 +24,6 @@ router.get('/github/callback', function(req, res, next){
 router.post('/local/signup', function(req, res, next){
 
 	passport.authenticate('local-signup', function(err, user, info){
-		console.log('hello ' + err);
 		if(err){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: "Error Occurred"}))
@@ -46,7 +44,6 @@ router.post('/local/signup', function(req, res, next){
 router.post('/local/login', function(req, res, next){
 	//console.log('req: ' + JSON.stringify(req));
 	passport.authenticate('local-login', function(err, user, info){
-		console.log(err + ' ' + user + ' ' + JSON.stringify(info));
 		if(err){
 			res.writeHead(401, {"Content-Type": "application/json"})
 			res.end(JSON.stringify({message: "Error Occurred"}))
@@ -93,7 +90,7 @@ router.get('/loggedInUser', function(req, res, next){
 function setSession(req, res, user){
 	// Set session, currently just a place holder!
 	var cleanUser = {
-    	id: user._id,
+    	_id: user._id,
     	email:  user.email,
     	username: user.username,
     	accounttype: user.accounttype //Exists to personalize user experience

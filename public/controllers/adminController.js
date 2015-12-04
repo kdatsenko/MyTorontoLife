@@ -1,39 +1,8 @@
 var crudApp = angular.module('crudApp');
 
-//////////////////////////////////
-//Added by Jim
-
-crudApp.config(function ($routeProvider, $locationProvider) {
-	$routeProvider.when('/', {
-		templateUrl: '/dashboard.html',
-		controller: 'userController'
-	});
-	$routeProvider.when('/userList', {
-		templateUrl: '/userList.html',
-		controller: 'userController'
-	});
-	$routeProvider.when('/postList', {
-		templateUrl: '/postList.html',
-		controller: 'postController'
-	});
-	$routeProvider.when('/interestList', {
-		templateUrl: '/interestList.html',
-		controller: 'interestController'
-	});
-	$routeProvider.when('/groupList', {
-		templateUrl: '/groupList.html',
-		controller: 'groupController'
-	});
-	$routeProvider.otherwise({redirectTo: '/'});
-
-	$locationProvider.html5Mode({enabled: true,requireBase: false});
-});
-
-
-
-
 crudApp.controller('groupController', function ($scope, $http, $location) {
 
+	$scope.tabIndex = 3;
 	$scope.showMsg = false;
 
 	$http({
@@ -77,6 +46,8 @@ crudApp.controller('groupController', function ($scope, $http, $location) {
 
 
 crudApp.controller('interestController', function ($scope, $http, $location) {
+
+	$scope.tabIndex = 2;
 
 	$scope.showMsg = false;
 
@@ -146,6 +117,8 @@ crudApp.controller('interestController', function ($scope, $http, $location) {
 
 crudApp.controller('postController', function ($scope, $http, $location) {
 
+	$scope.tabIndex = 1;
+
 	$scope.showMsg = false;
 
 	$http({
@@ -193,37 +166,7 @@ crudApp.controller('postController', function ($scope, $http, $location) {
 
 crudApp.controller('userController', function ($scope, $http, $location) {
 
-		// $scope.userList =
-	 // 			[{email: 'hello@fromtheotherside.com',
-		// 		  password: 'dddd',
-		// 		  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
-		// 		  loggedin: 0,
-		// 		  username: 'Adele',
-		// 		  description: '25 now',
-		// 		  //validation between 10 and 200 (vampires!)
-		// 		  age: 25,
-		// 		  gender: 'female', //for aliens!
-		// 		  homeaddress: 'London',
-		// 		  workplace: 'Some label',
-		// 		  position: 'Songstress',
-		// 		  contactinfo: 'Forget it',
-		// 		  interests: [0, 2]},
-
-		// 		  {email: 'borntodie@lana.com',
-		// 		  password: 'dddd',
-		// 		  accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
-		// 		  loggedin: 0,
-		// 		  username: 'LanaDelRey',
-		// 		  description: 'Off to the races!',
-		// 		  //validation between 10 and 200 (vampires!)
-		// 		  age: 25,
-		// 		  gender: 'female', //for aliens!
-		// 		  homeaddress: 'USA',
-		// 		  workplace: 'Some label',
-		// 		  position: 'Songstress',
-		// 		  contactinfo: 'Forget it',
-		// 		  interests: [0, 2]
-		// 		}];
+	$scope.tabIndex = 0;
 
 	$http({
 		method:'GET',
