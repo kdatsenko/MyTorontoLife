@@ -6,16 +6,16 @@ var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
+
 /* Get user profile */
 router.get('/profile', function(req, res) {
-
+    
       models.Users.findOne({ username: req.query.username }, '-password')
       .populate({
       path: 'interests',
       //populate: { path: 'interests' }
       })
       .exec(function(err, user) {
-        console.log("were here "  + user + " " + err);
         if (err) {
           return res.send(err);
         }
@@ -189,19 +189,16 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      console.log('in usergrouos yay');
       models.GroupMembers.find({ user: req.session.user._id}, '-_id -user')
       .populate({path: 'group', model: 'Groups', select:'_id name'})
+      .lean()
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
-        var groupObj = groups.toObject();
-        console.log(JSON.stringify(groupObj));
-        var group_array = groupObj.map(function(group_beautified){
-          return {_id: group_beautified._id, name: group_beautified.name};
+        var group_array = groups.map(function(group_beautified){
+          return {_id: group_beautified.group._id, name: group_beautified.group.name};
         });
-        console.log(JSON.stringify(group_array));
         res.json(group_array);
         //send as res
       });
@@ -234,7 +231,7 @@ router.get('/hasEditPermission', function(req, res, next){
   if(!req.session.user){
     res.status(401).send({error: "Not logged in"})
   }
-
+  
   models.Users.findOne({username: username}, function(err, foundUser){
     if(err){
       throw err;

@@ -33,7 +33,6 @@ module.exports = function () {
 						// There already exists a user with this username
 						return done(null, false, {message: "Username already in use!"})
 					}else{
-						console.log(req.body.username)
 						var user = new User()
 
 						user.email = email
@@ -61,8 +60,6 @@ module.exports = function () {
 			if(err){
 				return done(err)
 			}
-			console.log(JSON.stringify(existingUser) + ' passwordPPP: ' + password);
-			console.log(password == existingUser.password);
 			// No user found
 			if(!existingUser){
 				return done(null, false, {message: "No user found with those credentials!"})
@@ -89,7 +86,6 @@ function validPassword(password, user){
 	}catch(err){
 		// This usually only happens when there are non-hashed passwords
 		// in the db
-		console.log('Ummm...');
 		console.error(err)
 		return false
 	}

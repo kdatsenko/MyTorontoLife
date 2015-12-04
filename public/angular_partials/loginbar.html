@@ -1,7 +1,7 @@
 <div id="loginbar" ng-controller="loginController" style="z-index: 110;">
 	<div ng-if="logged == false">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signin_popup" ng-click = "login_form()" >Login</button>
-		<button type="button" class="btn" data-toggle="modal" data-target="#signup_popup" ng-click = "register_form()" >Register</button>
+		<button type="button" class="btn" data-toggle="modal" data-target="#signup_popup" ng-click = "register_form()" >Register</button> 
 
 		<div id="signin_popup" role="dialog" class="modal" aria-labelledby="signin-title" ng-controller="loginController">
 	        <div class="modal-dialog" role="document">
@@ -24,7 +24,7 @@
 	                        	<br/>
 	                        	<h4>or Sign In via Social Media:</h4>
 	                        	<br/>
-	                            <a href="/auth/github" ng-click="github_signin()" class="btn btn-block btn-github btn-social">
+	                            <a href="/auth/github" class="btn btn-block btn-github btn-social">
 	                            <i class="fa fa-github"></i>Sign in with GitHub</a>
 	                        </div>
 	                    </div>

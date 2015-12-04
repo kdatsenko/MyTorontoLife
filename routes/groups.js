@@ -4,6 +4,14 @@ var router = express.Router();
 var models = {};
 models.Groups = require('mongoose').model('Groups');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Posts = require('mongoose').model('Posts');
+models.Users = require('mongoose').model('Users');
+
+//models.Interests = require('mongoose').model('Interests');
+//var models = require('../models/dbschema');
+
+var checkAdmin = require('../middleware').checkAdmin;
+
 
 /* GET group home page. */
 /*router.get('/', function(req, res, next) {
@@ -23,22 +31,18 @@ router.get('/group', function(req, res) {
     } else if (!found_group){
       return res.status(404).send({error: 'The group with id ' + req.query._id + ' does not exist'});
     }
-    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & (found_group.private_type == true)){
-      models.GroupMembers.findOne({user: req.session.user.id, group: req.query._id}, function(err, usergroup) {
+      models.GroupMembers.findOne({user: req.session.user._id, group: req.query._id}, function(err, usergroup) {
         if (err) {
           return res.send(err);
         }
-        if (!usergroup){
+        if (!usergroup && !checkAdmin(req, res, 1) && !checkAdmin(req, res, 0) && (found_group.private_type == true)){
           return res.status(403).send({error: 'Group access for this user is unauthorized'});
+        } else if (!usergroup){
+          res.json({is_member: false, group: found_group});
         } else {
-          res.json(found_group);
+          res.json({is_member: true, group: found_group});
         }
       });
-
-    } else {
-      res.json(found_group);
-    }
-
   });
 });
 
@@ -65,6 +69,7 @@ router.get('/group', function(req, res) {
       function(err, groups) {
         if (err) { return res.send(err); }
         res.json(groups);
+        console.log(JSON.stringify(groups))
       });
   }
 });
@@ -75,13 +80,12 @@ router.post('/groups/addnew', function(req, res) {
   var group = new models.Group(req.body.group); //create new
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
-              group.group_creator = req.session.user.id; //this user
-              group.save(function(err) {
+              group.group_creator = req.session.user._id; //this user
+              group.save(function(err, group) {
                   if (err) {
                       res.send(err); //ERROR
                   }
                   res.status(200).send({message: 'Created group successfully'});
-
               });
           } else {
             return res.status(401).send({error: "That group name is already taken."});
@@ -95,7 +99,7 @@ router.put('/groups/group', function(req, res){
     if (err) {
       return res.send(err);
     }
-    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.id == group.group_creator)){
+    if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user._id == group.group_creator)){
       return res.status(403).send({error: 'Unauthorized account type'});
     }
 
@@ -136,7 +140,7 @@ router.post('/groups/group/addmember', function(req, res){
       } else if (!group){
         return res.status(404).send({error: 'The group with id ' + req.body.group._id + ' does not exist'});
       }
-      if (group.private_type == true & group.group_creator == req.session.user.id){
+      if (group.private_type == true & group.group_creator == req.session.user._id){
         addGroupMember(req, res, group);
       } else if (group.private_type == false){
         joinGroup(req, res, group);
@@ -148,8 +152,8 @@ router.post('/groups/group/addmember', function(req, res){
 });
 
 var joinGroup = function (req, res, group){
-    models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id},
-        {user: req.session.user.id, group: group._id}, { upsert: true }, function(err, membership){
+    models.GroupMembers.findOneAndUpdate({user: req.session.user._id, group: group._id},
+        {user: req.session.user._id, group: group._id}, { upsert: true }, function(err, membership){
       res.json({ message: 'Joined group!', result: membership});
     });
 };
@@ -171,7 +175,7 @@ router.delete('/groups/group/:id', function(req, res) {
     return res.status(403).send({error: 'Unauthorized account type'});
   }
   models.Groups.findById(req.params.id, function(err, group){
-      if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user.id){ //Action only allowed for Admins.
+      if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       group.remove(function(err, group) {
@@ -188,15 +192,18 @@ router.delete('/groups/group/:id', function(req, res) {
 
 });
 
+
+
 /* Get Group Posts */
 router.get('/group/posts', function(req, res) {
 //auth: only groups where the user is a member, or public
- models.Group.findById(req.query.groupid, function(err, group){
+  //console.log();
+ models.Groups.findById(req.query.groupid, function(err, group){
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       if (err){
         return res.send(err);
       } else if (group.private_type){
-        models.GroupMembers.findOne({user: req.session.user.id, group: req.query.groupid}, function(err, usergroup) {
+        models.GroupMembers.findOne({user: req.session.user._id, group: req.query.groupid}, function(err, usergroup) {
           if (err){
             return res.send(err);
           } else if (!usergroup){
@@ -211,18 +218,28 @@ router.get('/group/posts', function(req, res) {
 
 });
 
+
+
 /* Get 100 most recent posts for this group. Authen. is done in wrapper rest api method. */
 var getGroupPosts = function (req, res, group){
     models.Posts.
     find({group:  group._id}).
+    populate({
+      path: 'userid',
+      select: 'imageurl'
+    }).
+    populate({
+      path: 'interest',
+      select: 'name'
+    }).
     limit(100).
     sort({ date_posted: -1 }).
-    select('post_type group short_text username userid date_posted averagerating numberofratings').
+    select('post_type group short_text username userid date_posted averagerating interest numberofratings hashtags').
     exec(function(err, posts){
       if (err){
         return res.send(err);
       }
-      return res.json(posts);
+      return res.json({groupname: group.name, posts: posts});
     });
 };
 
