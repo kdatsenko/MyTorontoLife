@@ -5,6 +5,7 @@ var router = express.Router();
 var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Posts = require('mongoose').model('Posts');
 
 
 /* Get user profile */
@@ -177,6 +178,31 @@ var changePasswordRegular = function (user, res){
     }
     res.json(users);
     });
+});
+
+ /* Get all this user's posts */
+ router.get('/user/posts', function(req, res) {
+  //Retrieve entire list from DB
+  models.Posts.find({username: req.query.username})
+  .populate({
+    path: 'userid',
+    select: 'imageurl'
+  }).
+  populate({
+    path: 'interest',
+    select: 'name'
+  }).
+  populate({
+    path: 'group',
+    select: 'name'
+  }).
+  select('post_type group short_text username userid date_posted averagerating interest numberofratings hashtags')
+  .exec(function(err, posts){
+    if (err){
+      return res.send(err);
+    }
+    return res.json(posts);
+  });
 });
 
 /* Get all this user's groups */
