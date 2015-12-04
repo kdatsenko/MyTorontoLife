@@ -34,54 +34,53 @@ crudApp.config(function($routeProvider, $locationProvider) {
       	controller  : 'feedController'
       })
      .when('/login', {
-      	templateUrl : 'pages/login.html',
-      	controller  : 'loginController'
-      })
+     	templateUrl : 'pages/login.html',
+     	controller  : 'loginController'
+     })
      // route for the admin page
      .when('/admin', {
-        templateUrl: 'pages/admin/userList.html',
-        controller: 'userController'
+     	templateUrl: 'pages/admin/userList.html',
+     	controller: 'userController'
      })
      .when('/admin/users', {
-        templateUrl: 'pages/admin/userList.html',
-        controller: 'userController'
+     	templateUrl: 'pages/admin/userList.html',
+     	controller: 'userController'
      })
-    .when('/admin/posts', {
-        templateUrl: 'pages/admin/postList.html',
-        controller: 'postController'
+     .when('/admin/posts', {
+     	templateUrl: 'pages/admin/postList.html',
+     	controller: 'postController'
      })
-    .when('/admin/interests', {
-        templateUrl: 'pages/admin/interestList.html',
-        controller: 'interestController'
+     .when('/admin/interests', {
+     	templateUrl: 'pages/admin/interestList.html',
+     	controller: 'interestController'
      })
-    .when('/admin/groups', {
-        templateUrl: 'pages/admin/groupList.html',
-        controller: 'groupController'
+     .when('/admin/groups', {
+     	templateUrl: 'pages/admin/groupList.html',
+     	controller: 'groupController'
      })
       // route for the about page
       .when('/profile', {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
       })
-			.when('/profile/:username', {
+      .when('/profile/:username', {
       	templateUrl : 'pages/profile.html',
       	controller  : 'profileController'
       })
 
-			.when('/profile/interests', {
+      .when('/profile/interests', {
       	templateUrl : 'pages/customizeInterests.html',
       	controller  : 'interestsController'
       })
-		
-		.when('/permalink/', {
+      .when('/permalink/:post_id', {
       	templateUrl : 'pages/postpermalink.html',
-      	controller  : 'PostPermalinkController'
+      	controller  : 'permalinkController'
       })
-			.when('/tags', {
-				templateUrl : 'pages/list.html',
+      .when('/tags', {
+      	templateUrl : 'pages/list.html',
       	controller  : 'tagsListController'
-			})
-	  .otherwise({
+      })
+      .otherwise({
       	templateUrl : 'pages/notfound.html'
       });
 	//$routeProvider.otherwise({redirectTo: '/'});

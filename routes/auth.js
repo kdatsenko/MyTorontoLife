@@ -16,7 +16,7 @@ router.get('/github/callback', function(req, res, next){
 			res.redirect('/login');
 		}else{
 			setSession(req, res, user)
-			res.redirect('/profile.html');
+			res.redirect('/profile');
 		}
 	})(req, res, next);
 })
