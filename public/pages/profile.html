@@ -23,7 +23,7 @@
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
 			<p id="description" ng-bind="user.description" ng-show="!editing"></p>
-			<textarea class="form-control margin-sp-down'" id="description-box" placeholder="Description" style="width:100%" ng-if="editing" ng-model="edits.newDescription">{{user.description}}</textarea>
+			<textarea class="form-control margin-sp-down'" id="description-box" placeholder="Description" style="width:100%" ng-if="editing" ng-model="edits.description" ng-bind="user.description"></textarea>
 		</div>
 	</div>
 	<div class="row" ng-if="hasEditPermission">
@@ -38,6 +38,36 @@
 	<div class="row">
 		<div class="col-md-3">
 			<h2 style="text-align:center">Groups</h2>
+
+			<md-content layout-padding layout="column" ng-if="editing">
+			    <md-autocomplete
+			      ng-disabled="false"
+			      md-no-cache="true"
+			      md-selected-item="groupCtrl.selectedGroup"
+			      md-search-text-change="groupCtrl.searchTextChange(groupCtrl.groupText)"
+			      md-search-text="groupCtrl.groupText"
+			      md-selected-item-change="groupCtrl.selectedItemChange(item)"
+			      md-items="item in groupCtrl.querySearch(groupCtrl.groupText)"
+			      md-item-text="item.name"
+			      md-min-length="0"
+			      placeholder="Add a new group"
+				  md-menu-class="autocomplete-custom-template">
+			        <md-item-template>
+						<span class="item-title">
+							<b><span> {{item.name}} </span></b>
+						</span>
+						<span class="item-metadata">
+							<span class="item-metastat">
+								<i>{{item.description}}</i>
+							</span>
+						</span>
+			        </md-item-template>
+			        <md-not-found>
+			            No groups matching "{{groupCtrl.groupText}}"" found
+			        </md-not-found>
+			    </md-autocomplete>
+			    <md-button class="md-raised md-primary" ng-show="groupCtrl.showSubmit" ng-click="groupCtrl.addNewGroup()">Add new group</md-button>
+			</md-content>
 
 			<div class="group" ng-repeat="group in groups" ng-group>
 				<div class="well">

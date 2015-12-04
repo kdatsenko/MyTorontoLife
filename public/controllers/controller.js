@@ -358,6 +358,66 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 
 	/* End Interest Control */
 
+	/* Group control for md-autocomplete */
+	$scope.groupCtrl = {}
+	$scope.descriptionCutOff = 100 // Max length of desc
+
+	$scope.groupCtrl.searchTextChange = function (text) {
+	    this.showSubmit = false
+	}
+
+	$scope.groupCtrl.selectedItemChange = function (item) {
+	    this.showSubmit = true
+	}
+
+	$scope.groupCtrl.querySearch = function (query) {
+	    return $http.get("/groups").then(function (result) {
+	        var groups = result.data.map( function (group) {
+	            group.value = group.name.toLowerCase();
+				if(group.description.length > $scope.descriptionCutOff){
+					group.description = group.description.substring(0, $scope.descriptionCutOff) + '...'
+				}
+	            return group;
+	        });
+			console.log(result.data)
+			console.log(groups)
+	        return groups.filter($scope.groupCtrl.createFilterFor(query))
+	    })
+	}
+
+	$scope.groupCtrl.createFilterFor = function (query) {
+	    var lowercaseQuery = angular.lowercase(query);
+	    return function filterFn(item) {
+	        return (item.value.indexOf(lowercaseQuery) === 0) && $scope
+	        .groups.filter(function (x) {
+	            return x._id == item._id
+	        }).length == 0;
+	    };
+	}
+
+	$scope.groupCtrl.groupText = ''
+	$scope.groupCtrl.selectedGroup = null
+	$scope.showSubmit = false
+
+	$scope.groupCtrl.addNewGroup = function () {
+	    if(!this.selectedGroup){
+	        return
+	    }
+	    //$scope.saveEdits({groups: $scope.groups.concat([this.selectedGroup])}, function () {
+		$http.post('/groups/groups/group/addmember', {group: $scope.groupCtrl.selectedGroup})
+		.success(function (data, status, headers, config) {
+			$scope.groups.push($scope.groupCtrl.selectedGroup)
+	        $scope.groupCtrl.selectedGroup = null
+	        $scope.groupCtrl.groupText = ''
+	        $scope.groupCtrl.showSubmit = false
+		}).error(function (data, status, headers, config){
+			alert("Failed to add group " + data.error)
+		})
+	    //})
+	}
+
+	/* End groupCtrl*/
+
 	$scope.setUser = function(username){
 		$http.get('/users/profile?username='+username)
 		.success(function(data, status, headers, config){
@@ -365,9 +425,13 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 			$scope.user = data
 			profileService.setUser($scope.user)
 
-			$http.get('/users/user/group?id='+data.id)
+			$http.get('/users/user/groups?id='+data._id)
 			.success(function(data, status, headers, config){
-				$scope.groups = data.data
+				$scope.groups = data.data.map(function (x) {
+					var g = x.group
+					g.description = g.description.substring(0, $scope.descriptionCutOff) + '...'
+					return g
+				})
 			}).error(function(data, status, headers, config){
 				$scope.groups = []
 			})
@@ -406,22 +470,25 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 	}
 
 	$scope.saveEdits = function(edits, complete){
+		var newUser = jQuery.extend(true, {}, $scope.user)
 		for(property in edits){
-			this.user[property] = edits[property]
+			newUser[property] = edits[property]
 		}
+		console.log(edits)
 
-		$http.put("/users/profile", {user: this.user})
+		$http.put("/users/profile", {user: newUser})
 		.success(function(data, status, headers, config){
 			console.log("Saved changes")
 			complete()
-			profileService.setUser(this.user)
+			$scope.user = newUser
+			profileService.setUser(newUser)
 		}).error(function(data, status, headers, config){
 			console.log("Failed to save changes")
 		})
 	}
 
 	$scope.saveChanges = function () {
-		this.saveEdits(this.edits, function () {
+		$scope.saveEdits($scope.edits, function () {
 			$scope.editing = false
 			$scope.edits = {}
 		})

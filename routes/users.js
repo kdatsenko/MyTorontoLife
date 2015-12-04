@@ -6,7 +6,7 @@ var fs = require('fs');
 var path = require('path');
 
 
-models = {};
+var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
 
@@ -184,7 +184,7 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
         return res.sendError(400, "No query defined")
       }
       models.GroupMembers.find({ user: req.query.id}, '-_id -user')
-      .populate('group', 'name')
+      .populate('group', '-group_creator -private_type')
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
