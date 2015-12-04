@@ -83,31 +83,6 @@ crudApp.config(function ($routeProvider, $locationProvider) {
  crudApp.controller('mainController', function($scope, $location, $http, $route, sharedService) {
 
  	$scope.showNavBar = false;
- 	$scope.$on("update_nav_bar", function(event, show){
-			$scope.showNavBar = show;
-			console.log('I am triggered!');
-			populateNavBar();
- 			
-
-			/* Trigger the fill in methods */
-	});
-
-	$scope.$on("update_test", function(event){
-			console.log('update_test I am triggered! ' + $scope.state.is_group_page);
-
-
-			/* Trigger the fill in methods */
-	});
-	
-
- 	/*
-		1. Dashboard
-		- populate the main feed (different methods)
-		- populate the side bar for the user
-		- populate interests, groups
-		- populate name, admin/not admin
-	 */
-
  	$scope.state = {
         username: 'Chris',
          admin: true,
@@ -124,7 +99,7 @@ crudApp.config(function ($routeProvider, $locationProvider) {
          //Question: if we overwrite is_showing_interest in feedContrl, will it be 
       };
 
-   $scope.user = {
+         $scope.user = {
 		interests : [{
 			    "_id" : "5654b6c6e903c5aa96a19df2",
 			    "name" : "Food"
@@ -145,6 +120,41 @@ crudApp.config(function ($routeProvider, $locationProvider) {
 		    "name" : "Etobicoke"
 		}]
 	};
+
+
+    $scope.$on("update_nav_bar", function(event, show){
+			$scope.showNavBar = show;
+			console.log('I am triggered!');
+			populateNavBar();
+			/* Trigger the fill in methods */
+	});
+
+	$scope.$on("update_state_to_search", function(event, tagname){
+		console.log('update_test I am triggered! ' + tagname);
+		resetStateVariables();
+		$scope.state.is_searching = true;
+		sharedService.setData({tag : tagname});
+  		$location.path("/feed");
+  		$route.reload();
+	});
+
+	$scope.$on("update_state_to_group", function(event, groupid){
+		$scope.getPostByGroup(groupid);
+	});
+
+	$scope.$on("update_state_to_interest", function(event, interestid){
+		$scope.getPostByInterest(interestid);
+	});
+
+	/*$scope.$on("goto_profile", function(event, username){
+		$scope.getUserProfile(username);
+	});
+
+	$scope.$on("goto_post", function(event, postid){
+		$scope.getPostPage(postid);
+	});*/
+
+
 
     
     
@@ -197,6 +207,10 @@ var resetStateVariables = function () {
  $scope.getUserProfile = function(user_name) {
  alert(user_name);
  /* Navigate to User Profile page with this username. */
+};
+
+$scope.getPostPage = function (postid){
+	alert(postid);
 };
 
  var populateNavBar = function(){
@@ -569,6 +583,11 @@ crudApp.controller('feedController', function($scope, $location, $http, sharedSe
 
 
  $scope.search_tag = '';
+ $scope.showHero = true;
+ $scope.groupid = '';
+ $scope.group = null;
+ $scope.search = { tag: '' };
+ //$scope.is_group_member = false;
 
  $scope.Groups = [
       {_id: "1", name: "Etobicoke", description :""},
@@ -646,53 +665,18 @@ Also, should smartly recommend the "Add myself to this group based on whether th
        hashtags: ['adeleonstage', 'lanaisofftotheraces']} 
     ];
    
-   $scope.showHero = true;
-
-
-     
-   
-
-
-
-
 
  $scope.getUserProfile = function(user_name) {
- 	alert(($scope.state.is_searching | $scope.state.is_showing_interest));
- 	alert(user_name);
+ 	alert('Go to the profile of: ' + user_name);
 }
 
  $scope.getPostbyID = function(post_id) {
- alert(post_id);
+ 	alert('Go to the post with ID: ' + post_id);
 } 
 
  $scope.createNewPost = function(post_type) {
- alert(post_type);
-}
-
-
-/*var getGroupByID = function(group){  YES
-GET /groups/group
-
-var searchByGroup = function (group) YES DONE2
-GET /groups/group/posts
-
-var getPostsByInterest = function(interest){  YES DONE2
-GET /interests/interest/posts
-
-var hashTagIndex = function(){ YES
-GET /tags
-
-var searchByTagname = function (tagname) YES DONE2
-GET /tags/tag/posts
-
-var mainFeed = function(){ YES
-GET /dashboard
-
-
-var getAllGroups = function(){ NOT DONE YET
-GET /groups 
-
-*/
+ 	alert(post_type);
+ }
 
  var getPostsByInterest = function(interest_id) {
 	 $http({
@@ -743,14 +727,16 @@ GET /groups
     });
   };
 
-	var getPostsByHashTag = function() {
+	var getPostsByHashTag = function(hashtag) {
 		$http({
 	  		method: 'GET',
 	        url: '/tags/tag/posts', //get all user emails & displayname
-	        params: {tagname: 'Cool'}
+	        params: {tagname: hashtag}
 	    })
 	  	.then(function successCallback(response) {
-	  		console.log(response);
+	  		console.log(response.data);
+	  		$scope.Posts = response.data;
+  			$scope.search_tag = hashtag;
 	  		//$scope.search_tag = response.data.interest;
 
 	    },
@@ -772,6 +758,7 @@ var getGroupByID = function(group_id){
   		console.log(response);
   		$scope.group = response.data.group;
   		$scope.is_group_member = response.data.is_member;
+  		$scope.groupid = response.data.group._id;
   		/*
 _id: "5660faa0419858a825a6533f"
 description: "Groups - I assume we will preload some groups. How does the user belong to a group? Can they choose any group to join? Are there public and private groups? Will the user only see posts for the groups that they are registered with? Right now, I have set it so that all groups are by default public, and I was thinking that if a group is private then users already in the group have the privilege to add others. search and rate things in neighbourhood Toronto overall. Does this mean search and rate posts in the group the user belongs to? Site events? Page views I understand, but what else goes into this? Post expiry date - why do we need it? What happens to the post after expiry? I am concerned because there are tuples in other tables that depend on the post, and reputation of the user is aggregated based on ratings on their posts, so we shouldn’t remove the posts. How to calculate the user’s reputation? Example: there could be 1 post with a five star rating made by one user. On the other hand, there could be a post where 100 users voted. Also, some users have only a few posts, while others have multiple. So I was thinking what if we will create some formula based on numbers of posts and 5, 4, … 1 rating counts, number of votes."
@@ -836,17 +823,66 @@ var getGroupPosts = function(group_id){
  }
 
 
+ $scope.addToGroup = function(){
+ 	$http({
+		method: 'POST',
+		url: '/groups/group/addmember',
+		data: {group: {_id: $scope.groupid}}
+	})
+	.then(function successCallback(response) {
+        //$location.path('/dashboard'); // path not hash
+        $scope.is_group_member = true;
+        console.log(response.data.message);
+     },
+     function errorCallback(response) {
+     	console.log(response);
+     });  
+
+ };
+
+ $scope.removeFromGroup = function(){
+ 	$http({
+ 		method: 'PUT',
+        url: '/groups/group/removemember', //get all user emails & displayname
+        data: {group: {_id: $scope.groupid}}
+    })
+ 	.then(function successCallback(response) {
+ 		$scope.is_group_member = false;
+        console.log(response.data.message);
+    },
+    function errorCallback(response) {   
+    	console.log(response); 	
+    });
+ };
 
 
 
-//$scope.state.is_searching
+
+ $scope.submitSearch = function(){
+ 	//pass search data to top-level MainController, which will reload the view
+ 	$scope.$emit('update_state_to_search', $scope.search.tag);
+ };
+
+ $scope.onTagClick = function(tagname){
+ 	$scope.$emit('update_state_to_search', tagname);
+ };
+
+ $scope.onInterestClick = function(interestid){
+ 	$scope.$emit('update_state_to_interest', interestid);
+ };
+
+$scope.onGroupClick = function(groupid){
+ 	$scope.$emit('update_state_to_group', groupid);
+ };
+
+
 
 	
-	$scope.showHero = true;
+	
 
-  $scope.feed = {
+ /* $scope.feed = {
     type: 'group', /* types: dashboard, group, tag */
-    group: {
+   /* group: {
       name: "myGroup"
     },
     tag: {
@@ -861,7 +897,7 @@ var getGroupPosts = function(group_id){
         html:"<p>This is my post!</p>"
       }
     ]
-  }
+  }*/
 
   var start = function(){
   	console.log('START ' + $scope.state + ' ');
@@ -876,6 +912,9 @@ var getGroupPosts = function(group_id){
   		getPostsByInterest(interestid);
   	} else if ($scope.state.main_dashboard){
   		//getMainFeedPosts();
+  	} else if ($scope.state.is_searching){
+  		var tag = (sharedService.getData()).tag;
+  		getPostsByHashTag(tag);
   	}
   	fullGroupList();
  
