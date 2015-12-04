@@ -145,7 +145,7 @@ router.post('/fileupload', function(req, res) {
   }
   var buffer = new Buffer(data, 'base64');
 
-  var filename = req.session.user._id + Math.random().toString(36).slice(2, 34) + '.' + ext
+  var filename = req.session.user._id + '.' + ext
 
   fs.writeFile(path.join(__dirname, "../public/images/" + filename), buffer, function (err) {
       if(err){

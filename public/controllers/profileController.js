@@ -153,8 +153,8 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 
 			$http.get('/users/user/groups?id='+data._id)
 			.success(function(data, status, headers, config){
-				$scope.groups = data.data.map(function (x) {
-					var g = x.group
+				$scope.groups = data.map(function (x) {
+					var g = x
 					g.description = g.description.substring(0, $scope.descriptionCutOff) + '...'
 					return g
 				})
@@ -323,7 +323,7 @@ crudApp.controller('profileImageController', function(profileService, $scope, $h
 											file: reader.result})
 			.success(function(data, status, headers, config){
 				$("#image-upload-modal").modal('hide')
-				profileService.user.imageurl = data.newURL
+				profileService.user.imageurl = data.newURL + '?decache=' + Math.random();
 				//$("#profile-img").attr('src', data.newURL)
 			}).error(function(data, status, headers, config){
 				$scope.error = data.error
