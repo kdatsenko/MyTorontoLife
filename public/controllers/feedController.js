@@ -90,7 +90,9 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 }
 
  $scope.getPostbyID = function(post_id) {
-  alert('Go to the post with ID: ' + post_id);
+  //alert('Go to the post with ID: ' + post_id);
+    var route = '/permalink/:' + post_id;
+    $location.path(route);
 } 
 
  $scope.createNewPost = function(post_type) {

@@ -56,13 +56,13 @@
             <a ng-if="state.is_logged" href="" ng-click="logOut()">Log Out</a>
           </div>
 
-        <div>
+        <div ng-show="state.main_dashboard">
           <h1>Interests</h1>
           <ul>
             <li ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a></li>
           </ul>
         </div>
-        <div>
+        <div ng-show="state.main_dashboard">
           <h1>Groups</h1>
           <ul>
             <li ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a></li>
