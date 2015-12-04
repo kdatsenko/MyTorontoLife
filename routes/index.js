@@ -36,7 +36,7 @@ api.use('/posttypes',  require('./posttypes'));
 api.use('/tags', require('./tags'));
 api.use('/users', require('./users'));
 
-router.use('/admin', admin);
+// router.use('/admin', admin);
 router.use([login, api]);
 
 

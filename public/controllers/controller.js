@@ -69,6 +69,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
 	  .when('/', {
       	templateUrl : 'pages/login.html',
       	controller  : 'loginController'
+      });
 
 
       $locationProvider.html5Mode(true);
