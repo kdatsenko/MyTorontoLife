@@ -76,9 +76,11 @@
           </div>
 
           <div class="profile">
-            <img src="{{post.avatarURL}}">
+            <img src="{{post.userid.imageurl}}">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
-            <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">{{post.date_posted}}</a> - {{post.interestname}}</span>
+            <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">{{post.date_posted}}</a> - {{post.interest.name}}
+            </span>
+            <a a href="" ng-click="">{{post.group.name}}</a><br>
           </div>  
           <div ng-bind-html="posts.html">
 
@@ -139,14 +141,19 @@
        <div id="rightsidebar" class="actions right">
         <!-- Group info box -->
         <div class="box" ng-show="state.is_group_page">
-          <h1>Group: {{feed.group.name}}</h1>
+          <h1>Group: {{group.name}}</h1>
           <ul>
             <li>List of members</li>
+            <!--<a ng-if=""><li>Add me to this group</li></a>-->
           </ul>
-          <a>Add a user to this group</a>
+          <ul ng-if="!is_group_member">
+            <li>Add me to this group</li>
+            <!--<a ng-if=""><li>Add me to this group</li></a>-->
+          </ul>
+          <!--<a ng-if="">Add me to this group</a>-->
         </div>
         <div class="box" ng-show="state.is_showing_interest || state.is_searching">
-          <h1>Showing Results for:{{feed.tag}}</h1>
+          <h1>Showing Results for:{{search_tag}}</h1>
         </div>
 
         <div class="box">

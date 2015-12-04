@@ -20,10 +20,22 @@ var getGroupFeed = function (req, res) {
         return res.json('');
       }
       var group_ids = docs.map(function(obj) { return obj.group; });
-      models.Posts.find({group: { "$in" : group_ids}})
+      models.Posts.find({group: { "$in" : group_ids}}).
+      populate({
+        path: 'userid',
+        select: 'imageurl'
+      }).
+      populate({
+        path: 'interest',
+        select: 'name'
+      }).
+      populate({
+        path: 'group',
+        select: 'name'
+      })
       .sort({ date_posted: -1 })
       .limit(100)
-      .select('post_type group short_text username userid date_posted averagerating numberofratings')
+      .select('post_type group short_text username userid date_posted averagerating interest hashtags numberofratings')
       .exec(function(err, posts){
         if (err){
           return res.send(err);
@@ -133,11 +145,23 @@ router.get('/', function(req, res) {
                 cutoff.setDate(-100);
 
                 models.Posts
-                .find({_id : {"$in" : finalpostids}})
+                .find({_id : {"$in" : finalpostids}}).
+                populate({
+                  path: 'userid',
+                  select: 'imageurl'
+                }).
+                populate({
+                  path: 'interest',
+                  select: 'name'
+                }).
+                populate({
+                  path: 'group',
+                  select: 'name'
+                })
                 .where('date_posted').gt(cutoff)
                 .sort({ date_posted: -1 })
                 .limit(100)
-                .select('post_type group short_text username userid date_posted averagerating numberofratings')
+                .select('post_type group short_text username userid date_posted averagerating hashtags umberofratings')
                 .exec(function(err, posts){
 
                   if (err) {return res.send(err); }

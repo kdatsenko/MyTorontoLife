@@ -169,6 +169,17 @@ postsSchema.pre('save', function (next) {
   next();
 });
 
+groupsSchema.post('save', function(next) {
+  var group_membership = new models.GroupMembers({user: this.group_creator, group: this._id});
+  group_membership.save(function(err, eh) {
+    if (err) {
+      console.log(err);
+    }
+    console.log('eh: ' + eh);
+    next();
+  });
+});                  
+
 
 var Interests = mongoose.model('Interests', interestSchema);
 var Users = mongoose.model('Users', userSchema);

@@ -67,9 +67,21 @@ router.get('/interest/posts', function(req, res) {
         var merged_group_ids = ids_public.concat(ids_private);
         models.Posts.
         find({group: { "$in" : merged_group_ids}, interest: found_interest._id}).
+        populate({
+          path: 'userid',
+          select: 'imageurl'
+        }).
+        populate({
+          path: 'interest',
+          select: 'name'
+        }).
+        populate({
+          path: 'group',
+          select: 'name'
+        }).
         sort({date_posted: -1}).
         limit(100).
-        select('post_type group short_text username userid date_posted averagerating numberofratings').
+        select('post_type group short_text username userid date_posted averagerating interest numberofratings hashtags').
         exec(function(err, posts){
           if (err) {
             return res.send(err);
@@ -80,5 +92,7 @@ router.get('/interest/posts', function(req, res) {
    });
   });
 });
+
+
 
 module.exports = router;

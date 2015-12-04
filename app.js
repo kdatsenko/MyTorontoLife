@@ -137,9 +137,6 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
                   {_id: group_ids[11], name: 'UofT', private_type: false, group_creator: user_ids[2], description: 'UofTn yay'}];
 
 
-
-
-
   var usergroups = [{user: user_ids[0], group: group_ids[0]},
     {user: user_ids[2], group: group_ids[0]},
   {user: user_ids[1], group: group_ids[0]},
