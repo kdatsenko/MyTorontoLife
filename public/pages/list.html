@@ -1,0 +1,10 @@
+<div style="margin-top: 40px" class="listPage">
+  <h1>{{listTitle}}</h1>
+  <p>{{listDesc}}</p>
+  <ul>
+    <li ng-repeat="item in theList">
+      <a href="{{item.href}}">{{item.title}}</a>
+      <p>{{item.description}}</p>
+    </li>
+  </ul>
+</div>

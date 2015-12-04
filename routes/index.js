@@ -13,19 +13,12 @@ var middleware = require('../middleware');
 
 
 login.use('/auth', require('./auth'));
-
-router.use(middleware.verifyUser);
-router.use(middleware.sendAngularHtml);
-router.use(middleware.installHelpers);
-router.use(middleware.setupCORS);
-
-
-login.get('/login', middleware.sendAngularHtml);
-
+login.get('/login', middleware.sendAngularHtml(true));
 
 
 admin.use(middleware.requireUser('Admin'));
 admin.use(require('./admin'));
+admin.use(middleware.sendAngularHtml('admin.html'))
 
 api.use(middleware.requireUser('any'));
 api.use('/interests', require('./interests'));
@@ -37,9 +30,13 @@ api.use('/tags', require('./tags'));
 api.use('/users', require('./users'));
 
 router.use('/admin', admin);
-router.use([login, api]);
-
-
+router.use([login,
+            middleware.verifyUser,
+            middleware.sendAngularHtml(),
+            middleware.installHelpers,
+            middleware.setupCORS,
+            api,
+            middleware.sendAngularHtml(true)]);
 
 
 module.exports = router;

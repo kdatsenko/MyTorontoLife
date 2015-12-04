@@ -206,3 +206,7 @@ div.box:hover {
      content: "\2605";
      position: absolute;
   }
+
+div.modal-backdrop{
+  z-index: 100!important;
+}

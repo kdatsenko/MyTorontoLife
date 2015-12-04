@@ -1,0 +1,5 @@
+<div ng-controller="mainController">
+  <h1>Groups</h1>
+  <span ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a><br></span>
+  <a href="/groups" >Show all public groups</a>
+</div>
