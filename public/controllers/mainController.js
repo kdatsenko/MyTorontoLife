@@ -156,22 +156,24 @@ $scope.getPostPage = function (postid){
 
  var populateNavBar = function(){
 	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
-    	var account = data.user.accounttype;
-    	if (account == 0){
-    		$scope.state.admin = true;
-         	$scope.state.super_admin = true;
-    	} else if (account == 1){
-    		$scope.state.admin = true;
-         	$scope.state.super_admin = false;
-         } else {
-         	$scope.state.admin = false;
-         	$scope.state.super_admin = false;
-         }
-   		//var username = data.user.username; //Should be a JSON object
-   		$scope.state.username = data.user.username;
-    	//var id = data.user._id;
-		populateInterests(data.user.username);
-		$scope.populateUserGroups();
+		if (data.user){
+	    	var account = data.user.accounttype;
+	    	if (account == 0){
+	    		$scope.state.admin = true;
+	         	$scope.state.super_admin = true;
+	    	} else if (account == 1){
+	    		$scope.state.admin = true;
+	         	$scope.state.super_admin = false;
+	         } else {
+	         	$scope.state.admin = false;
+	         	$scope.state.super_admin = false;
+	         }
+	   		//var username = data.user.username; //Should be a JSON object
+	   		$scope.state.username = data.user.username;
+	    	//var id = data.user._id;
+			populateInterests(data.user.username);
+			$scope.populateUserGroups();
+		}
   }).error(function(data, status, headers, config) {
   		console.log(data);
     // if(status == 403 )

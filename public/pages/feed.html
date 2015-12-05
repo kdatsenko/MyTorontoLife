@@ -44,7 +44,7 @@
             </span>
             <br>
             <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
-              <a href=""> {{ tag.name }} </a>
+              <a href=""> #{{ tag.name }} </a>
             </span>
             <br>
             <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
@@ -108,25 +108,15 @@
             <li ng-click="createNewPost( 'New question')">New question</li>
           </ul>
         </div>
-   <div class="box" id="kitteh" >
-        <h3>Tag Index</h3>
-        <ul>
-          <li><a href="#" ng-click="getTagIndex()">Tag Index</a></li>
-          <li ng-repeat="tag in tags">
-          <a href="#">{{tag.name}}</a>
-          <a href="#">{{tag.count}}</a>
 
-          </li>
-  
+        <div class="box" ng-init="tagsShown = false">
+          <a href="" ng-show="!tagsShown" ng-click="tagsShown = true; getTagIndex()"><span style="text-align: center;">Show Popular Tags</span></a>
+          <a href="" ng-show="tagsShown" ng-click="tagsShown = false; hideTagIndex()"><span style="text-align: center;">Hide Tags</span></a>
 
-               <!--<li><a href="#">About</a></li>
-          <li><a href="#">Terms of Service</a></li>
-          <li><a href="#">Partners</a></li>
-          <li><a href="#">Email Policy</a></li>
-          <li><a href="#">Data Attribution</a></li>-->
-        </ul>
-      </div>
-       
+          <ul id="tagul">
+            <li style=" text-align: left;" ng-repeat="tag in tags"><a href="" ng-click="onTagClick(tag.name)"><span>{{tag.name}}</span></a><span> x {{tag.count}}</span></li>
+          </ul>
+        </div>       
     <!--    <ul class="box footerlinks">
           <li><a href="#">Tag Index</a></li>
           <!--<li><a href="#">About</a></li>

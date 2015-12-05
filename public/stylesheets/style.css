@@ -225,3 +225,14 @@ div.box:hover {
 div.modal-backdrop{
   z-index: 100!important;
 }
+
+ #tagul { 
+    display: block; 
+     padding: 0;
+    margin: 0;
+     margin-left:0;
+    margin-right: 0;
+    max-height: 100px; 
+     overflow: auto; 
+      
+    }
