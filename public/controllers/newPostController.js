@@ -52,11 +52,7 @@ var crudApp = angular.module('crudApp');
   numberofratings: 30,
   averagerating: 3.5,
   commercial: false,
-  comments: [{userid: '1', username: 'Adel', date: "Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "I was wondering if after all these years you'd like to meet To go over everything They say that time's supposed to heal ya But I ain't done much healing Hello, can you hear me I'm in California dreaming about who we used to be "},
-  {userid: '2', username: 'new user' ,date: "Sun Feb 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "getting me some noms.."},
-  {userid: '3', username: 'old user', date: "Sun Jan 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "not sure what is it"},
-  {userid: '4', username: 'lana' , date: "Sun Dec 29 2014 14:59:13 GMT-0500 (Eastern Standard Time)", text: "All I wanna do is get high by the beach Get high by the beach, get high All I wanna do is get by by the beach"}
-  ],
+  comments: [],
   interest: { name: 'Food', _id: '565b5911afaf8bac3202966c' },
   userid: '565b5911afaf8bac3202965',
   username: 'Adele',
