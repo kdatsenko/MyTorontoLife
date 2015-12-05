@@ -92,9 +92,11 @@ var crudApp = angular.module('crudApp');
       	};
 
   		$http.post('/auth/local/signup', data).success(function(response) {
-  			$scope.state.is_logged = true;
-            $("#signup_popup").modal('hide')
-  			$location.path('/profile');
+        $("#signup_popup").modal('hide')
+        $scope.state.is_logged = true;
+            $location.path('/feed');
+          $scope.$emit('update_nav_bar', true);
+  			$location.path('/feed');
       		console.log(response);
       	}).error(function (data, status, headers, config) {
       		console.log(data);
@@ -120,8 +122,16 @@ var crudApp = angular.module('crudApp');
       //
       //  Do not change, the browser must be physically redirected for
       //  this to work- AJAX will not work!
+      /* 
+$scope.state.is_logged = true;
+          $scope.$emit('update_nav_bar', true);
+      */
       //
-      window.location = "/auth/github";
+
+        $scope.state.is_logged = true;
+          window.location = "/auth/github";
+          $scope.$emit('update_nav_bar', true);
+      
   	}
 
   	var redirect = function(){

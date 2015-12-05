@@ -52,6 +52,8 @@ var crudApp = angular.module('crudApp');
 			/* Trigger the fill in methods */
 	});
 
+
+
 	$scope.$on("update_state_to_search", function(event, tagname){
 		console.log('update_test I am triggered! ' + tagname);
 		resetStateVariables();
