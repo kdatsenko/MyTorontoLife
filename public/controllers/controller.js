@@ -175,7 +175,11 @@ $scope.getPostByGroup = function(group_id){
 };
 
  $scope.getAdminDashBoard = function() {
- 	alert('Admin Dash!');
+ 	//alert('Admin Dash!');
+ 	resetStateVariables();
+ 	$scope.state.admin_dashboard = true;
+ 	$location.path("/admin");
+  	$route.reload();
  	
 };
 
@@ -193,7 +197,7 @@ var resetStateVariables = function () {
 	$scope.state.is_group_page = false;
 	$scope.state.main_dashboard = false;
 	$scope.state.admin_dashboard = false;
-	$scope.state.admin_dashboard = false;
+	//$scope.state.admin_dashboard = false;
 	$scope.state.is_searching = false;
 };
 

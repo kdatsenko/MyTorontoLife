@@ -1,6 +1,6 @@
 var crudApp = angular.module('crudApp');
 
-crudApp.controller('groupController', function ($scope, $http, $location) {
+crudApp.controller('groupController', function ($scope, $http, $location, $timeout) {
 
 	$scope.tabIndex = 3;
 	$scope.showMsg = false;
@@ -45,7 +45,7 @@ crudApp.controller('groupController', function ($scope, $http, $location) {
 });
 
 
-crudApp.controller('interestController', function ($scope, $http, $location) {
+crudApp.controller('interestController', function ($scope, $http, $location, $timeout) {
 
 	$scope.tabIndex = 2;
 
@@ -115,7 +115,7 @@ crudApp.controller('interestController', function ($scope, $http, $location) {
 });
 
 
-crudApp.controller('postController', function ($scope, $http, $location) {
+crudApp.controller('postController', function ($scope, $http, $location, $timeout) {
 
 	$scope.tabIndex = 1;
 
@@ -164,7 +164,7 @@ crudApp.controller('postController', function ($scope, $http, $location) {
 });
 
 
-crudApp.controller('userController', function ($scope, $http, $location) {
+crudApp.controller('userController', function ($scope, $http, $location, $timeout) {
 
 	$scope.tabIndex = 0;
 
