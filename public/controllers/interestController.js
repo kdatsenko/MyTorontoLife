@@ -30,7 +30,6 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 	// });
 
 	$scope.submitInterest = function () {
->>>>>>> origin/jim
 		if ($scope.interest == undefined) {
 			$scope.showMsg = true;
 			$scope.msg = "Please fill the blank";
