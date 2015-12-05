@@ -1,0 +1,21 @@
+#register-holder{
+    border-left: 1px solid #474b49;
+}
+
+#title-holder{
+    text-align: center;
+    padding-bottom: 2em;
+}
+
+#title-holder>h1{
+    font-size: 10em;
+    color: white;
+}
+
+body{
+    background: #1097FF;
+}
+
+.white{
+    color: white;
+}
