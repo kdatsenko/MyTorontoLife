@@ -189,6 +189,10 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 	}
 
 	$scope.isEmpty = function(list){
+		if(!list || !list.length){
+			console.log("isEmpty: List was null")
+			return true
+		}
 		return list.length == 0
 	}
 

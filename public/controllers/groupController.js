@@ -11,15 +11,24 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 
 	$scope.showMsg = false;
 
-	$http({
-		method:'GET',
-		url: '/groups'
-	}).then(function successCallback(res) {
-		$scope.groupList = res.data.groups;
+	$scope.groupList = [
+      {_id: "1", name: "Etobicoke", description :""},
+      {_id: "565b5911afaf8bac32029661" , name: "Toronto", description :""},
+      {_id: "3", name: "UofT", description :""},
+      {_id: "4", name: "a new group", description :""},
+      {_id: "65b5911afaf8bac32029672", name: "Announcement", description :""}
+    ];
 
-	}, function errorCallback(res) {
-		console.log(res.data.error);
-	});
+
+	// $http({
+	// 	method:'GET',
+	// 	url: '/groups'
+	// }).then(function successCallback(res) {
+	// 	$scope.groupList = res.data.groups;
+
+	// }, function errorCallback(res) {
+	// 	console.log(res.data.error);
+	// });
 
 	$scope.submitGroup = function () {
 		if ($scope.group == undefined || $scope.privateType == undefined || $scope.description == undefined) {
@@ -29,9 +38,15 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 				$scope.showMsg = false;
 			}, 3000);
 		} else {
+
 			$http({
 				method: 'POST',
-				url: '/groups/addnew'
+				url: 'groups/addnew',
+				data: JSON.stringify({
+					name: $scope.group,
+					private_type: $scope.privateType,
+					description: $scope.description
+				})
 			}).then(function successCallback(res) {
 				$scope.showMsg = true;
 				$scope.msg = res.data.message;

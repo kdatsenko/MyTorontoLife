@@ -1,44 +1,44 @@
-
-		<!-- <div id="hello"> -->
-			<div id="loginbar" ng-include="'angular_partials/loginbar.html'"></div>
-			<h1>Login Test Page</h1>
-		<!--	<p>Hello! This page is used as a test for the login import!</p>
-			<p>The loginbar is now included by inserting the following line in your file:</p>
-			<p><code> &lt;div ng-include="'angular_partials/loginbar.html'"&gt;&lt;/div&gt; </code></p>
-			<p>Given that the <code>controllers/controller.js</code> script is included in your file,
-			and it is placed within an <code>ng-app="crudApp"</code> </p>
-			<h2><b>Old:</b></h2>
-			<p>By reading the code for this page, you can see that at the top
-			we import the <b>loginbar</b> partial by importing <b>>loginbar</b> through
-			handlebars. The login partial requires a <b>logged</b> (boolean) variable to
-			be rendered along with a <b>username</b> (string). These are use to
-			distinguish between a logged user and not logged in user, and to fetch
-			the username for the profile link, respectively.</p>
-			<p>The login partial can be imported in any page in any part of the HTML,
-			it contains only two side-by-side buttons at anytime. The associated
-			modals are added to the bottom of the body via jQuery to ensure
-			they show up properly.</p>
-			<p>As a basic example, the code for rendering page containing the login
-			import can be handled via:</p>
-			<code>
-			router.get('/login', function(req, res, next){
-				if(req.session.user){
-					res.render('login', {logged: true, username: req.session.user.username})
-				}else{
-					res.render('login')
-				}
-			})
-			</code>
-			<p>This, of course, assumes the user is stored via </p>
-			<code>req.session.user</code>
-			<p>However, this may not be the case in future builds.</p>
-			<p>As it stands now, logging in with GitHub redirects straight to
-			<b>'/'</b> but this could surely be changed to redirect to the calling
-			page in the future!</p>
-			<p>Try logging in and registering now! If you encounter any errors,
-			or think of possible improvements, be sure to create some new issues
-			with the relevant labels in the GitHub repo!</p>
-			<p>Also, as it stands now (<b>Nov 28th 2015</b>) the profile page is
-			unimplemented, so clicking the button that says your username won't
-			do anything, but in the future it should redirect to a profile page!</p>-->
+<!--<div id="loginbar" ng-include="'angular_partials/loginbar.html'"></div>-->
+<link rel="stylesheet" href="/stylesheets/login.css" charset="utf-8">
+<section class="login">
+<div class="bg"></div>
+<div class="gradient"></div>
+<div id="login-container" class="container" ng-controller="loginController">
+	<div class="row">
+		<div id="title-holder" class="col-md-12">
+			<h1>MyTorontoLife</h1>
 		</div>
+	</div>
+	<div class="row">
+		<div id="login-holder" class="col-md-3 col-md-offset-3">
+			<h2 class="white">Login</h2>
+			<form>
+				<p id="login-error" style="color: red" ng-show="loginError">{{login_error_msg}}</p>
+				<label class="white">Email:</label><input id="login-email" type="text" class="form-control" placeholder="Email">
+				<label class="white">Password:</label><input id="login-password" type="password" class="form-control" placeholder="Password">
+				<button type="button" class="btn btn-primary" ng-click="login()">
+					Signin
+				</button>
+			</form>
+			<br/>
+			<h4>or Sign In via Social Media:</h4>
+			<br/>
+			<a href="/auth/github" ng-click="github_signin()" class="btn btn-block btn-github btn-social">
+			<i class="fa fa-github"></i>Sign in with GitHub</a>
+		</div>
+		<div id="register-holder" class="col-md-3">
+			<h2 class="white">Register</h2>
+			<form>
+				<p id="signup-error" style="color: red" ng-show="registerError">{{register_error_msg}}</p>
+				<label class="white">Email:</label><input id="signup-email" type="text" class="form-control" placeholder="Email">
+				<label class="white">Username:</label><input id="signup-username" type="text" class="form-control" placeholder="Username">
+				<label class="white">Password:</label><input id="signup-password"  type="password" class="form-control" placeholder="Password">
+				<label class="white">Confirm password:</label><input id="signup-password-conf" type="password" class="form-control" placeholder="Password">
+				<button type="button" class="btn btn-primary" ng-click="signup()">
+					Signup
+				</button>
+			</form>
+		</div>
+	</div>
+</div>
+</section>

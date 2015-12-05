@@ -44,7 +44,7 @@
             </span>
             <br>
             <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
-              <a href=""> {{ tag.name }} </a>
+              <a href=""> #{{ tag.name }} </a>
             </span>
             <br>
             <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
@@ -71,16 +71,16 @@
         <div class="box" ng-show="state.is_group_page">
           <h1>Group: {{group.name}}</h1>
           <ul>
-<li>
-<div ng-init="limit = 150; moreShown = false">
-    {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
-    <a ng-show="group.description.length > limit && !moreShown"
-      href ng-click="limit=limit=300; moreShown = true">  
-      More
-    </a>
-    <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
-</div>
-</li>
+              <li>
+              <div ng-init="limit = 150; moreShown = false">
+                  {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
+                  <a ng-show="group.description.length > limit && !moreShown"
+                    href ng-click="limit=limit=300; moreShown = true">  
+                    More
+                  </a>
+                  <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
+              </div>
+              </li>
 
            <!-- <div id="group_description">{{group.description}}</div>-->
             <!--<a ng-if=""><li>Add me to this group</li></a>-->
@@ -95,6 +95,8 @@
           </ul>
           <!--<a ng-if="">Add me to this group</a>-->
         </div>
+
+
         <div class="box" ng-show="state.is_showing_interest || state.is_searching">
           <h1>Showing Results for:{{search_tag}}</h1>
         </div>
@@ -107,13 +109,23 @@
           </ul>
         </div>
 
-        <ul class="box footerlinks">
-          <li><a href="#">About</a></li>
+        <div class="box" ng-init="tagsShown = false">
+          <a href="" ng-show="!tagsShown" ng-click="tagsShown = true; getTagIndex()"><span style="text-align: center;">Show Popular Tags</span></a>
+          <a href="" ng-show="tagsShown" ng-click="tagsShown = false; hideTagIndex()"><span style="text-align: center;">Hide Tags</span></a>
+
+          <ul id="tagul">
+            <li style=" text-align: left;" ng-repeat="tag in tags"><a href="" ng-click="onTagClick(tag.name)"><span>{{tag.name}}</span></a><span> x {{tag.count}}</span></li>
+          </ul>
+        </div>       
+    <!--    <ul class="box footerlinks">
+          <li><a href="#">Tag Index</a></li>
+          <!--<li><a href="#">About</a></li>
           <li><a href="#">Terms of Service</a></li>
           <li><a href="#">Partners</a></li>
           <li><a href="#">Email Policy</a></li>
           <li><a href="#">Data Attribution</a></li>
-        </ul>
+        </ul> -->
+     
       </div>
 
 

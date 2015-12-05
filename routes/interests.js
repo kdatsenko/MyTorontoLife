@@ -1,6 +1,10 @@
 var express = require('express');
 var router = express.Router();
 
+var middleware = require('../middleware');
+var checkAdmin = middleware.checkAdmin;
+
+
 var models = {};
 models.GroupMembers = require('mongoose').model('GroupMembers');
 models.Posts = require('mongoose').model('Posts');

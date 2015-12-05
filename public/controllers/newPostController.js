@@ -8,14 +8,6 @@ var crudApp = angular.module('crudApp');
  crudApp.controller('newPostController', function ($scope)  {
 
 
-
-		$scope.logininfoLists = [{useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'},
-                         {useremail:'katie@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.0'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'AChrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'ANDROID',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.1.0.2'},
-                         {useremail:'ok@ok.com', date:'12-12-2015',device :'DESCTOP', OS: 'Windows',  browser:'EXPLORER',location: 'AJAX', screen_size : '160x280', IP: '127.0.0.2'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'Amobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'}]
-
 				 $scope.postTypes = [
       {_id: "aaaa", name: "questions"},
       {_id: "bbbb" , name: "a business"},
@@ -31,7 +23,6 @@ var crudApp = angular.module('crudApp');
       {_id: "4", name: "a new group"},
       {_id: "65b5911afaf8bac32029672", name: "Announcement"}
     ];
-
 
 
     		 $scope.Interests = [
@@ -54,18 +45,14 @@ var crudApp = angular.module('crudApp');
 
     $scope.post={
 
-        short_text: 'hey',
-  date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+        short_text: '',
+  date_posted: new Date,
   hashtags: [],
   external_urls: [],
   numberofratings: 30,
   averagerating: 3.5,
   commercial: false,
-  comments: [{userid: '1', username: 'Adel', date: "Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "I was wondering if after all these years you'd like to meet To go over everything They say that time's supposed to heal ya But I ain't done much healing Hello, can you hear me I'm in California dreaming about who we used to be "},
-  {userid: '2', username: 'new user' ,date: "Sun Feb 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "getting me some noms.."},
-  {userid: '3', username: 'old user', date: "Sun Jan 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)",text: "not sure what is it"},
-  {userid: '4', username: 'lana' , date: "Sun Dec 29 2014 14:59:13 GMT-0500 (Eastern Standard Time)", text: "All I wanna do is get high by the beach Get high by the beach, get high All I wanna do is get by by the beach"}
-  ],
+  comments: [],
   interest: { name: 'Food', _id: '565b5911afaf8bac3202966c' },
   userid: '565b5911afaf8bac3202965',
   username: 'Adele',

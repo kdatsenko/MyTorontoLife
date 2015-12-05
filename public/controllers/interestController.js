@@ -10,15 +10,24 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 
 	$scope.showMsg = false;
 
-	$http({
-		method:'GET',
-		url: '/interests'
-	}).then(function successCallback(res) {
-		$scope.interestList = res.data.interests;
+	 $scope.interestList = [
+      {_id: "aaaa", name: "fishing"},
+      {_id: "bbbb" , name: "cats"},
+      {_id: "cccc", name: "dogs"},
+      {_id: "dddd", name: "real estate"},
+      {_id: "565b5911afaf8bac3202966c", name: "Food"}
+    ];
 
-	}, function errorCallback(res) {
-		console.log(res.data.error);
-	});
+
+	// $http({
+	// 	method:'GET',
+	// 	url: '/interests'
+	// }).then(function successCallback(res) {
+	// 	$scope.interestList = res.data.interests;
+
+	// }, function errorCallback(res) {
+	// 	console.log(res.data.error);
+	// });
 
 	$scope.submitInterest = function () {
 		if ($scope.interest == undefined) {
@@ -30,7 +39,10 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 		} else {
 			$http({
 				method: 'POST',
-				url: '/interests/addnew'
+				url: '/interests/addnew',
+				data: JSON.stringify({
+					name: $scope.interest
+				})
 			}).then(function successCallback(res) {
 				$scope.showMsg = true;
 				$scope.msg = res.data.message;

@@ -1,0 +1,6 @@
+<p style="text-align: center">Please Wait, sending you to github</p>
+<script>
+angular.element(document.querySelector('[ng-controller=mainController]')).scope().showNavBar = false;
+angular.element(document.querySelector('[ng-controller=mainController]')).scope().$digest();
+window.location = "/auth/github";
+</script>

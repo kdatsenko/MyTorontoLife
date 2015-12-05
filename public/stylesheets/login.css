@@ -1,0 +1,58 @@
+#register-holder{
+    border-left: 1px solid #474b49;
+}
+
+#title-holder{
+    text-align: center;
+    padding-bottom: 2em;
+}
+
+#title-holder>h1{
+    font-size: 10em;
+    color: white;
+}
+
+body{
+    background: #1097FF;
+}
+
+.white{
+    color: white;
+}
+
+section.login{
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #1097FF;
+}
+section.login div.gradient,
+section.login div.bg{
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+section.login div.gradient{
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1097ff+0,1097ff+100&amp;1+30,0.01+100 */
+  background: -moz-linear-gradient(top,  rgba(16,151,255,1) 0%, rgba(16,151,255,1) 35%, rgba(16,151,255,0.01) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top,  rgba(16,151,255,1) 0%,rgba(16,151,255,1) 35%,rgba(16,151,255,0.01) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom,  rgba(16,151,255,1) 0%,rgba(16,151,255,1) 35%,rgba(16,151,255,0.01) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1097ff', endColorstr='#031097ff',GradientType=0 ); /* IE6-9 */
+top: 0;
+z-index: 0;
+}
+section.login div.bg {
+  top: 35%;
+  background: url("/images/to.jpg");
+  background-size: cover;
+  -webkit-filter: blur(2px);
+  -moz-filter: blur(2px);
+  -o-filter: blur(2px);
+  -ms-filter: blur(2px);
+  filter: blur(2px);
+  z-index: -1;
+  opacity: 1;
+}

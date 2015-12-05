@@ -84,11 +84,13 @@ crudApp.config(function($routeProvider, $locationProvider) {
 				templateUrl : 'pages/newpost.html',
 				controller  : 'newPostController'
 			})
-	  .otherwise({
-      })
+
       .when('/newpost', {
       	templateUrl : 'pages/newpost.html',
       	controller  : 'newPostController'
+      })
+			.when('/auth/github', {
+      	templateUrl : 'pages/github.html',
       })
       .otherwise({
       	templateUrl : 'pages/notfound.html'
@@ -102,7 +104,7 @@ crudApp.config(function($routeProvider, $locationProvider) {
 
 
 crudApp.config(function ($routeProvider, $locationProvider) {
-	
+
 	$locationProvider.html5Mode({enabled: true,requireBase: false});
 });
 
@@ -130,5 +132,3 @@ crudApp.directive("ngGroup", function(){
 		})
 	}
 })
-
-

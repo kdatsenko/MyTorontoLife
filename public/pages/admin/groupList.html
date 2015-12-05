@@ -3,7 +3,7 @@
     .tab {margin-left:100px;}
     #header {margin-left:30px;}
     #groupList {margin-left:300px;margin-right:30px;}
-    .description {width:380px;height:100px;resize:none;}
+    .descr {width:380px;height:100px;resize:none;}
 </style>
 <nav id="topNav" class="feed">
     <h1>MyTorontoLife.ca</h1>
@@ -26,62 +26,59 @@
     </nav>
 
   <div id="main" ng-controller="groupController">
-<div>
-	<div>
-		Sort by: 
-      <select ng-model="sortExpression">
-			<option value="name">Name</option>
-			<option value="group">Description</option>
-		</select>
-    </div>
-
-    <table class="table table-bordered table-condensed table-responsive table-sm">
-          <thead class="thead-inverse">
-            <tr>
-              <th>Group Name</th>
-              <th>Description</th>
-              <th>Option</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>
-                <input placeholder="Search name" ng-model="search.groupName" />
-              </td>
-              <td>
-                <input placeholder="Search description" ng-model="search.groupDescription" />
-              </td>
-            </tr>
-          </tbody>
-          <tbody>
-            <tr ng-repeat="group in groupList | orderBy:mySortFunction | filter:search">
-              <td class="btn-like">{{group.name}}</td>
-            	<td class="btn-like">{{group.description}}</td>
-              <td>
-                <a ng-click='deleteGroup(group.name)'>
-                  <strong style="margin-left:10px">(DELETE)</strong>
-                </a>
-            </td> 
-            </tr>
-          </tbody>
-        </table>
-
-        <form id="addGroup">
-        Add a group:
-          <input type="text" placeholder="Enter group name" name="group"></br>
-          <select ng-model="privateType">
-            <option value="true">True</option>
-            <option value="false">False</option>
-          </select></br>
-          <textarea name="description" placeholder="Description" class="description" maxlength="500"></textarea></br>
-          <input type="submit" value="submit" ng-click="submitGroup()">
-      </form>
-
-      <div ng-show="showMsg">
-        {{msg}}
+       <div>
+        Sort by: 
+          <select ng-model="sortExpression">
+          <option value="name">Name</option>
+          <option value="group">Description</option>
+        </select>
       </div>
 
-</div>
-  </div>
-</div>
+      <table class="table table-bordered table-condensed table-responsive table-sm">
+            <thead class="thead-inverse">
+              <tr>
+                <th>Group Name</th>
+                <th>Description</th>
+                <th>Option</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <input placeholder="Search name" ng-model="search.name" />
+                </td>
+                <td>
+                  <input placeholder="Search description" ng-model="search.description" />
+                </td>
+              </tr>
+            </tbody>
+            <tbody>
+              <tr ng-repeat="group in groupList | orderBy:mySortFunction | filter:search">
+                <td>{{group.name}}</td>
+                <td>{{group.description}}</td>
+                <td class="btn-like">
+                  <a ng-click='deleteGroup(group.name)'>
+                    <strong style="margin-left:10px">(DELETE)</strong>
+                  </a>
+              </td> 
+              </tr>
+            </tbody>
+          </table>
 
+          <form id="addGroup">
+            Add a group:
+            </br></br>
+            <input type="text" placeholder="Enter group name" name="group" ng-model="group"></br></br>
+            <select ng-model="privateType">
+              <option value="true">True</option>
+              <option value="false">False</option>
+            </select></br></br>
+            <textarea ng-model="description" name="description" placeholder="Description" class="descr" maxlength="500"></textarea></br></br>
+            <input type="submit" value="submit" ng-click="submitGroup()">
+         </form>
+
+          <div ng-show="showMsg">
+            {{msg}}
+          </div>
+    </div>
+</div>

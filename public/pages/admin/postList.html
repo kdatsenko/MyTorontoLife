@@ -27,16 +27,16 @@
   <div id="main" ng-controller="postController">
 
 <div>
-	<div>
-		Sort by: 
+  <div>
+    Sort by: 
 
         <select ng-model="sortExpression">
-			<option value="ser">User</option>
-			<option value="group">Group</option>
-      <option value="datePost">Date Post</option>
-      <option value="type">Type</option>
-      <option value="shortDescription">Short Description</option>
-		</select>
+      <option value="username">Username</option>
+      <option value="groupname">Group name</option>
+      <option value="date_posted">Date Post</option>
+      <option value="post_type">Type</option>
+      <option value="short_text">Short Description</option>
+    </select>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -56,27 +56,27 @@
                 <input placeholder="Search name" ng-model="search.username" />
               </td>
               <td>
-                <input placeholder="Search group" ng-model="search.group" />
+                <input placeholder="Search group" ng-model="search.groupname" />
               </td>
               <td>
-                <input placeholder="Search date post" ng-model="search.datePost" />
+                <input placeholder="Search date post" ng-model="search.date_posted" />
               </td>
                <td>
-                <input placeholder="Search type" ng-model="search.type" />
+                <input placeholder="Search type" ng-model="search.post_type" />
               </td>
               <td>
-                <input placeholder="Search short description" ng-model="search.shortDescription" />
+                <input placeholder="Search short description" ng-model="search.short_text" />
               </td>
             </tr>
           </tbody>
           <tbody>
             <tr ng-repeat="post in postList | orderBy:mySortFunction | filter:search">
-              <td class="btn-like">{{post.username}}</td>
-            	<td class="btn-like">{{post.group}}</td>
-              <td class="btn-like">{{post.date_posted}}</td>
-              <td class="btn-like">{{post.post_type}}</td>
-              <td class="btn-like">{{post.short_text}}</td>
-              <td>
+              <td>{{post.username}}</td>
+              <td>{{post.groupname}}</td>
+              <td>{{post.date_posted}}</td>
+              <td>{{post.post_type}}</td>
+              <td>{{post.short_text}}</td>
+              <td class="btn-like">
                 <a ng-click='deletePost(post._id)'>
                   <strong style="margin-left:10px">(DELETE)</strong>
                 </a>
