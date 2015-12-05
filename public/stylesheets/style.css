@@ -96,7 +96,10 @@ section.feed {
     top: 40px;
     position: fixed;
     left: 2%;
-    right: 75%; }
+    right: 75%;
+    bottom: 0;
+    overflow-y: auto;
+  }
   section.feed .center {
     position: absolute;
     left: 25%;
