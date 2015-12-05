@@ -37,7 +37,10 @@ module.exports = function(err) {
   } else {
     console.log('connection successful');
 
-    mongoose.connection.db.dropDatabase();
+    // I'm starting to become emotionally attached to this db, and I have
+    // abandonment issues, please don't leave me again!
+    //
+    // mongoose.connection.db.dropDatabase();
 
 
  var postTypes = [{_id: types[0], name: 'Announcement'},
