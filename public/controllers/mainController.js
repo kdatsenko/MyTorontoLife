@@ -82,8 +82,7 @@ var crudApp = angular.module('crudApp');
 
   $scope.showHero = true;
 
-  $scope.logOut =
-  $scope.logout = function(){
+  $scope.logOut = function(){
       $scope.state.is_logged = false;
       $http.get('/auth/logout').success(function(data, status, headers, config) {
           $scope.showLogin = false;
@@ -172,6 +171,7 @@ $scope.getPostPage = function (postid){
 		populateInterests(data.user.username);
 		$scope.populateUserGroups();
   }).error(function(data, status, headers, config) {
+  	console.log(data);
     // if(status == 403 )
 
   });
@@ -208,10 +208,19 @@ $scope.getPostPage = function (postid){
 
 
 
+
+
 $http.get('/auth/loggedInUser').success(function(data, status, headers, config){
  if(data.logged == false && window.location.path != '/auth/github'){
    $location.path('/login');
  }
 });
+
+var start = function(){
+	$scope.showNavBar = true;
+	populateNavBar();
+};
+
+start();
 
  });
