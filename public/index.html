@@ -12,10 +12,16 @@
 	<link rel="stylesheet" href="/stylesheets/bootstrap-social.css">
 	<link href='http://fonts.googleapis.com/css?family=Ek+Mukta:200,400,800' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="stylesheets/style.css">
+	<link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.css">
 
 	<!-- JS files -->
 	<script src="/vendor/jquery-2.1.4.js"></script>
 	<script src="/vendor/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-aria.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0-rc1/angular-material.min.js"></script>
 	<!-- <script src="http://rawgit.com/danialfarid/ng-file-upload/master/dist/ng-file-upload.min.js"></script> -->
 	<script src="/vendor/angular-route.min.js"></script>
 	<script src="/vendor/bootstrap-3.3.6/js/bootstrap.min.js"></script>
@@ -37,31 +43,46 @@
 
 <!-- define top-level controller -->
 <body ng-controller="mainController">
-	<nav id="topNav" class="hero" ng-if="showHero">
-	    <h1>MyTorontoLife.ca</h1>
-	</nav>
-	<nav id="topNav" class="feed">
-	    <ng-include style="float:right" src="'/angular_partials/loginbar.html'">
 
-	    </ng-include>
-			<h1><a href='/' style="color: white">MyTorontoLife.ca</a></h1>
+       <section class="feed">
+        <div id="leftsidebar"class="quick-links left" ng-if="showNavBar">
+          <div class="box">
+            <h1>{{state.username}}</h1>
+            <a href="" ng-if="state.is_logged" ng-click="getUserProfile(state.username)">My Profile</a>
+            <br>
 
-	</nav>
-	    <section class="hero" ng-if="showHero">
-	    <div class="bg"></div>
-	    <div class="content">
-	        <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
-	        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
-	        <form>
-	            <input type="text" placeholder="Search for a Neighbourhood, Topic or Address">
-	        </form>
-	    </div>
-	    </section>
+            <a ng-if="state.admin && !state.admin_dashboard && state.is_logged" href="" ng-click="getAdminDashBoard()">Admin Dashboard</a>
+            <br>
+            <a ng-if="!state.main_dashboard && state.is_logged" href="" ng-click="getMainDashBoard()">Dashboard</a>
+            <br>
+            <a ng-if="state.is_logged" href="" ng-click="logOut()">Log Out</a>
+          </div>
+
+        <div ng-show="state.main_dashboard">
+          <h1>Interests</h1>
+          <ul>
+            <li ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a></li>
+          </ul>
+        </div>
+        <div ng-show="state.main_dashboard">
+          <h1>Groups</h1>
+          <ul>
+            <li ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a></li>
+          </ul>
+          <a>show all public groups</a>
+        </div>
+     </div>
+     </section>
+
+
+
+<div id="main" ng-controller="loginController">
+
 	<!-- angular templating -->
 	<!-- this is where content will be injected -->
-	<div ng-view>
-	</div>
+	<div ng-view></div>
 
+</div>
 
 </body>
 

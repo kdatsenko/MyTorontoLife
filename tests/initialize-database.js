@@ -40,7 +40,7 @@ module.exports = function(err) {
     mongoose.connection.db.dropDatabase();
 
 
-  var postTypes = [{_id: types[0], name: 'Announcement'},
+ var postTypes = [{_id: types[0], name: 'Announcement'},
                   {_id: types[1], name: 'Question'},
                   {_id: types[2], name: 'Business Ad'},
                   {_id: types[3], name: 'Event'},
@@ -112,21 +112,18 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
 
 
 
-  var groups = [{_id: group_ids[0], name: 'Toronto', group_creator: user_ids[0], description: desc1},
-                  {_id: group_ids[1], name: 'Etobicoke', group_creator: user_ids[0], description: desc2},
-                  {_id: group_ids[2], name: 'Little Italy', group_creator: user_ids[0], description: desc3},
-                  {_id: group_ids[3], name: 'Kensington', group_creator: user_ids[0], description: 'Kensington yay'},
-                  {_id: group_ids[4], name: 'Guelph', group_creator: user_ids[0], description: 'Guelph yay'},
-                  {_id: group_ids[5], name: 'Old Mill', group_creator: user_ids[0], description: 'Old Mill yay'},
-                  {_id: group_ids[6], name: 'Marys Housemates', group_creator: user_ids[1], description: 'Marys Housemates yay'},
-                  {_id: group_ids[7], name: 'Ontario', group_creator: user_ids[1], description: 'Ontario yay'},
-                  {_id: group_ids[8], name: 'Waterloo', group_creator: user_ids[1], description: 'Waterloo yay'},
-                  {_id: group_ids[9], name: 'London', group_creator: user_ids[2], description: 'London yay'},
-                  {_id: group_ids[10], name: 'Bloor', group_creator: user_ids[2], description: 'Bloor yay'},
-                  {_id: group_ids[11], name: 'UofT', group_creator: user_ids[2], description: 'UofTn yay'}];
-
-
-
+  var groups = [{_id: group_ids[0], name: 'Toronto', private_type: false, group_creator: user_ids[0], description: desc1},
+                  {_id: group_ids[1], name: 'Etobicoke', private_type: false, group_creator: user_ids[0], description: desc2},
+                  {_id: group_ids[2], name: 'Little Italy', private_type: false, group_creator: user_ids[0], description: desc3},
+                  {_id: group_ids[3], name: 'Kensington', private_type: false, group_creator: user_ids[0], description: 'Kensington yay'},
+                  {_id: group_ids[4], name: 'Guelph', private_type: false, group_creator: user_ids[0], description: 'Guelph yay'},
+                  {_id: group_ids[5], name: 'Old Mill', private_type: false, group_creator: user_ids[0], description: 'Old Mill yay'},
+                  {_id: group_ids[6], name: 'Marys Housemates', private_type: false, group_creator: user_ids[1], description: 'Marys Housemates yay'},
+                  {_id: group_ids[7], name: 'Ontario', private_type: false, group_creator: user_ids[1], description: 'Ontario yay'},
+                  {_id: group_ids[8], name: 'Waterloo', private_type: false, group_creator: user_ids[1], description: 'Waterloo yay'},
+                  {_id: group_ids[9], name: 'London', private_type: false, group_creator: user_ids[2], description: 'London yay'},
+                  {_id: group_ids[10], name: 'Bloor', private_type: false, group_creator: user_ids[2], description: 'Bloor yay'},
+                  {_id: group_ids[11], name: 'UofT', private_type: false, group_creator: user_ids[2], description: 'UofTn yay'}];
 
 
   var usergroups = [{user: user_ids[0], group: group_ids[0]},
@@ -208,14 +205,14 @@ var interests = [{_id: interest_ids[0], name: 'Food'},
   interests: [interest_ids[0], interest_ids[1], interest_ids[3], interest_ids[4]]
 }];
 
+console.log((new Date) + ' ' + Date.now());
 
-
- var hashtags = [{_id: hashtag_ids[0], name: 'Cool', last_used: new Date()},
-                  {_id: hashtag_ids[1], name: 'Interesting', last_used: new Date()},
-                  {_id: hashtag_ids[2], name: 'Coolerthanyourcity', last_used: new Date()},
-                  {_id: hashtag_ids[3], name: 'greatlandscapes', last_used: new Date()},
-                  {_id: hashtag_ids[4], name: 'someonecalltheplumber', last_used: new Date()},
-                  {_id: hashtag_ids[5], name: 'lostatsomewhere', last_used: new Date()}];
+ var hashtags = [{_id: hashtag_ids[0], name: 'Cool', last_used: new Date, count: 2},
+                  {_id: hashtag_ids[1], name: 'Interesting', last_used: new Date, count: 1},
+                  {_id: hashtag_ids[2], name: 'Coolerthanyourcity', last_used: new Date, count: 1},
+                  {_id: hashtag_ids[3], name: 'greatlandscapes', last_used: new Date, count: 1},
+                  {_id: hashtag_ids[4], name: 'someonecalltheplumber', last_used: new Date, count: 1},
+                  {_id: hashtag_ids[5], name: 'lostatsomewhere', last_used: new Date, count: 1}];
 
 
 
@@ -225,7 +222,9 @@ var posts = [
 { _id: post_ids[0],
   post_type: types[0],
   group: group_ids[0],
+  date_posted: new Date,
   text: desc3,
+  short_text: desc3.substring(0, 200),
   username: 'Adele',
   userid: user_ids[0],
   hashtags: [
@@ -234,16 +233,25 @@ var posts = [
       {tag_id: hashtag_ids[2],
       name: 'Coolerthanyourcity'}],
   interest: interest_ids[0],
-   fivestarcount: 2,
    comments: [
     {userid: user_ids[1],
      username: 'MCHammer',
-   text: 'Yo, this is cool'}]},
+   text: 'Yo, this is cool'}],
+   fivestarcount: 2,
+   fourstarcount: 0,
+   threestarcount: 0,
+   twostarcount: 0,
+   onestarcount: 0,
+   numberofratings: 0,
+   averagerating: 5
+ },
 
 {_id: post_ids[1],
   post_type: types[1],
   group: group_ids[0],
+  date_posted: new Date,
   text: desc2,
+  short_text: desc2.substring(0, 200),
   username: 'LanaDelRey',
   userid: user_ids[2],
   hashtags: [
@@ -252,28 +260,38 @@ var posts = [
       {tag_id: hashtag_ids[5],
       name: 'lostatsomewhere'}],
   interest: interest_ids[3],
-   fivestarcount: 1,
-   threestarcount: 1,
    comments: [
     {userid: user_ids[1],
      username: 'MCHammer',
    text: 'Yo, this is quite cool, good post'},
    {userid: user_ids[0],
      username: 'Adele',
-   text: 'So knowledgeable, Lana'}]},
+   text: 'So knowledgeable, Lana'}],
+   fivestarcount: 1,
+   fourstarcount: 0,
+   threestarcount: 1,
+   twostarcount: 0,
+   onestarcount: 0,
+   numberofratings: 0,
+   averagerating: 4
+ },
 
 { _id: post_ids[2],
   post_type: types[0],
   group: group_ids[0],
+  date_posted: new Date,
   text: desc2,
+  short_text: desc2.substring(0, 200),
   username: 'MCHammer',
   userid: user_ids[1],
   hashtags: [
     {tag_id: hashtag_ids[3],
       name: 'greatlandscapes'},
       {tag_id: hashtag_ids[4],
-      name: 'someonecalltheplumber'}],
-  interest: interest_ids[5],
+      name: 'someonecalltheplumber'},
+      {tag_id: hashtag_ids[1],
+      name: 'Interesting'}],
+  interest: interest_ids[0],
    twostarcount: 1,
    onestarcount: 1,
    comments: [
@@ -288,8 +306,16 @@ var posts = [
    text: 'I agree with Adele'},
    {userid: user_ids[1],
      username: 'MCHammer',
-   text: 'Why?'}]}
- ];
+   text: 'Why?'}],
+   fivestarcount: 0,
+   fourstarcount: 0,
+   threestarcount: 0,
+   twostarcount: 1,
+   onestarcount: 1,
+   numberofratings: 0,
+   averagerating: 1.5
+
+ }];
 
 
 
@@ -297,10 +323,10 @@ var posts = [
 var postsRatings = [
   {_id: rating_ids[0], postid: post_ids[0],
   userid: user_ids[1],
-  rating: 5},
+  rating: 3},
   {_id: rating_ids[1], postid: post_ids[0],
   userid: user_ids[2],
-  rating: 5},
+  rating: 3},
 
   {_id: rating_ids[2], postid: post_ids[1],
   userid: user_ids[1],
@@ -319,7 +345,6 @@ var postsRatings = [
 
 models.Interests.collection.insert(interests, onInsert);
 models.PostTypes.collection.insert(postTypes, onInsert);
-
  models.Groups.collection.insert(groups, onInsert);
  models.GroupMembers.collection.insert(usergroups, onInsert);
  models.Hashtags.collection.insert(hashtags, onInsert);
@@ -339,7 +364,7 @@ models.PostTypes.collection.insert(postTypes, onInsert);
     if (err) {
         console.log(err);
     } else {
-      console.log(docs);
+     //console.log(docs);
         console.log(docs.insertedCount + ' entries were successfully stored.');
     }
   }

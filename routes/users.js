@@ -1,10 +1,15 @@
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware');
+var crypt = require('../config/bcrypt')
+var fs = require('fs');
+var path = require('path');
 
 
 var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
+models.Posts = require('mongoose').model('Posts');
 
 
 /* Get user profile */
@@ -40,16 +45,16 @@ router.get('/credentials', function(req, res){
 /* Edit the user's profile */
 router.put('/profile', function(req, res){
   //Action allowed only for Admins, or the user's own profile (session check)
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user._id == req.body._id)){
+  if (!(middleware.checkAdmin(req, res, 1) || middleware.checkAdmin(req, res, 0) || (req.session.user._id == req.body.user._id))){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Users.findOne({ _id: req.body._id }, function(err, user) {
+  models.Users.findOne({ _id: req.body.user._id }, function(err, user) {
     if (err) {
       return res.send(err);
     }
 
-    for (property in req.body) {
-      user[property] = req.body[property];
+    for(property in req.body.user){
+      user[property] = req.body.user[property]
     }
 
     // save the user profile details
@@ -68,10 +73,10 @@ router.put('/profile', function(req, res){
 /* Update the user's password. */
 router.put('/profile/passwordchange', function(req,res){
 //var changePassword = function (user){ //Require login
-  if (checkAdmin(req, res, 1) | checkAdmin(req, res, 0)){
-    changePasswordRegular(req.body, res); //req, res
-  } else if (req.session.user._id == req.body._id){
+  if (middleware.checkAdmin(req, res, 1) || middleware.checkAdmin(req, res, 0)){
     changePasswordAdmin(req.body, res); //req, res
+  } else if (req.session.user._id == req.body._id){
+    changePasswordRegular(req.body, res); //req, res
   } else {
     return res.status(403).send({error: 'Unauthorized account type'});
   }
@@ -85,7 +90,7 @@ var changePasswordAdmin = function (user, res){
     if (err) {
       return res.send(err);
     }
-    update_user.password = user.new_password;
+    update_user.password = crypt.generateHash(user.new_password);
     // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
@@ -103,10 +108,11 @@ var changePasswordRegular = function (user, res){
     if (err) {
       return res.send(err);
     }
-    if (update_user.password != user.old_password){
+
+    if (crypt.validPassword(update_user.password, user.old_password)){
       return res.status(422).send({error: 'Incorrect password submission.'});
     }
-    update_user.password = user.new_password;
+    update_user.password = crypt.generateHash(user.new_password);
     // save the user's new password to DB
     update_user.save(function(err) {
       if (err) {
@@ -123,47 +129,40 @@ var changePasswordRegular = function (user, res){
 /** Uploads an image file to the server, tranfers it to public/images folder,
  *  update the DB profile imageurl for this user.
  */
-/* router.post('/fileupload', multipartyMiddleware, function(req, res) {
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & !(req.session.user.email == req.body.email)){
+router.post('/fileupload', function(req, res) {
+  if (!middleware.checkAdmin(req, res, 1) && !middleware.checkAdmin(req, res, 0) && !(req.session.user._id == req.body._id)){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  var file = req.files.file;
-  console.log(file.name);
-  console.log(file.type);
-  console.log(file.path);
+  var file = req.body.file; // Data URL
 
-    // get the temporary location of the file
-    var tmp_path = file.path;
-    // set where the file should actually exists - in this case it is in the "images" directory
-    var target_path = './public/images/' + file.name;
-    var relpath_html = '../images/' + file.name;
+  var regex = /^data:.+\/(.+);base64,(.*)$/; //Ext in first grpup, data in second
 
-    // move the file from the temporary location to the intended location
-    fs.rename(tmp_path, target_path, function(err) {
-      if (err)
-        return res.send(err);
-        // delete the temporary file, so that the explicitly set temporary
-        //upload dir does not get filled with unwanted files
-        fs.unlink(tmp_path, function() {
-          if (err) return res.send(err);
-          res.send({relpath: relpath_html});
-        });
-        //Modify the DB to include the right link
-        models.User.findOne({ email: req.body.email }, function(err, user) {
-          if (err)
-            return console.log(err);
-        user.imageurl = relpath_html; //change image link
-        // save the user
-        user.save(function(err) {
-          if (err) {
-            return console.log(err);
+  var matches = file.match(regex);
+  var ext = matches[1];
+  var data = matches[2];
+
+  if(!(/(gif|jpg|jpeg|tiff|png)$/i).test(ext)){
+      return res.status(415).send({error: "Invalid file type"})
+  }
+  var buffer = new Buffer(data, 'base64');
+
+  var filename = req.session.user._id + '.' + ext
+
+  fs.writeFile(path.join(__dirname, "../public/images/" + filename), buffer, function (err) {
+      if(err){
+          throw err
+      }
+
+      models.Users.findOneAndUpdate({_id: req.body._id}, {imageurl: "/images/" + filename}, function (err, raw) {
+          if(err){
+              throw err
           }
-          console.log("User " + user.email + " image updated!");
-        });
-    });
-    });
 
-});*/
+          res.status(200).send({newURL: "/images/" + filename})
+      })
+  });
+
+});
 
 /* Get all a list of all users' email, username (for Admin) */
  router.get('/', function(req, res) {
@@ -179,6 +178,31 @@ var changePasswordRegular = function (user, res){
     });
 });
 
+ /* Get all this user's posts */
+ router.get('/user/posts', function(req, res) {
+  //Retrieve entire list from DB
+  models.Posts.find({username: req.query.username})
+  .populate({
+    path: 'userid',
+    select: 'imageurl'
+  }).
+  populate({
+    path: 'interest',
+    select: 'name'
+  }).
+  populate({
+    path: 'group',
+    select: 'name'
+  }).
+  select('post_type group short_text username userid date_posted averagerating interest numberofratings hashtags')
+  .exec(function(err, posts){
+    if (err){
+      return res.send(err);
+    }
+    return res.json(posts);
+  });
+});
+
 /* Get all this user's groups */
  router.get('/user/groups', function(req, res) {
   //get groups related to this user
@@ -189,15 +213,23 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
   */
-      models.GroupMembers.find({ user: req.session.user._id}, '-_id -user')
-      .populate({path: 'group', model: 'Groups', select:'_id name'})
+      var id;
+      if(req.query.id){
+          id = req.query.id
+      }else{
+          id = res.session.user._id
+      }
+      models.GroupMembers.find({ user: id}, '-_id -user')
+      .populate({path: 'group', model: 'Groups', select:'_id name description'})
       .lean()
       .exec(function(err, groups) {
         if (err){
           return res.send(err);
         }
         var group_array = groups.map(function(group_beautified){
-          return {_id: group_beautified.group._id, name: group_beautified.group.name};
+          return {_id: group_beautified.group._id,
+               name: group_beautified.group.name,
+               description: group_beautified.group.description};
         });
         res.json(group_array);
         //send as res
