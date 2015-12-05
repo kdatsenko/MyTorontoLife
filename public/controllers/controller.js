@@ -77,6 +77,10 @@ crudApp.config(function($routeProvider, $locationProvider) {
 				templateUrl : 'pages/list.html',
       	controller  : 'tagsListController'
 			})
+			.when('/create_post', {
+				templateUrl : 'pages/newpost.html',
+				controller  : 'newPostController'
+			})
 	  .otherwise({
       	templateUrl : 'pages/notfound.html'
       });
