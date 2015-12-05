@@ -12,7 +12,7 @@ models.Posts = require('mongoose').model('Posts');
 Get feed from groups: Get most recent feed from all user's groups
 */
 var getGroupFeed = function (req, res) {
-  models.GroupMembers.find({user: req.session.useid}, 'group').exec(function(err, docs){
+  models.GroupMembers.find({user: req.session.user._id}, 'group').exec(function(err, docs){
       if (err){
         return res.send(err);
       } else if (!docs){
@@ -100,6 +100,7 @@ router.get('/', function(req, res) {
               return;
             }
             var intersect_users = docs.map(function(obj) { return obj.user; });
+            console.log('intersect_users: ' + intersect_users);
             models.PostRatings
             .find({userid: { "$in" : intersect_users} })
             .where('rating').gt(3).lt(6) //rated as 4 or 5
@@ -116,6 +117,7 @@ router.get('/', function(req, res) {
               //Get all posts that 'this' user has not seen before (via rating).
               models.PostRatings.find({postid: { "$in" : temppostids}, userid: req.session.user._id}, 'postid').exec(function(err, docs){
                 if (err) { return res.send(err); }
+                console.log('temppostids: ' + temppostids + ' seenpostsids' + (docs.map(function(obj) { return obj.postid; })));
                 var finalpostids = [];
                 if(!docs) { //this user has not rated anything, safe to skip additional "already seen" check
                   finalpostids = temppostids;

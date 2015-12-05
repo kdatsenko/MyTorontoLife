@@ -5,11 +5,13 @@ var crudApp = angular.module('crudApp');
 
  	$scope.showNavBar = false;
  	$scope.state = {
+
         username: 'Chris',
          admin: true,
          super_admin: true,
          profile_is_admin: true,
          main_dashboard: true,
+         main_feed: true,
          admin_dashboard : false,
          is_logged : true, 
          is_searching: false,
@@ -88,14 +90,12 @@ $scope.logOut = function() {
  	 resetStateVariables();
 	 $scope.state.is_showing_interest = true;
 	 sharedService.setData({interestid : interest_id});
-	 console.log("THIS IS THE INTERESR!!!!! " + interest_id);
 	 $location.path("/feed");
   	 $route.reload();
 
  };
 
 $scope.getPostByGroup = function(group_id){
-	console.log('getPostByGroup: ' + group_id);
 	resetStateVariables();
 	$scope.state.is_group_page = true;
 	sharedService.setData({groupid : group_id});
@@ -104,36 +104,45 @@ $scope.getPostByGroup = function(group_id){
 };
 
  $scope.getAdminDashBoard = function() {
+ 	/*
+	resetStateVariables();
+ 	$scope.state.main_dashboard = false;
+ 	$scope.state.admin_dashboard = true;
+ 	//sharedService.setData({username : user_name});
+ 	$location.path('/admin');
+
+
+ 	*/
  	alert('Admin Dash!');
  	
 };
 
 $scope.getMainDashBoard = function() {
 	resetStateVariables();
- 	$scope.state.main_dashboard = true; 
+	$scope.state.main_dashboard = true; 
+ 	$scope.state.main_feed = true; 
  	$location.path("/feed");
   	$route.reload();	
 };
 
 
 var resetStateVariables = function () {
-	$scope.state.main_dashboard = false;
+	$scope.state.main_feed = false;
 	$scope.state.is_showing_interest = false;
 	$scope.state.is_group_page = false;
-	$scope.state.main_dashboard = false;
 	$scope.state.admin_dashboard = false;
 	$scope.state.is_searching = false;
 };
 
  $scope.getUserProfile = function(user_name) {
  	resetStateVariables();
+ 	$scope.state.main_dashboard = false;
  	sharedService.setData({username : user_name});
  	$location.path('/profile');
  /* Navigate to User Profile page with this username. */
 };
 
 $scope.getPostPage = function (postid){
-
 	alert(postid);
 };
 

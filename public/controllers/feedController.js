@@ -106,8 +106,6 @@ Also, should smartly recommend the "Add myself to this group based on whether th
           params: {id: interest_id}
       })
       .then(function successCallback(response) {
-        console.log('THE INTEREST POSTS');
-        console.log(response);
         $scope.Posts = response.data.posts;
         $scope.search_tag = response.data.interest;
 
@@ -125,8 +123,7 @@ Also, should smartly recommend the "Add myself to this group based on whether th
         url: '/dashboard', //get all user emails & displayname
     })
     .then(function successCallback(response) {
-      console.log(response);
-
+      $scope.Posts = response.data;
     },
     function errorCallback(response) {
       console.log(response);
@@ -156,7 +153,6 @@ Also, should smartly recommend the "Add myself to this group based on whether th
           params: {tagname: hashtag}
       })
       .then(function successCallback(response) {
-        console.log(response.data);
         $scope.Posts = response.data;
         $scope.search_tag = hashtag;
         //$scope.search_tag = response.data.interest;
@@ -177,7 +173,6 @@ var getGroupByID = function(group_id){
         params: {_id: group_id}
     })
     .then(function successCallback(response) {
-      console.log(response);
       $scope.group = response.data.group;
       $scope.is_group_member = response.data.is_member;
       $scope.groupid = response.data.group._id;
@@ -215,7 +210,6 @@ var getGroupPosts = function(group_id){
         return post;
     });
       $scope.Posts = reformattedPosts;
-      console.log(reformattedPosts);
 
 
     },
@@ -297,33 +291,7 @@ $scope.onGroupClick = function(groupid){
   $scope.$emit('update_state_to_group', groupid);
  };
 
-
-
-  
-  
-
- /* $scope.feed = {
-    type: 'group', /* types: dashboard, group, tag */
-   /* group: {
-      name: "myGroup"
-    },
-    tag: {
-      name: "myTag"
-    },
-    posts:[
-      {
-        user:{
-          username: "Chris",
-          imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50"
-        },
-        html:"<p>This is my post!</p>"
-      }
-    ]
-  }*/
-
   var start = function(){
-    console.log('START ' + $scope.state + ' ');
-    console.log($scope.state);
     if ($scope.state.is_group_page){
       var groupid = (sharedService.getData()).groupid;
       getGroupPosts(groupid);
@@ -331,15 +299,13 @@ $scope.onGroupClick = function(groupid){
 
     } else if ($scope.state.is_showing_interest){
       var interestid = (sharedService.getData()).interestid;
-      console.log("AND NOW INTEREST IN FEED CONTROL: " + interestid);
       getPostsByInterest(interestid);
-    } else if ($scope.state.main_dashboard){
-      //getMainFeedPosts();
+    } else if ($scope.state.main_feed){
+      getMainFeedPosts();
     } else if ($scope.state.is_searching){
       var tag = (sharedService.getData()).tag;
       getPostsByHashTag(tag);
     }
-    fullGroupList();
  
 
   };
