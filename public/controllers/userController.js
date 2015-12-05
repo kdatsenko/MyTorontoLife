@@ -55,7 +55,7 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 	//  };
 
 
-	 $scope.delteUser = function (id) {
+	 $scope.deleteUser = function (id) {
 	 	$http({
 	 		method: 'DELETE',
 	 		url: '/users/profile/' + id
