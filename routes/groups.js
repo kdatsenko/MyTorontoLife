@@ -238,14 +238,18 @@ router.delete('/group/:id', function(req, res) {
     return res.status(403).send({error: 'Unauthorized account type'});
   }
   models.Groups.findById(req.params.id, function(err, group){
+      if (err) {return res.send(err);}
+      if (!group) {
+        return res.json({message: 'Group not found'});
+      }
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       group.remove(function(err, group) {
       if (err) {
         return res.send(err);
-      } else if (group && group.result.n > 0){
-        res.json({ message: 'Group ' + req.params.id + ' deleted!' });
+      } else if (group){
+        res.json({ message: 'Group ' + group.name + ' deleted!' });
       } else {
         res.json({ message: 'Unable to delete this group' });
       }
