@@ -53,8 +53,8 @@
           </tbody>
           <tbody>
             <tr ng-repeat="user in userList | orderBy:mySortFunction | filter:search">
-                <td ng-click='getUser(user.useremail)' class="btn-like">{{user.username}}</td>
-              <td ng-click='getUser(user.useremail)' class="btn-like">{{user.email}}</td>
+                <td ng-click='getUser(user.username)' class="btn-like">{{user.username}}</td>
+              <td ng-click='getUser(user.username)' class="btn-like">{{user.email}}</td>
               <td class="btn-like">
                 <a ng-click='deleteUser(user._id)'>
                   <strong style="margin-left:10px">(DELETE)</strong>

@@ -40,19 +40,19 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 				  interests: [0, 2]
 				}];
 
-	// $http({
-	// 	method:'GET',
-	// 	url: '/users'
-	// }).then(function successCallback(res) {
-	// 	$scope.userList = res.data.users;
+		$http({
+			method:'GET',
+			url: '/users'
+		}).then(function successCallback(res) {
+			$scope.userList = res.data;
 
-	// }, function errorCallback(res) {
-	// 	console.log(res.data.error);
-	// });
+		}, function errorCallback(res) {
+			console.log(res.data.error);
+		});
 
-	//  $scope.getUser = function (email) {
-	//  	$location.path('/userProfile/' + email);
-	//  };
+		 $scope.getUser = function (username) {
+		 	$location.path('/profile/' + username);
+		 };
 
 
 	 $scope.deleteUser = function (id) {
