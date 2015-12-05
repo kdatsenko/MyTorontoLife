@@ -212,12 +212,12 @@ UserGroups - for this userid, get all the groupids, populate with group name, an
 [ { group: { name: 'Toronto', _id: 5658ed81876352c41cb95891 } },
   { group: { name: 'Etobicoke', _id: 5658ed81876352c41cb95892 } },
   { group: { name: 'Little Italy', _id: 5658ed81876352c41cb95893 } } ]
-  */
+  */  
       var id;
       if(req.query.id){
-          id = req.query.id
+          id = req.query.id;
       }else{
-          id = res.session.user._id
+          id = req.session.user._id;
       }
       models.GroupMembers.find({ user: id}, '-_id -user')
       .populate({path: 'group', model: 'Groups', select:'_id name description'})
