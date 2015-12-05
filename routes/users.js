@@ -254,7 +254,7 @@ router.delete('/profile/:id', function(req, res) {
       if (err) {
         return res.send(err);
       } else if (user_rem){
-        res.json({ message: 'User ' + user.username + ' deleted!' });
+        res.json({ message: 'User ' + user_rem.username + ' deleted!' });
       } else {
         res.json({ message: 'Unable to delete this user' });
       }
