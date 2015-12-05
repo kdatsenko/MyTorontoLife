@@ -8,14 +8,6 @@ var crudApp = angular.module('crudApp');
  crudApp.controller('newPostController', function ($scope)  {
 
 
-
-		$scope.logininfoLists = [{useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'},
-                         {useremail:'katie@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.0'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'Windows',  browser:'AChrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'mobile', OS: 'ANDROID',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.1.0.2'},
-                         {useremail:'ok@ok.com', date:'12-12-2015',device :'DESCTOP', OS: 'Windows',  browser:'EXPLORER',location: 'AJAX', screen_size : '160x280', IP: '127.0.0.2'},
-                         {useremail:'ok@ok.com', date:'12-13-2015',device :'Amobile', OS: 'Windows',  browser:'Chrome',location: 'Toronto', screen_size : '760x280', IP: '127.0.0.2'}]
-
 				 $scope.postTypes = [
       {_id: "aaaa", name: "questions"},
       {_id: "bbbb" , name: "a business"},
@@ -31,7 +23,6 @@ var crudApp = angular.module('crudApp');
       {_id: "4", name: "a new group"},
       {_id: "65b5911afaf8bac32029672", name: "Announcement"}
     ];
-
 
 
     		 $scope.Interests = [
@@ -54,8 +45,8 @@ var crudApp = angular.module('crudApp');
 
     $scope.post={
 
-        short_text: 'hey',
-  date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
+        short_text: '',
+  date_posted: new Date,
   hashtags: [],
   external_urls: [],
   numberofratings: 30,
