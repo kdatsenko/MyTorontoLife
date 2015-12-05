@@ -346,15 +346,22 @@ var postsRatings = [
   rating: 1}
   ];
 
-models.Interests.collection.insert(interests, onInsert);
-models.PostTypes.collection.insert(postTypes, onInsert);
- models.Groups.collection.insert(groups, onInsert);
- models.GroupMembers.collection.insert(usergroups, onInsert);
- models.Hashtags.collection.insert(hashtags, onInsert);
- models.Users.collection.insert(users, onInsert)
- models.Posts.collection.insert(posts, onInsert);
-  models.PostRatings.collection.insert(postsRatings, onInsert);
+function insertOnce(collection, data){
+  collection.count(function(err, count){
+    if(count == 0){
+      collection.insert(data, onInsert);
+    }
+  });
+}
 
+insertOnce(models.Interests.collection, interests);
+insertOnce(models.PostTypes.collection, postTypes);
+insertOnce(models.Groups.collection, groups);
+insertOnce(models.GroupMembers.collection, usergroups);
+insertOnce(models.Hashtags.collection, hashtags);
+insertOnce(models.Users.collection, users);
+insertOnce(models.Posts.collection, posts);
+insertOnce(models.PostRatings.collection, postsRatings);
 
 
  test();
