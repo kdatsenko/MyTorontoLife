@@ -41,26 +41,29 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 				  interests: [0, 2]
 				}];
 
-	// $http({
-	// 	method:'GET',
-	// 	url: '/users'
-	// }).then(function successCallback(res) {
-	// 	$scope.userList = res.data.users;
+	$http({
+		method:'GET',
+		url: '/users'
+	}).then(function successCallback(res) {
+		
+		console.log(res);
+		$scope.userList = res.data;
 
-	// }, function errorCallback(res) {
-	// 	console.log(res.data.error);
-	// });
+	}, function errorCallback(res) {
+		console.log(res.data);
+	});
 
-	//  $scope.getUser = function (email) {
-	//  	$location.path('/userProfile/' + email);
-	//  };
+	 $scope.getUser = function (email) {
+	 	$location.path('/userProfile/' + email);
+	 };
 
 
-	 $scope.delteUser = function (id) {
+	 $scope.deleteUser = function (id) {
 	 	$http({
 	 		method: 'DELETE',
 	 		url: '/users/profile/' + id
 	 	}).then(function successCallback(res) {
+	 		console.log('DELETE USERS successcallback');
  			for (var i = 0; i < $scope.userList.length; i++) {
 	 			if ($scope.userList[i].id == id) {
 	 				$scope.userList.splice(i, 1);
@@ -74,6 +77,7 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 
 
 	 	}, function errorCallback(res) {
+	 		console.log('DELETE USERS errorcallback');
 	 		$scope.showMsg = true;
 			$scope.msg = res.data.error;
 			$timeout(function() {
@@ -81,4 +85,5 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 			}, 3000);
 	 	});
 	 };
+
 });
