@@ -1,20 +1,36 @@
 var crudApp = angular.module('crudApp');
 
-crudApp.controller('interestController', function ($scope, $http, $location) {
+crudApp.controller('interestController', function ($scope, $http, $location, $timeout) {
+
+	$scope.mySortFunction = function(item) {
+			if(isNaN(item[$scope.sortExpression]))
+				return item[$scope.sortExpression];
+			return parseInt(item[$scope.sortExpression]);
+		}
 
 	$scope.showMsg = false;
 
-	$http({
-		method:'GET',
-		url: '/interests'
-	}).then(function successCallback(res) {
-		$scope.interestList = res.data.interests;
+	 $scope.interestList = [
+      {_id: "aaaa", name: "fishing"},
+      {_id: "bbbb" , name: "cats"},
+      {_id: "cccc", name: "dogs"},
+      {_id: "dddd", name: "real estate"},
+      {_id: "565b5911afaf8bac3202966c", name: "Food"}
+    ];
 
-	}, function errorCallback(res) {
-		console.log(res.data.error);
-	});
 
-	$scope.submit = function () {
+	// $http({
+	// 	method:'GET',
+	// 	url: '/interests'
+	// }).then(function successCallback(res) {
+	// 	$scope.interestList = res.data.interests;
+
+	// }, function errorCallback(res) {
+	// 	console.log(res.data.error);
+	// });
+
+	$scope.submitInterest = function () {
+>>>>>>> origin/jim
 		if ($scope.interest == undefined) {
 			$scope.showMsg = true;
 			$scope.msg = "Please fill the blank";
@@ -24,7 +40,10 @@ crudApp.controller('interestController', function ($scope, $http, $location) {
 		} else {
 			$http({
 				method: 'POST',
-				url: '/interests/addnew'
+				url: '/interests/addnew',
+				data: JSON.stringify({
+					name: $scope.interest
+				})
 			}).then(function successCallback(res) {
 				$scope.showMsg = true;
 				$scope.msg = res.data.message;
