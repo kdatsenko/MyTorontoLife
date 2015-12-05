@@ -54,13 +54,13 @@
 
         <div ng-show="state.main_dashboard">
           <h1>Interests</h1>
-          <ul>
+          <ul class="scroll">
             <li ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a></li>
           </ul>
         </div>
         <div ng-show="state.main_dashboard">
           <h1>Groups</h1>
-          <ul>
+          <ul class="scroll">
             <li ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a></li>
           </ul>
           <a>show all public groups</a>
