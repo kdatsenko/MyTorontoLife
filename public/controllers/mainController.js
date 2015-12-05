@@ -170,19 +170,25 @@ $scope.getPostPage = function (postid){
    		$scope.state.username = data.user.username;
     	//var id = data.user._id;
 		populateInterests(data.user.username);
-		populateUserGroups();
+		$scope.populateUserGroups();
   }).error(function(data, status, headers, config) {
     // if(status == 403 )
 
   });
  };
 
- var populateUserGroups = function(){
+ $scope.populateUserGroups = function(){
   	$http.get('/users/user/groups').success(function(data, status, headers, config) {
         $scope.user.groups = data;
 
     });
  };
+
+ $scope.showAllPublicGroups = function(){
+    $http.get('/groups').success(function(data, status, headers, config) {
+    	$scope.user.groups = data;
+    });
+};
 
  var populateInterests = function(username){
  	$http({
@@ -199,6 +205,9 @@ $scope.getPostPage = function (postid){
 
     });
  };
+
+
+
 $http.get('/auth/loggedInUser').success(function(data, status, headers, config){
  if(data.logged == false && window.location.path != '/auth/github'){
    $location.path('/login');

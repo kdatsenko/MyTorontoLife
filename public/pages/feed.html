@@ -71,16 +71,16 @@
         <div class="box" ng-show="state.is_group_page">
           <h1>Group: {{group.name}}</h1>
           <ul>
-<li>
-<div ng-init="limit = 150; moreShown = false">
-    {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
-    <a ng-show="group.description.length > limit && !moreShown"
-      href ng-click="limit=limit=300; moreShown = true">  
-      More
-    </a>
-    <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
-</div>
-</li>
+              <li>
+              <div ng-init="limit = 150; moreShown = false">
+                  {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
+                  <a ng-show="group.description.length > limit && !moreShown"
+                    href ng-click="limit=limit=300; moreShown = true">  
+                    More
+                  </a>
+                  <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
+              </div>
+              </li>
 
            <!-- <div id="group_description">{{group.description}}</div>-->
             <!--<a ng-if=""><li>Add me to this group</li></a>-->
@@ -95,6 +95,8 @@
           </ul>
           <!--<a ng-if="">Add me to this group</a>-->
         </div>
+
+
         <div class="box" ng-show="state.is_showing_interest || state.is_searching">
           <h1>Showing Results for:{{search_tag}}</h1>
         </div>
@@ -106,14 +108,34 @@
             <li ng-click="createNewPost( 'New question')">New question</li>
           </ul>
         </div>
+   <div class="box" id="kitteh" >
+        <h3>Tag Index</h3>
+        <ul>
+          <li><a href="#" ng-click="getTagIndex()">Tag Index</a></li>
+          <li ng-repeat="tag in tags">
+          <a href="#">{{tag.name}}</a>
+          <a href="#">{{tag.count}}</a>
 
-        <ul class="box footerlinks">
-          <li><a href="#">About</a></li>
+          </li>
+  
+
+               <!--<li><a href="#">About</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Partners</a></li>
+          <li><a href="#">Email Policy</a></li>
+          <li><a href="#">Data Attribution</a></li>-->
+        </ul>
+      </div>
+       
+    <!--    <ul class="box footerlinks">
+          <li><a href="#">Tag Index</a></li>
+          <!--<li><a href="#">About</a></li>
           <li><a href="#">Terms of Service</a></li>
           <li><a href="#">Partners</a></li>
           <li><a href="#">Email Policy</a></li>
           <li><a href="#">Data Attribution</a></li>
-        </ul>
+        </ul> -->
+     
       </div>
 
 

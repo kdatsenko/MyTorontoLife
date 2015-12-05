@@ -150,6 +150,9 @@ div.box {
     display: flex;
     justify-content: space-around;
     box-sizing: border-box; }
+
+
+
     div.box ul li {
       list-style: none;
       width: 100%;
@@ -157,6 +160,14 @@ div.box {
       box-sizing: border-box;
       text-align: center;
       border: 1px solid #eee; }
+
+ #kitteh ul {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+
+    box-sizing: border-box; }
+
     div.box ul li:hover {
       background: #eee; }
   div.box div.profile {

@@ -132,13 +132,14 @@ Also, should smartly recommend the "Add myself to this group based on whether th
     });
   };
 
-  var getTagIndex = function() {
+  $scope.getTagIndex = function() {
     $http({
       method: 'GET',
         url: '/tags', //get all user emails & displayname
     })
     .then(function successCallback(response) {
       console.log(response);
+      $scope.tags = response.data;
 
     },
     function errorCallback(response) {
