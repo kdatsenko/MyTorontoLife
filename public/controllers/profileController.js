@@ -16,19 +16,18 @@ crudApp.factory('profileService', function(){
 crudApp.controller('profileController', function (profileService, $scope, $http, $compile, $routeParams, $location) {
 	$scope.user = {
 		_id: "1234",
-		username: "John Cena",
+		username: "Username",
 		imageurl: "/images/cool_cat.png",
-		email: "mynameisjohncena@johncena.com",
-		description: "You're reading the description of someone, and his name is John Cena.",
+		email: "email address",
+		description: "description",
 		age: 38,
 		gender: 'male',
-		interests: [{name: "Wrestling"}, {name: "Vine"}, {name: "Memes"}]
+		interests: []
 	}
 
 	$scope.posts = [{text: "Example post. Ideally style and structure for posts from other parts of the site can be used here to see all posts of a user."}]
 
-	$scope.groups =[{name: "Wrestling Fans", description: "A group for lovers of Wrestling"},
-					{name: "Meme Central", description: "All your favourite memes in one place"}]
+	$scope.groups =[]
 
 	$scope.editing = false
 
@@ -155,11 +154,20 @@ crudApp.controller('profileController', function (profileService, $scope, $http,
 			.success(function(data, status, headers, config){
 				$scope.groups = data.map(function (x) {
 					var g = x
-					g.description = g.description.substring(0, $scope.descriptionCutOff) + '...'
+					if(g.description.length > $scope.descriptionCutOff){
+						g.description = g.description.substring(0, $scope.descriptionCutOff) + '...'
+					}
 					return g
 				})
 			}).error(function(data, status, headers, config){
 				$scope.groups = []
+			})
+
+			$http.get('/users/user/posts?username=' + data.username)
+			.success(function (data, status, headers, config) {
+				$scope.Posts = data
+			}).error(function (data, status, headers, config) {
+				console.log("Error fetching posts")
 			})
 		}).error(function(data, status, headers, config){
 			$location.path("login")
