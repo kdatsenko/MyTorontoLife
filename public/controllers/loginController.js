@@ -37,30 +37,15 @@ var crudApp = angular.module('crudApp');
   			return
   		}
 
-  		/*$.ajax({
-  			url: "/auth/local/login",
-  			type: "POST",
-  			contentType: "application/x-www-form-urlencoded",
-  			data: {'email': email, 'password': password},
-  			success: function(data){
-  				// Successful login
-  				location.href = "profile.html"
-  			},
-  			error: function(data){
-  				$("#login-error").html(data.responseJSON.message)
-  				$("#login-error").show()
-  			}
-  		})*/
-
-
   		var data = {
       		email: email,
       		password: password
       	};
   		$http.post('/auth/local/login', data).success(function(response) {
-  			 $scope.state.is_logged = true;
-      	  $location.path('/feed');
-      		 $scope.$emit('update_nav_bar', true);
+            $("#signin_popup").modal('hide')
+  			$scope.state.is_logged = true;
+            $location.path('/feed');
+      		$scope.$emit('update_nav_bar', true);
       	}).error(function (data, status, headers, config) {
       		$scope.login_error_msg = data.message;
           	$scope.loginError = true;
@@ -100,21 +85,6 @@ var crudApp = angular.module('crudApp');
   			return
   		}
 
-  		/*$.ajax({
-  			url: "/auth/local/signup",
-  			type: "POST",
-  			contentType: "application/x-www-form-urlencoded",
-  			data: {'email': email, 'password': pass1, 'username': username},
-  			success: function(data){
-  				// Successful login
-  				redirect();
-
-  			},
-  			error: function(data){
-  				$("#signup-error").html(data.responseJSON.message)
-  				$("#signup-error").show()
-  			}
-  		})*/
   		var data = {
       		email: email,
       		password: pass1,
@@ -123,6 +93,7 @@ var crudApp = angular.module('crudApp');
 
   		$http.post('/auth/local/signup', data).success(function(response) {
   			$scope.state.is_logged = true;
+            $("#signup_popup").modal('hide')
   			$location.path('/profile');
       		console.log(response);
       	}).error(function (data, status, headers, config) {

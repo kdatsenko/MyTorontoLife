@@ -1,7 +1,7 @@
 <div id="loginbar" ng-controller="loginController" style="z-index: 10000;">
 	<div ng-if="logged == false">
 		<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#signin_popup" ng-click = "login_form()" >Login</button>
-		<button type="button" class="btn" data-toggle="modal" data-target="#signup_popup" ng-click = "register_form()" >Register</button>
+		<button type="button" class="btn btn-success" data-toggle="modal" data-target="#signup_popup" ng-click = "register_form()" >Register</button>
 
 		<div id="signin_popup" role="dialog" class="modal" aria-labelledby="signin-title" ng-controller="loginController">
 	        <div class="modal-dialog" role="document">
@@ -17,7 +17,7 @@
 	                        		<p id="login-error" style="color: red" ng-show="loginError">{{login_error_msg}}</p>
 									<label>Email:</label><input id="login-email" type="text" class="form-control" placeholder="Email">
 									<label>Password:</label><input id="login-password" type="password" class="form-control" placeholder="Password">
-									<button type="button" data-dismiss="modal" class="btn btn-primary" ng-click="login()">
+									<button type="button" class="btn btn-primary" ng-click="login()">
 										Signin
 									</button>
 	                        	</form>
@@ -52,7 +52,7 @@
 									<label>Username:</label><input id="signup-username" type="text" class="form-control" placeholder="Username">
 									<label>Password:</label><input id="signup-password"  type="password" class="form-control" placeholder="Password">
 									<label>Confirm password:</label><input id="signup-password-conf" type="password" class="form-control" placeholder="Password">
-									<button type="button" data-dismiss="modal" class="btn btn-primary" ng-click="signup()">
+									<button type="button" class="btn btn-primary" ng-click="signup()">
 										Signup
 									</button>
 	                        	</form>

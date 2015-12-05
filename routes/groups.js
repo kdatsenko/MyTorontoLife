@@ -1,5 +1,6 @@
 var express = require('express');
 var router = express.Router();
+var middleware = require('../middleware');
 
 var models = {};
 models.Groups = require('mongoose').model('Groups');
@@ -55,14 +56,26 @@ router.get('/group', function(req, res) {
 */
   //Retrieve entire list from DB
   //Authenticate the current user for Admin Status
-  if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
-      models.Groups.aggregate(
-      {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
-      {$match: {private_type: false}},
+  if (!middleware.checkAdmin(req, res, 1) & !middleware.checkAdmin(req, res, 0)){
+      /*models.Groups.aggregate(
+      [{$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
+      {$match: {private_type: false}}],
       function(err, groups) {
-        if (err) { return res.send(err); }
+          console.log("GROUPS")
+          console.log(groups)
+        if (err) {
+            throw err
+            return res.send(err);
+        }
         res.json(groups);
-      });
+    });*/
+    models.Groups.find({private_type: false}, function (err, groups) {
+        if(err){
+            throw err
+        }
+
+        res.json(groups)
+    })
   } else { //Get only those that are non-private
       models.Groups.aggregate(
       {$project: {name: 1, short_description: {$substr : ["$description", 0, 100]}}},
@@ -152,11 +165,24 @@ router.post('/group/addmember', function(req, res){
 });
 
 var joinGroup = function (req, res, group){
-    models.GroupMembers.findOneAndUpdate({user: req.session.user._id, group: group._id},
-        {user: req.session.user._id, group: group._id}, { upsert: true }, function(err, membership){
-      if (err){ return res.send(err); }
-      res.json({ message: 'Joined group!'});
-    });
+    // Surely the below won't work if a user's not in this group?
+    /*models.GroupMembers.findOneAndUpdate({user: req.session.user.id, group: group._id},
+        {user: req.session.user.id, group: group._id}, { upsert: true }, function(err, membership)
+      res.json({ message: 'Joined group!', result: membership});
+    });*/
+    var membership = new models.GroupMembers()
+    membership.user = req.session.user._id
+    membership.group = group._id
+    console.log(membership.user)
+    console.log(membership.group)
+
+    membership.save(function (err) {
+        if(err){
+            throw err
+        }
+
+        res.json({ message: 'Joined group!', result: membership})
+    })
 };
 
 //group creator add member

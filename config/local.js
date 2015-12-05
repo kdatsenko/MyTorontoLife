@@ -1,7 +1,8 @@
 var passport = require('passport'),
 	User = require('mongoose').model('Users'),
 	LocalStrategy = require('passport-local').Strategy,
-	bcrypt = require('bcrypt-nodejs');
+	generateHash = require('./bcrypt').generateHash,
+	validPassword = require('./bcrypt').validPassword;
 
 module.exports = function () {
 	passport.use('local-signup', new LocalStrategy({
@@ -17,7 +18,7 @@ module.exports = function () {
 			if(err){
 				return done(err)
 			}
-			
+
 			if(existingUser){
 				// User with this email already exists
 				// 			err   user     info
@@ -70,23 +71,7 @@ module.exports = function () {
 				return done(null, false, {message: 'Invalid password! Try again!'})
 			}
 
-
 			return done(null, existingUser)
 		})
 	}))
-}
-
-function generateHash(password){
-	return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-}
-
-function validPassword(password, user){
-	try{
-		return bcrypt.compareSync(password, user.password)
-	}catch(err){
-		// This usually only happens when there are non-hashed passwords
-		// in the db
-		console.error(err)
-		return false
-	}
 }

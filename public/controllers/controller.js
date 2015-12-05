@@ -1,5 +1,5 @@
 // create the module
-var crudApp = angular.module('crudApp', ['ngRoute']);
+var crudApp = angular.module('crudApp', ['ngRoute', 'ngMaterial']);
 
 /* Service to share data between controllers. Used to share user email
 for navigation to and display of profile page. */
@@ -79,6 +79,12 @@ crudApp.config(function($routeProvider, $locationProvider) {
       .when('/tags', {
       	templateUrl : 'pages/list.html',
       	controller  : 'tagsListController'
+			})
+			.when('/create_post', {
+				templateUrl : 'pages/newpost.html',
+				controller  : 'newPostController'
+			})
+	  .otherwise({
       })
       .when('/newpost', {
       	templateUrl : 'pages/newpost.html',
