@@ -3,7 +3,7 @@ var crudApp = angular.module('crudApp');
 
  crudApp.controller('mainController', function($scope, $location, $http, $route, sharedService) {
 
- 	$scope.showNavBar = false;
+ 	$scope.showNavBar = true;
  	$scope.state = {
 
         username: 'Chris',
@@ -13,13 +13,13 @@ var crudApp = angular.module('crudApp');
          main_dashboard: true,
          main_feed: true,
          admin_dashboard : false,
-         is_logged : true, 
+         is_logged : true,
          is_searching: false,
          is_group_page: false,
          is_showing_interest: false
 
          //The search bar is in the scope of the feedController
-         //Question: if we overwrite is_showing_interest in feedContrl, will it be 
+         //Question: if we overwrite is_showing_interest in feedContrl, will it be
       };
 
          $scope.user = {
@@ -80,13 +80,18 @@ var crudApp = angular.module('crudApp');
 	});*/
 
 
+  $scope.showHero = true;
 
-    
-    
-$scope.logOut = function() {
- alert('logOut');
-}   
-    
+  $scope.logOut =
+  $scope.logout = function(){
+      $scope.state.is_logged = false;
+      $http.get('/auth/logout').success(function(data, status, headers, config) {
+          $scope.showLogin = false;
+          $scope.showRegister = false;
+          return $location.path('/'); // path not hash
+      });
+  }
+
 
  $scope.getPostByInterest = function(interest_id) {
  	 resetStateVariables();
@@ -116,15 +121,15 @@ $scope.getPostByGroup = function(group_id){
 
  	*/
  	alert('Admin Dash!');
- 	
+
 };
 
 $scope.getMainDashBoard = function() {
 	resetStateVariables();
-	$scope.state.main_dashboard = true; 
- 	$scope.state.main_feed = true; 
+	$scope.state.main_dashboard = true;
+ 	$scope.state.main_feed = true;
  	$location.path("/feed");
-  	$route.reload();	
+  	$route.reload();
 };
 
 
@@ -166,7 +171,10 @@ $scope.getPostPage = function (postid){
     	//var id = data.user._id;
 		populateInterests(data.user.username);
 		populateUserGroups();
-    });
+  }).error(function(data, status, headers, config) {
+    // if(status == 403 )
+
+  });
  };
 
  var populateUserGroups = function(){
@@ -190,8 +198,11 @@ $scope.getPostPage = function (postid){
     	console.log(response);
 
     });
- };  
-
-
+ };
+$http.get('/auth/loggedInUser').success(function(data, status, headers, config){
+ if(data.logged == false && window.location.path != '/auth/github'){
+   $location.path('/login');
+ }
+});
 
  });

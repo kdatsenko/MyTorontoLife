@@ -1,8 +1,9 @@
 crudApp.controller('feedController', function($scope, $location, $http, sharedService) {
 
+// angular.element(document.querySelector('[ng-controller=mainController]')).scope().showNavBar = true;
+
 
  $scope.search_tag = '';
- $scope.showHero = true;
  $scope.groupid = '';
  $scope.group = null;
  $scope.search = { tag: '' };
@@ -14,24 +15,24 @@ crudApp.controller('feedController', function($scope, $location, $http, sharedSe
       {_id: "3", name: "UofT", description :""},
       {_id: "4", name: "a new group", description :""},
       {_id: "65b5911afaf8bac32029672", name: "Announcement", description :""}
-    ];  
-     
-    
-      
+    ];
+
+
+
          $scope.Interests = [
       {_id: "aaaa", name: "fishing"},
       {_id: "bbbb" , name: "cats"},
       {_id: "cccc", name: "dogs"},
       {_id: "dddd", name: "real estate"},
       {_id: "565b5911afaf8bac3202966c", name: "Food"}
-    ];  
-    
+    ];
+
 
 
 /*
 group: "5660cdaa20bcd1782ec2225e"
 Missing: groupname - Etobioke ---- we just jave groupid
-avatarURL : "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50", 
+avatarURL : "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50",
 where is interest???
 On group search: should fill in description, name
 Also, should smartly recommend the "Add myself to this group based on whether they're in the group"
@@ -41,49 +42,49 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 
 
   $scope.Posts = [
-     {_id: "aaaa5", 
+     {_id: "aaaa5",
       username: "Chris" ,
       short_text: 'hey',
        userid: {
         imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50" },
       date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
-      
+
       interestname : 'Cooking',
-      groupname: 'Toronto', 
+      groupname: 'Toronto',
       averagerating: 3.5,
-       hashtags: ['great', 'cool', 'iheartmyTO']} , 
-        {_id: "aaaa6", 
-      username: "Adam", 
+       hashtags: ['great', 'cool', 'iheartmyTO']} ,
+        {_id: "aaaa6",
+      username: "Adam",
       userid: {
         imageurl: "https://i1.wp.com/slack.global.ssl.fastly.net/3654/img/avatars/ava_0001-72.png?ssl=1" },
       date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
       short_text: 'hello!',
       interestname : 'CS',
-      groupname: 'Etobicoke', 
+      groupname: 'Etobicoke',
       averagerating: 5,
        hashtags: ['wellthatwasfun', 'iheartmyTO']},
-      {_id: "aaaa7", 
-      username: "Jim", 
+      {_id: "aaaa7",
+      username: "Jim",
       userid: {
         imageurl: "https://avatars.slack-edge.com/2015-11-18/14843332005_64782944e2c667c5e73f_72.jpg" },
       date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
       short_text: 'hello world!',
       interestname : 'Toronto',
-      groupname: 'SadUniLife', 
+      groupname: 'SadUniLife',
       averagerating: 4.5,
        hashtags: ['wellthatwasfun', 'wholetthedogsoutwhowhowho']},
-      {_id: "aaaa8", 
-      username: "Katie", 
+      {_id: "aaaa8",
+      username: "Katie",
       userid: {
         imageurl: "https://secure.gravatar.com/avatar/524e5d5e8c92b9dcf1ad7f6bd582eb3c.jpg" },
       date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
       short_text: 'Want Christmas and kittens!',
       interestname : 'Etobicoke',
-      groupname: 'EvenSaddderUniLife', 
+      groupname: 'EvenSaddderUniLife',
       averagerating: 4.5,
-       hashtags: ['adeleonstage', 'lanaisofftotheraces']} 
+       hashtags: ['adeleonstage', 'lanaisofftotheraces']}
     ];
-   
+
 
  $scope.getUserProfile = function(user_name) {
   alert('Go to the profile of: ' + user_name);
@@ -93,7 +94,7 @@ Also, should smartly recommend the "Add myself to this group based on whether th
   //alert('Go to the post with ID: ' + post_id);
     var route = '/permalink/:' + post_id;
     $location.path(route);
-} 
+}
 
  $scope.createNewPost = function(post_type) {
   alert(post_type);
@@ -201,7 +202,7 @@ var getGroupPosts = function(group_id){
         params: {groupid: group_id}
     })
     .then(function successCallback(response) {
-      var reformattedPosts = response.data.posts.map(function(post){ 
+      var reformattedPosts = response.data.posts.map(function(post){
         var post = post;
         post.group = {
           _id: post.group,
@@ -221,7 +222,7 @@ var getGroupPosts = function(group_id){
 
   var fullGroupList = function(){
     $http.get('/groups').success(function(data, status, headers, config) {
-      console.log(data);  
+      console.log(data);
     });
   };
 
@@ -232,9 +233,9 @@ var getGroupPosts = function(group_id){
  }
 
  var populateFeed = function (){
-  
 
-    
+
+
  }
 
 
@@ -251,7 +252,7 @@ var getGroupPosts = function(group_id){
      },
      function errorCallback(response) {
       console.log(response);
-     });  
+     });
 
  };
 
@@ -265,8 +266,8 @@ var getGroupPosts = function(group_id){
     $scope.is_group_member = false;
         console.log(response.data.message);
     },
-    function errorCallback(response) {   
-      console.log(response);  
+    function errorCallback(response) {
+      console.log(response);
     });
  };
 
@@ -304,7 +305,7 @@ $scope.onGroupClick = function(groupid){
       var tag = (sharedService.getData()).tag;
       getPostsByHashTag(tag);
     }
- 
+
 
   };
 

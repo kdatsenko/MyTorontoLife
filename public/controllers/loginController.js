@@ -12,7 +12,7 @@ var crudApp = angular.module('crudApp');
    * Controller for login page template.
    */
    crudApp.controller('loginController', function($scope, $location, $http) {
-
+     angular.element(document.querySelector('[ng-controller=mainController]')).scope().showNavBar = false;
    	$scope.logged = false;
    	$scope.username = null;
    	$scope.login_error_msg = "";
@@ -122,16 +122,16 @@ var crudApp = angular.module('crudApp');
       //
       //  Do not change, the browser must be physically redirected for
       //  this to work- AJAX will not work!
-      /* 
+      /*
 $scope.state.is_logged = true;
           $scope.$emit('update_nav_bar', true);
       */
       //
 
-        $scope.state.is_logged = true;
+        // $scope.state.is_logged = true;
           window.location = "/auth/github";
           $scope.$emit('update_nav_bar', true);
-      
+
   	}
 
 
