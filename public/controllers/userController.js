@@ -1,53 +1,59 @@
 var crudApp = angular.module('crudApp');
 
 
-crudApp.controller('userController', function ($scope, $http, $location) {
+crudApp.controller('userController', function ($scope, $http, $location, $timeout) {
 
-		// $scope.userList =
-	 // 			[{email: 'hello@fromtheotherside.com',
-		// 		  password: 'dddd',
-		// 		  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
-		// 		  loggedin: 0,
-		// 		  username: 'Adele',
-		// 		  description: '25 now',
-		// 		  //validation between 10 and 200 (vampires!)
-		// 		  age: 25,
-		// 		  gender: 'female', //for aliens!
-		// 		  homeaddress: 'London',
-		// 		  workplace: 'Some label',
-		// 		  position: 'Songstress',
-		// 		  contactinfo: 'Forget it',
-		// 		  interests: [0, 2]},
+	$scope.mySortFunction = function(item) {
+			if(isNaN(item[$scope.sortExpression]))
+				return item[$scope.sortExpression];
+			return parseInt(item[$scope.sortExpression]);
+		}
 
-		// 		  {email: 'borntodie@lana.com',
-		// 		  password: 'dddd',
-		// 		  accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
-		// 		  loggedin: 0,
-		// 		  username: 'LanaDelRey',
-		// 		  description: 'Off to the races!',
-		// 		  //validation between 10 and 200 (vampires!)
-		// 		  age: 25,
-		// 		  gender: 'female', //for aliens!
-		// 		  homeaddress: 'USA',
-		// 		  workplace: 'Some label',
-		// 		  position: 'Songstress',
-		// 		  contactinfo: 'Forget it',
-		// 		  interests: [0, 2]
-		// 		}];
+		$scope.userList =
+	 			[{email: 'hello@fromtheotherside.com',
+				  password: 'dddd',
+				  accounttype: 2, //0 for Super Admin, 1 for Admin, 2 for user
+				  loggedin: 0,
+				  username: 'Adele',
+				  description: '25 now',
+				  //validation between 10 and 200 (vampires!)
+				  age: 25,
+				  gender: 'female', //for aliens!
+				  homeaddress: 'London',
+				  workplace: 'Some label',
+				  position: 'Songstress',
+				  contactinfo: 'Forget it',
+				  interests: [0, 2]},
 
-	$http({
-		method:'GET',
-		url: '/users'
-	}).then(function successCallback(res) {
-		$scope.userList = res.data.users;
+				  {email: 'borntodie@lana.com',
+				  password: 'dddd',
+				  accounttype: 1, //0 for Super Admin, 1 for Admin, 2 for user
+				  loggedin: 0,
+				  username: 'LanaDelRey',
+				  description: 'Off to the races!',
+				  //validation between 10 and 200 (vampires!)
+				  age: 25,
+				  gender: 'female', //for aliens!
+				  homeaddress: 'USA',
+				  workplace: 'Some label',
+				  position: 'Songstress',
+				  contactinfo: 'Forget it',
+				  interests: [0, 2]
+				}];
 
-	}, function errorCallback(res) {
-		console.log(res.data.error);
-	});
+	// $http({
+	// 	method:'GET',
+	// 	url: '/users'
+	// }).then(function successCallback(res) {
+	// 	$scope.userList = res.data.users;
 
-	 $scope.getUser = function (email) {
-	 	$location.path('/userProfile/' + email);
-	 };
+	// }, function errorCallback(res) {
+	// 	console.log(res.data.error);
+	// });
+
+	//  $scope.getUser = function (email) {
+	//  	$location.path('/userProfile/' + email);
+	//  };
 
 
 	 $scope.delteUser = function (id) {

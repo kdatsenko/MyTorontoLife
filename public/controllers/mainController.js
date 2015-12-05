@@ -112,17 +112,7 @@ $scope.getPostByGroup = function(group_id){
 };
 
  $scope.getAdminDashBoard = function() {
- 	/*
-	resetStateVariables();
- 	$scope.state.main_dashboard = false;
- 	$scope.state.admin_dashboard = true;
- 	//sharedService.setData({username : user_name});
- 	$location.path('/admin');
-
-
- 	*/
- 	alert('Admin Dash!');
-
+ 	$route.reload();
 };
 
 $scope.getMainDashBoard = function() {
