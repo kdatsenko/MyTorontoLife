@@ -4,6 +4,9 @@
     #header {margin-left:30px;}
     #postList {margin-left:300px;margin-right:30px;}
 </style>
+<nav id="topNav" class="feed">
+    <h1>MyTorontoLife.ca</h1>
+</nav>
 <div id="postList">
     <div id="header">
       <h1>Admin Dashboard</h1>
@@ -22,17 +25,18 @@
     </nav>
 
   <div id="main" ng-controller="postController">
-  
-  <div>
-  <div>
-    Sort by: 
+
+<div>
+	<div>
+		Sort by: 
+
         <select ng-model="sortExpression">
-      <option value="user">User</option>
-      <option value="group">Group</option>
+			<option value="ser">User</option>
+			<option value="group">Group</option>
       <option value="datePost">Date Post</option>
       <option value="type">Type</option>
       <option value="shortDescription">Short Description</option>
-    </select>
+		</select>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -68,10 +72,10 @@
           <tbody>
             <tr ng-repeat="post in postList | orderBy:mySortFunction | filter:search">
               <td class="btn-like">{{post.username}}</td>
-              <td class="btn-like">{{post.group}}</td>
-              <td class="btn-like">{{post.datePost}}</td>
+            	<td class="btn-like">{{post.group}}</td>
+              <td class="btn-like">{{post.date_posted}}</td>
               <td class="btn-like">{{post.post_type}}</td>
-              <td class="btn-like">{{post.text}}</td>
+              <td class="btn-like">{{post.short_text}}</td>
               <td>
                 <a ng-click='deletePost(post._id)'>
                   <strong style="margin-left:10px">(DELETE)</strong>
@@ -80,6 +84,11 @@
             </tr>
           </tbody>
         </table>
+
+        <div ng-show="showMsg">
+        {{msg}}
+      </div>
 </div>
+
   </div>
 </div>

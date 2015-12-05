@@ -1,19 +1,20 @@
 body {
   padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px
 }
 
 a {
   color: #00B7FF;
 }
 
+
 body, html {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  font-family: 'Ek Mukta', sans-serif; }
+  font-family: 'Ek Mukta', "Lucida Grande", Helvetica, Arial, sans-serif;}
   body h1, body h2, body h3, body h4, body ul, body li, html h1, html h2, html h3, html h4, html ul, html li {
-    font-family: 'Ek Mukta', sans-serif;
+    font-family: 'Ek Mukta', "Lucida Grande", Helvetica, Arial, sans-serif;
     font-weight: 100;
     padding: 0;
     margin: 0;
@@ -206,3 +207,7 @@ div.box:hover {
      content: "\2605";
      position: absolute;
   }
+
+div.modal-backdrop{
+  z-index: 100!important;
+}

@@ -16,23 +16,58 @@
 	</div>
 	<div class="row">
 		<div id="below-image" class="col-md-12">
-			<h2 id="username" ng-bind="user.username"></h2>
-			<h4 id="email" ng-bind="user.email"></h2>
+			<h2 id="username" class='margin-sp-down' ng-bind="user.username"></h2>
+			<h4 id="email" class='margin-sp-down' ng-bind="user.email"></h2>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-4 col-md-offset-4">
-			<p id="description" ng-bind="user.description"></p>
+			<p id="description" ng-bind="user.description" ng-show="!editing"></p>
+			<textarea class="form-control margin-sp-down'" id="description-box" placeholder="Description" style="width:100%" ng-if="editing" ng-model="edits.description" ng-bind="user.description"></textarea>
 		</div>
 	</div>
 	<div class="row" ng-if="hasEditPermission">
 		<div id="buttons" class="col-md-2 col-md-offset-5" style="text-align: center;">
-			<button id="edit-button" class="btn btn-primary" ng-click="enterEditMode()">Edit</button>
+			<button id="edit-button" class="btn btn-primary" ng-click="enterEditMode()" ng-if="!editing">Edit</button>
+			<button id="save-button" class='btn btn-success margin-sp-down margin-sp-up' ng-click='saveChanges()' ng-if="editing">Save Changes</button>
+			<button id="dismiss-button" class='btn btn-danger margin-sp-down' ng-click='dismissChanges()' ng-if="editing">Discard Changes</button>
+			<button id="change-password-button" class='btn btn-primary margin-sp-down' data-toggle="modal" data-target="#password-modal" ng-if="editing">Change Password</button>
+			<button id="change-image-button" class='btn btn-primary' data-toggle="modal" data-target="#image-upload-modal" ng-if="editing">Change Profile Image</button>
 		</div>
 	</div>
 	<div class="row">
 		<div class="col-md-3">
 			<h2 style="text-align:center">Groups</h2>
+
+			<md-content layout-padding layout="column" ng-if="editing">
+			    <md-autocomplete
+			      ng-disabled="false"
+			      md-no-cache="true"
+			      md-selected-item="groupCtrl.selectedGroup"
+			      md-search-text-change="groupCtrl.searchTextChange(groupCtrl.groupText)"
+			      md-search-text="groupCtrl.groupText"
+			      md-selected-item-change="groupCtrl.selectedItemChange(item)"
+			      md-items="item in groupCtrl.querySearch(groupCtrl.groupText)"
+			      md-item-text="item.name"
+			      md-min-length="0"
+			      placeholder="Add a new group"
+				  md-menu-class="autocomplete-custom-template">
+			        <md-item-template>
+						<span class="item-title">
+							<b><span> {{item.name}} </span></b>
+						</span>
+						<span class="item-metadata">
+							<span class="item-metastat">
+								<i>{{item.description}}</i>
+							</span>
+						</span>
+			        </md-item-template>
+			        <md-not-found>
+			            No groups matching "{{groupCtrl.groupText}}"" found
+			        </md-not-found>
+			    </md-autocomplete>
+			    <md-button class="md-raised md-primary" ng-show="groupCtrl.showSubmit" ng-click="groupCtrl.addNewGroup()">Add new group</md-button>
+			</md-content>
 
 			<div class="group" ng-repeat="group in groups" ng-group>
 				<div class="well">
@@ -57,18 +92,40 @@
 		<div class="col-md-6">
 			<h2 style="text-align:center">Posts</h2>
 
-			<div class="post" ng-repeat="post in posts">
+			<!--<div class="post" ng-repeat="post in posts">
 				<div class="well">
 					<h4>{{post.text}}</h4>
 				</div>
-			</div>
+			</div>-->
+			<div ng-include="'/angular_partials/PostFeed.html'"></div>
 
-			<div ng-if="isEmpty(posts)" class="well">
+			<div ng-if="isEmpty(Posts)" class="well">
 				<i><h3 class="center">No Posts Listed</h3></i>
 			</div>
 		</div>
 		<div id="interests" class="col-md-3">
 			<h2 style="text-align:center">Interests</h2>
+			<md-content layout-padding layout="column" ng-if="editing">
+				<md-autocomplete
+		          ng-disabled="false"
+		          md-no-cache="true"
+		          md-selected-item="interestCtrl.selectedInterest"
+		          md-search-text-change="interestCtrl.searchTextChange(interestCtrl.interestText)"
+		          md-search-text="interestCtrl.interestText"
+		          md-selected-item-change="interestCtrl.selectedItemChange(item)"
+		          md-items="item in interestCtrl.querySearch(interestCtrl.interestText)"
+		          md-item-text="item.name"
+		          md-min-length="0"
+		          placeholder="Add a new interest">
+					<md-item-template>
+						<span md-highlight-text="interestCtrl.interestText" md-highlight-flags="^i">{{item.name}}</span>
+					</md-item-template>
+					<md-not-found>
+						No interests matching "{{interestCtrl.interestText}}"" found
+					</md-not-found>
+				</md-autocomplete>
+				<md-button class="md-raised md-primary" ng-show="interestCtrl.showSubmit" ng-click="interestCtrl.addNewInterest()">Add new interest</md-button>
+			</md-content>
 
 			<div class="interest" ng-repeat="int in user.interests">
 				<div class="well row">
@@ -83,6 +140,64 @@
 
 			<div ng-if="isEmpty(user.interests)" class="well">
 				<i><h3 class="center">No Interests Listed</h3></i>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="password-modal" class="modal" tabindex="-1" role="dialog" ng-controller="profilePasswordController">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Change Password</h4>
+			</div>
+
+			<div class="modal-body">
+				<span id="password-error" class="error" ng-show="error">{{error}}</span>
+				<div style="width: 100%">
+					<div class="form-group">
+						<label for="old_password">Old Password</label>
+						<input id="old_password" type="password" class="form-control" style="width: 100%" placeholder="Old Password" ng-model="passwordChange.old" ng-change="resetError()">
+					</div>
+					<div class="form-group">
+						<label for="old_password">New Password</label>
+						<input id="new1_password" type="password" class="form-control" style="width: 100%" placeholder="New Password" ng-model="passwordChange.new1" ng-change="resetError()">
+					</div>
+					<div class="form-group">
+						<label for="old_password">Confirm Password</label>
+						<input id="new2_password" type="password" class="form-control" style="width: 100%" placeholder="Confirm Password" ng-model="passwordChange.new2" ng-change="resetError()">
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal">Close</button>
+				<button class="btn btn-success" ng-click="changePassword()">Save Changes</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="image-upload-modal" class="modal" tabindex="-1" role="dialog" ng-controller="profileImageController">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h4 class="modal-title">Change Profile Image</h4>
+			</div>
+
+			<div class="modal-body">
+				<span id="image-error" class="error" ng-show="error">{{error}}</span>
+				<div style="width: 100%">
+					<div class="form-group">
+						<label for="new_image">Upload a new Profile Image</label>
+						<input id="new_image" type="file" class="form-control">
+					</div>
+				</div>
+			</div>
+
+			<div class="modal-footer">
+				<button class="btn btn-default" data-dismiss="modal">Close</button>
+				<button class="btn btn-success" ng-click="changeImage()">Save Changes</button>
 			</div>
 		</div>
 	</div>

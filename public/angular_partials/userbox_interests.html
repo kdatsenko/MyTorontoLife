@@ -1,0 +1,6 @@
+<div ng-controller="mainController">
+<h1>Interests</h1>
+
+  <span ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a><br></span>
+  <a href='/profile'>Customize My interests</a>
+</div>

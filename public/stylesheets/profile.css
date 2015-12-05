@@ -37,3 +37,28 @@
 .group-description{
 	display: none;
 }
+
+.error{
+	color: #EE1423;
+}
+
+.margin-sp-down{
+	margin-bottom: 0.5em;
+}
+
+.margin-sp-up{
+	margin-top: 0.5em;
+}
+
+.autocomplete-custom-template li {
+  border-bottom: 1px solid #ccc;
+  height: auto;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  white-space: normal; }
+.autocomplete-custom-template li:last-child {
+  border-bottom-width: 0; }
+.autocomplete-custom-template .item-title,
+.autocomplete-custom-template .item-metadata {
+  display: block;
+  line-height: 2; }

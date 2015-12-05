@@ -4,7 +4,9 @@
         #header {margin-left:30px;}
         #userList {margin-left:300px;margin-right:30px;}
     </style>
-
+<nav id="topNav" class="feed">
+    <h1>MyTorontoLife.ca</h1>
+</nav>
 <div id="userList">
   <div id="header">
       <h1>Admin Dashboard</h1>
@@ -23,22 +25,19 @@
     </nav>
 
   <div id="main" ng-controller="userController">
-
-  <!-- user -->
-    <div>
-  <div>
-    Sort by: 
+	<div>
+    Sort by:
         <select ng-model="sortExpression">
-      <option value="username">Username</option>
-      <option value="useremail">email</option>
-    </select>
+			<option value="username">Username</option>
+			<option value="useremail">Useremail</option>
+		</select>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
           <thead class="thead-inverse">
             <tr  >
               <th>Username</th>
-              <th>email</th>
+              <th>Useremail</th>
               <th>Option</th>
             </tr>
           </thead>
@@ -48,22 +47,28 @@
                 <input placeholder="Search name" ng-model="search.username" />
               </td>
               <td>
-                <input placeholder="Search email" ng-model="search.email" />
+                <input placeholder="Search email" ng-model="search.useremail" />
               </td>
             </tr>
           </tbody>
           <tbody>
             <tr ng-repeat="user in userList | orderBy:mySortFunction | filter:search">
-                <td ng-click='getUser(user.username)' class="btn-like">{{user.username}}</td>
-              <td ng-click='getUser(user.email)' class="btn-like">{{user.email}}</td>
-              <td>
-                <a ng-click='deleteUser(user.email)'>
-                  <strong style="margin-left:10px">(DELETE)</strong>
-                </a>
-            </td>  
+              	<td ng-click='getUser(user.useremail)' class="btn-like">{{user.username}}</td>
+            	<td ng-click='getUser(user.useremail)' class="btn-like">{{user.useremail}}</td>
+             	<td>
+             		<a ng-click='deleteUser(user.useremail)'>
+		              <strong style="margin-left:10px">(DELETE)</strong>
+		            </a>
+		        </td>  
             </tr>
           </tbody>
         </table>
+
+        <div ng-show="showMsg">
+        {{msg}}
+      </div>
 </div>
+
   </div>
 </div>
+

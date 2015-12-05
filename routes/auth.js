@@ -9,14 +9,14 @@ router.get('/github', passport.authenticate('github', { scope: [ 'user:email' ] 
 router.get('/github/callback', function(req, res, next){
 	passport.authenticate('github', function(err, user, info){
 		if(err){
-			res.redirect('/')
+			// res.redirect('/')
 			throw err;
 		}
 		if(!user){
-			res.redirect('/')
+			res.redirect('/login');
 		}else{
 			setSession(req, res, user)
-			res.redirect('/profile.html')
+			res.redirect('/feed');
 		}
 	})(req, res, next);
 })
