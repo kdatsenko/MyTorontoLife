@@ -47,6 +47,8 @@ var crudApp = angular.module('crudApp');
 
     $scope.$on("update_nav_bar", function(event, show){
 			$scope.showNavBar = show;
+			$scope.state.main_dashboard = true;
+			$scope.state.main_feed = true;
 			console.log('I am triggered!');
 			populateNavBar();
 			/* Trigger the fill in methods */
@@ -82,8 +84,7 @@ var crudApp = angular.module('crudApp');
 
   $scope.showHero = true;
 
-  $scope.logOut =
-  $scope.logout = function(){
+  $scope.logOut = function(){
       $scope.state.is_logged = false;
       $http.get('/auth/logout').success(function(data, status, headers, config) {
           $scope.showLogin = false;
@@ -111,17 +112,12 @@ $scope.getPostByGroup = function(group_id){
 };
 
  $scope.getAdminDashBoard = function() {
- 	/*
-	resetStateVariables();
+ 	resetStateVariables();
  	$scope.state.main_dashboard = false;
  	$scope.state.admin_dashboard = true;
  	//sharedService.setData({username : user_name});
  	$location.path('/admin');
-
-
- 	*/
- 	alert('Admin Dash!');
-
+ 	$route.reload();
 };
 
 $scope.getMainDashBoard = function() {
@@ -155,34 +151,43 @@ $scope.getPostPage = function (postid){
 
  var populateNavBar = function(){
 	$http.get('/auth/loggedInUser').success(function(data, status, headers, config) {
-    	var account = data.user.accounttype;
-    	if (account == 0){
-    		$scope.state.admin = true;
-         	$scope.state.super_admin = true;
-    	} else if (account == 1){
-    		$scope.state.admin = true;
-         	$scope.state.super_admin = false;
-         } else {
-         	$scope.state.admin = false;
-         	$scope.state.super_admin = false;
-         }
-   		//var username = data.user.username; //Should be a JSON object
-   		$scope.state.username = data.user.username;
-    	//var id = data.user._id;
-		populateInterests(data.user.username);
-		populateUserGroups();
+		if (data.user){
+	    	var account = data.user.accounttype;
+	    	if (account == 0){
+	    		$scope.state.admin = true;
+	         	$scope.state.super_admin = true;
+	    	} else if (account == 1){
+	    		$scope.state.admin = true;
+	         	$scope.state.super_admin = false;
+	         } else {
+	         	$scope.state.admin = false;
+	         	$scope.state.super_admin = false;
+	         }
+	   		//var username = data.user.username; //Should be a JSON object
+	   		$scope.state.username = data.user.username;
+	    	//var id = data.user._id;
+			populateInterests(data.user.username);
+			$scope.populateUserGroups();
+		}
   }).error(function(data, status, headers, config) {
+  		console.log(data);
     // if(status == 403 )
 
   });
  };
 
- var populateUserGroups = function(){
+ $scope.populateUserGroups = function(){
   	$http.get('/users/user/groups').success(function(data, status, headers, config) {
         $scope.user.groups = data;
 
     });
  };
+
+ $scope.showAllPublicGroups = function(){
+    $http.get('/groups').success(function(data, status, headers, config) {
+    	$scope.user.groups = data;
+    });
+};
 
  var populateInterests = function(username){
  	$http({
@@ -199,10 +204,22 @@ $scope.getPostPage = function (postid){
 
     });
  };
-  $http.get('/auth/loggedInUser').success(function(data, status, headers, config){
-   if(data.logged == false && window.location.path != '/auth/github'){
-     $location.path('/login');
-   }
-  });
+
+
+
+
+
+$http.get('/auth/loggedInUser').success(function(data, status, headers, config){
+ if(data.logged == false && window.location.path != '/auth/github'){
+   $location.path('/login');
+ }
+});
+
+var start = function(){
+	$scope.showNavBar = true;
+	populateNavBar();
+};
+
+start();
 
  });

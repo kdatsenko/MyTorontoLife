@@ -12,6 +12,36 @@ models.HashTags = require('mongoose').model('Hashtags');
 models.Posts = require('mongoose').model('Posts');
 models.PostRatings = require('mongoose').model('PostRatings');
 
+
+router.get('/', function(req, res){
+   if (checkAdmin(req, res, 1) | checkAdmin(req, res, 0)){
+      models.Posts.find({})
+      .populate({
+      path: 'post_type',
+      select: 'name'
+      })
+      .populate({
+      path: 'group',
+      select: 'name'
+      //populate: { path: 'interests' }
+      })
+      .select('_id post_type group short_text username userid date_posted')
+      .exec(function(err, posts) {
+        if (err){
+          return res.send(err);
+        } else if (!posts){
+          return res.status(404).send({error: 'Posts are not found'});
+        }
+        return res.json(posts);
+      });
+  } else {
+    return res.status(403).send({error: 'Unauthorized account type'});
+  }
+
+});
+
+
+
 /* The posts page shows a single post. */
 /* Create Post, update hashtags */
 router.post('/addnew', function(req, res){
@@ -287,13 +317,17 @@ var modifyPostRatingHelper = function(postObj, numstars, subtract){
  */
 router.delete('/post/:id', function(req, res) {
   models.Posts.findById(req.params.id, function(err, post){
+      if (err) {return res.send(err);}
+      if (!post) {
+        return res.json({message: 'Post not found'});
+      }
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & post.userid != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
       }
       post.remove(function(err, post) {
       if (err) {
         return res.send(err);
-      } else if (post && post.result.n > 0){
+      } else if (post){
         res.json({ message: 'Post' + req.params.id + ' deleted!' });
       } else {
         res.json({ message: 'Unable to delete this post' });
@@ -301,5 +335,7 @@ router.delete('/post/:id', function(req, res) {
     });
   });
 });
+
+
 
 module.exports = router;

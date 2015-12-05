@@ -25,7 +25,7 @@ router.get('/', function(req, res) {
   where('last_used').gt(cutoff).
   sort({ count: -1 }).
   limit(100).
-  select('name last_used').
+  select('name last_used count').
   exec(function(err, tags){
     if (err) {
       return res.send(err);

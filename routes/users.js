@@ -174,6 +174,8 @@ router.post('/fileupload', function(req, res) {
     if (err) {
       return res.send(err);
     }
+    console.log('GETTING USERS');
+    console.log(users);
     res.json(users);
     });
 });
@@ -244,11 +246,15 @@ router.delete('/profile/:id', function(req, res) {
     return res.status(403).send({error: 'Unauthorized account type'});
   }
   models.Users.findById(req.params.id, function(err, user){
-      user.remove(function(err, user) {
+      if (err) {return res.send(err);}
+      if (!user) {
+        return res.json({message: 'User not found'});
+      }
+      user.remove(function(err, user_rem) {
       if (err) {
         return res.send(err);
-      } else if (user && user.result.n > 0){
-        res.json({ message: 'User ' + req.params.id + ' deleted!' });
+      } else if (user_rem){
+        res.json({ message: 'User ' + user_rem.username + ' deleted!' });
       } else {
         res.json({ message: 'Unable to delete this user' });
       }

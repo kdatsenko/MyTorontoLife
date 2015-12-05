@@ -128,8 +128,9 @@ $scope.state.is_logged = true;
       */
       //
 
-        // $scope.state.is_logged = true;
+          
           window.location = "/auth/github";
+          $scope.state.is_logged = true;
           $scope.$emit('update_nav_bar', true);
 
   	}

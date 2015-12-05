@@ -13,6 +13,7 @@
 	<link href='https://fonts.googleapis.com/css?family=Ek+Mukta:200,400,800' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="stylesheets/style.css">
 
+
 	<!-- JS files -->
 	<script src="/vendor/jquery-2.1.4.js"></script>
 	<script src="/vendor/angular.min.js"></script>
@@ -38,6 +39,10 @@
 	<script src="controllers/tagsListController.js"></script>
 	<script src="controllers/userController.js"></script>
 	<script src="controllers/loginbarController.js"></script>
+	<!-- load momentJS (required for angular-moment) -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
+	<!-- load angular-moment -->
+	<script src="//cdnjs.cloudflare.com/ajax/libs/angular-moment/0.9.0/angular-moment.min.js"></script>
 </head>
 
 <!-- define top-level controller -->
@@ -57,18 +62,19 @@
             <a ng-if="state.is_logged" href="" ng-click="logOut()">Log Out</a>
           </div>
 
-        <div ng-show="state.main_dashboard">
+       <div ng-show="state.main_dashboard">
           <h1>Interests</h1>
           <ul>
             <li ng-repeat="interest in user.interests"><a href="" ng-click="getPostByInterest(interest._id)">{{interest.name}}</a></li>
           </ul>
         </div>
-        <div ng-show="state.main_dashboard">
+        <div ng-init="allGroupsShown = false" ng-show="state.main_dashboard">
           <h1>Groups</h1>
           <ul>
             <li ng-repeat="group in user.groups"><a href="" ng-click="getPostByGroup(group._id)">{{group.name}}</a></li>
           </ul>
-          <a>show all public groups</a>
+          <a href="" ng-show="!allGroupsShown" ng-click="allGroupsShown = true; showAllPublicGroups()">show all public groups</a>
+          <a href="" ng-show="allGroupsShown" ng-click="allGroupsShown = false; populateUserGroups()">show my groups only</a>
         </div>
      </div>
 
