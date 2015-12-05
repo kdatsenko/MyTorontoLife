@@ -199,10 +199,10 @@ $scope.getPostPage = function (postid){
 
     });
  };
-$http.get('/auth/loggedInUser').success(function(data, status, headers, config){
- if(data.logged == false && window.location.path != '/auth/github'){
-   $location.path('/login');
- }
-});
+  $http.get('/auth/loggedInUser').success(function(data, status, headers, config){
+   if(data.logged == false && window.location.path != '/auth/github'){
+     $location.path('/login');
+   }
+  });
 
  });

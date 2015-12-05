@@ -7,7 +7,7 @@ var login = express.Router();
 var api = express.Router();
 
 var middleware = require('../middleware');
-checkAdmin = middleware.checkAdmin;
+var checkAdmin = middleware.checkAdmin;
 
 /* GET home page. */
 
