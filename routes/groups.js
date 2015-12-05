@@ -259,7 +259,9 @@ router.delete('/group/:id', function(req, res) {
 router.get('/group/posts', function(req, res) {
 //auth: only groups where the user is a member, or public
   //console.log();
+  console.log('req.query.groupid: ' + req.query.groupid);
  models.Groups.findById(req.query.groupid, function(err, group){
+    console.log('group: ' + JSON.stringify(group));
     if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
       if (err){
         return res.send(err);
