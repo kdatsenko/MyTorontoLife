@@ -47,6 +47,8 @@ var crudApp = angular.module('crudApp');
 
     $scope.$on("update_nav_bar", function(event, show){
 			$scope.showNavBar = show;
+			$scope.state.main_dashboard = true;
+			$scope.state.main_feed = true;
 			console.log('I am triggered!');
 			populateNavBar();
 			/* Trigger the fill in methods */
@@ -171,7 +173,7 @@ $scope.getPostPage = function (postid){
 		populateInterests(data.user.username);
 		$scope.populateUserGroups();
   }).error(function(data, status, headers, config) {
-  	console.log(data);
+  		console.log(data);
     // if(status == 403 )
 
   });
