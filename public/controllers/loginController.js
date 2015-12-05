@@ -109,14 +109,19 @@ var crudApp = angular.module('crudApp');
 
   	$scope.github_signin = function(){
 
-  		$http.get('/auth/github').success(function(data, status, headers, config) {
-  				$scope.state.is_logged = true;
-              	console.log("back in success");
-              }).
-              error(function(data, status, headers, config) {
-              	console.log('ERROR!');
-              });
-
+  		// $http.get('/auth/github').success(function(data, status, headers, config) {
+  		// 		$scope.state.is_logged = true;
+      //         	console.log("back in success");
+      //         }).
+      //         error(function(data, status, headers, config) {
+      //         	console.log('ERROR!');
+      //         });
+      //
+      //
+      //  Do not change, the browser must be physically redirected for
+      //  this to work- AJAX will not work!
+      //
+      window.location = "/auth/github";
   	}
 
   	var redirect = function(){
