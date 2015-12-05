@@ -1,5 +1,5 @@
 // create the module
-var crudApp = angular.module('crudApp', ['ngRoute', 'ngMaterial']);
+var crudApp = angular.module('crudApp', ['ngRoute', 'ngMaterial', 'angularMoment']);
 
 /* Service to share data between controllers. Used to share user email
 for navigation to and display of profile page. */
