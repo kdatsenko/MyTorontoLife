@@ -210,8 +210,7 @@ var getGroupPosts = function(group_id){
         return post;
     });
       $scope.Posts = reformattedPosts;
-
-
+      console.log();
     },
     function errorCallback(response) {
       console.log(response);
@@ -296,7 +295,6 @@ $scope.onGroupClick = function(groupid){
       var groupid = (sharedService.getData()).groupid;
       getGroupPosts(groupid);
       getGroupByID(groupid);
-
     } else if ($scope.state.is_showing_interest){
       var interestid = (sharedService.getData()).interestid;
       getPostsByInterest(interestid);

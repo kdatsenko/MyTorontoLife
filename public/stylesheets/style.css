@@ -7,11 +7,6 @@ a {
   color: #00B7FF;
 }
 
-.scroll {
-  overflow: scroll;
-  overflow-y: hidden;
-  overflow-x: hidden;
-}
 
 body, html {
   margin: 0;
