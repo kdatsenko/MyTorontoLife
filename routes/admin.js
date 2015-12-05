@@ -3,6 +3,10 @@ var router = express.Router();
 var schema = require('../models/dbschema');
 var mongoose = require('mongoose');
 
+var middleware = require('../middleware');
+var checkAdmin = middleware.checkAdmin;
+
+
 var Users = require('mongoose').model('Users');
 var Interests = require('mongoose').model('Interests');
 var Groups = require('mongoose').model('Groups');
