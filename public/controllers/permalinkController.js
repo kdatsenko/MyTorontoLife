@@ -52,6 +52,7 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
           },
           function errorCallback(response) {
             console.log(response)
+            $scope.currentRating = 0;
           });  
 
   }
