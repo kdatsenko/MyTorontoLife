@@ -1,6 +1,6 @@
 var crudApp = angular.module('crudApp');
 
-crudApp.controller('permalinkController', function($scope, $location, $http, sharedService) {
+crudApp.controller('permalinkController', function($scope, $location, $http, $interval, sharedService) {
   $scope.post = {};
 
   String.prototype.trimLeft = function(charlist) {
@@ -25,22 +25,34 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
   }
   $scope.postId = $location.$$path.split('/')[2].trimLeft(':')
   $scope.localUsers = {}
-  $http.get('/posts/post?id='+$scope.postId).then(function(post){
-    if(post){
-      $scope.post = post.data;
-      getUser(post.data.username);
-      for(var i in post.data.comments){
-        getUser(post.data.comments[i].username);
+  $scope.loading = true;
+  function loadPost(){
+    $scope.loading = true;
+    $http.get('/posts/post?id='+$scope.postId).then(function(post){
+      $scope.loading = false;
+      if($scope.post != {} && post.data.comments && $scope.post.comments && post.data.comments.length > $scope.post.comments.length){
+        for(var i = $scope.post.comments.length; i < post.data.comments.length; i++)
+        {
+          $scope.post.comments.push(post.data.comments[i])
+        }
       }
-    }
-  },
-  function errorCallback(response, status, headers, config) {
-    if(status == 403){
-    window.location = "/login";
-    }
-    console.log(response);
-  });
-
+      if(post){
+        $scope.post = post.data;
+        getUser(post.data.username);
+        for(var i in post.data.comments){
+          getUser(post.data.comments[i].username);
+        }
+      }
+    },
+    function errorCallback(response, status, headers, config) {
+      if(status == 403){
+      window.location = "/login";
+      }
+      console.log(response);
+    });
+  }
+  loadPost();
+  $interval(loadPost, 5000); // Automatically update comments;
 
   $scope.currentRating = 0;
 
@@ -74,5 +86,27 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
             $scope.currentRating = 0;
           });
 
+  }
+
+  $scope.new_comment = "";
+  $scope.saveComment = function(){
+    if($scope.new_comment){
+      $http({
+        method: 'POST',
+        url: '/posts/post/addcomment',
+        data: {comment:{
+            group: $scope.post.group._id,
+            postid: $scope.post._id,
+            text: $scope.new_comment
+          }
+        }
+      })
+      .then(function successCallback(response) {
+        loadPost();
+      },
+      function errorCallback(response) {
+        console.log(response);
+      });
+    }
   }
 });

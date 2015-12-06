@@ -46,7 +46,7 @@ router.get('/', function(req, res){
   // Create our deferred object, which we will use in our promise chain
     var deferred = Q.defer();
     // Find a single department and return in
-    models.Hashtags.findOneAndUpdate({name: tagname}, {last_used: time_inserted, count: {$inc: 1}}, 
+    models.Hashtags.findOneAndUpdate({name: tagname}, {last_used: time_inserted, count: {$inc: 1}},
       {'upsert': true}, function(err, hashtag){
         if (err){deferred.reject(err);}
         else {
@@ -75,7 +75,7 @@ router.post('/addnew', function(req, res){
         var time_inserted = Date.now();
         var tasks = [];
         for (var i = 0; i < req.body.hashtags.length; i++) {
-          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }}, 
+          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }},
           {'upsert': true, 'new': true}));
         }
         Q.all(tasks)
@@ -211,13 +211,14 @@ router.post('/post/addcomment', function(req, res){
           var commentObj = {
             userid: req.session.user._id,
             username: req.session.user.username,
-            text: req.body.comment.text
+            text: req.body.comment.text,
+            date: new Date
           };
           //update the post comment array
           models.Posts.findByIdAndUpdate(
           req.body.comment.postid,
           {$push: {comments: commentObj}},
-          {safe: true, upsert: true},
+          {safe: true, upsert: true, new: true},
           function(err, comment) {
             if (err){
                return res.send(err);
