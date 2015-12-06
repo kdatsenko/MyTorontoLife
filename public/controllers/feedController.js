@@ -93,7 +93,11 @@ Also, should smartly recommend the "Add myself to this group based on whether th
         url: '/dashboard', //get all user emails & displayname
     })
     .then(function successCallback(response) {
+      //$scope.Posts = response.data;
       $scope.Posts = response.data;
+      console.log('$scope.Posts');
+      console.log(response.data);
+      console.log($scope.Posts);
     },
     function errorCallback(response) {
       console.log(response);
@@ -245,6 +249,13 @@ var getGroupPosts = function(group_id){
     });
  };
 
+var formatDate = function(posts){
+  posts.map(function(post){
+        var post = post;
+        post.date_posted = moment(new Date(2014, 9, 18, 0, 0, 0));
+        return post;
+      });
+};
 
 
 

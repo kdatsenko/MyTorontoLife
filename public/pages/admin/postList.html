@@ -11,7 +11,7 @@
     <div id="header">
       <h1>Admin Dashboard</h1>
     </div>
-    
+
     <nav class="navbar navbar-default">
       <div class="container">
         <ul class="nav nav-tabs">
@@ -27,8 +27,8 @@
   <div id="main" ng-controller="postController">
 
 <div>
-  <div>
-    Sort by: 
+  <div style="display:flex">
+    Sort by:
 
         <select ng-model="sortExpression">
       <option value="username">Username</option>
@@ -37,6 +37,10 @@
       <option value="post_type">Type</option>
       <option value="short_text">Short Description</option>
     </select>
+
+    <div ng-show="showMsg" style="margin-left:20px">
+        {{msg}}
+      </div>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -80,7 +84,7 @@
                 <a ng-click='deletePost(post._id)'>
                   <strong style="margin-left:10px">(DELETE)</strong>
                 </a>
-            </td> 
+            </td>
             </tr>
           </tbody>
         </table>
