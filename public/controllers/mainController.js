@@ -142,8 +142,8 @@ var resetStateVariables = function () {
  $scope.getUserProfile = function(user_name) {
  	resetStateVariables();
  	$scope.state.main_dashboard = false;
- 	sharedService.setData({username : user_name});
- 	$location.path('/profile');
+ 	//sharedService.setData({username : user_name});
+ 	$location.path('/profile/' + user_name);
  /* Navigate to User Profile page with this username. */
 };
 

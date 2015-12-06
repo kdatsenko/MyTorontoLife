@@ -7,7 +7,7 @@ var login = express.Router();
 var api = express.Router();
 
 var middleware = require('../middleware');
-checkAdmin = middleware.checkAdmin;
+var checkAdmin = middleware.checkAdmin;
 
 /* GET home page. */
 
@@ -32,9 +32,9 @@ api.use('/users', require('./users'));
 router.use('/admin', [middleware.installHelpers,middleware.sendAngularHtml(),admin]);
 router.use([middleware.installHelpers,
             login,
+            middleware.setupCORS,
             middleware.verifyUser,
             middleware.sendAngularHtml(),
-            middleware.setupCORS,
             api,
             middleware.sendAngularHtml()]);
 

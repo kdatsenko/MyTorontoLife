@@ -66,7 +66,7 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 }
 
  $scope.createNewPost = function(post_type) {
-  alert(post_type);
+  $location.path('/create_post');
  }
 
  var getPostsByInterest = function(interest_id) {

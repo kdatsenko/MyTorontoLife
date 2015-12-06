@@ -1,6 +1,24 @@
+<style>
+div.inset{
+  display: block;
+  max-height: 300px;
+  -moz-box-shadow:    1px 1px 8px #eee inset;
+  -webkit-box-shadow: 1px 1px 8px #eee inset;
+  box-shadow:         1px 1px 8px #eee inset;
+  padding: 1em;
+  overflow-y: auto;
+  border-radius: 3px;
+  /* Chrome, Safari, Opera prefix */
+  -webkit-column-width: 250px;
 
+  /* Mozilla Firefox prefix */
+  -moz-column-width: 250px;
+
+  column-width: 250px;
+}
+</style>
 <div ng-controller="newPostController">
-      <div class="container">
+      <div style="position: absolute; left: 30%; right: 10%;">
       <!-- post body -->
       <form class="form-horizontal">
         <div class="row">
@@ -8,7 +26,7 @@
             <!-- post type -->
             <div class="form-group">
               <label for="postTypeArraySel">Type:</label>
-              <select ng-model="postTypeValue" id="postTypeArraySel" ng-disabled="{{!state.user_is_author}}" ng-options="getpostType(type) for type in postTypes">
+                <select ng-model="postTypeValue" id="postTypeArraySel" ng-options="type.name for type in postTypes">
                 <!--    <option value="">[select type] </option> -->
               </select>
               <!--  <label for="postTypeResult"> Selected type:</label>
@@ -18,78 +36,36 @@
             <!-- group  -->
             <div class="form-group">
               <label for="postGroupArraySel">Group:</label>
-              <select ng-model="postGroupValue" id="postGroupArraySel" ng-disabled="{{!state.user_is_author}}" ng-options="getGroup(group) for group in Groups">
+              <select ng-model="postGroupValue" id="postGroupArraySel" ng-options="getGroup(group) for group in Groups">
               </select>
 
             </div>
             <!-- interest  -->
-            <div class="form-group">
-              <label for="postInterestArraySel">Interest:</label>
-              <select ng-model="postInterestValue" mgid="postInterestArraySel" ng-disabled="{{!state.user_is_author}}" ng-options="getInterest(interest) for interest in Interests">
-              </select>
-            </div>
-          </div>
-          <div class="row">
-            <p>Rated:<span>{{post.averagerating}}</span> of 5</p>
-            <br>
-            <p><span>{{post.numberofratings}}</span> Ratings</p>
+            <label for="postGroupArraySel">Interests:</label>
+            <div class="form-group inset">
+              <!-- <label for="postInterestArraySel">Interest:</label>
+              <select ng-model="postInterestValue" mgid="postInterestArraySel" ng-options="getInterest(interest) for interest in Interests">
+              </select> -->
 
+              <label ng-repeat="interest in Interests" style="display: block">
+                <input type="checkbox" checklist-model="post.Interests" checklist-value="interest.id"> {{interest.name}}
+              </label>
+            </div>
           </div>
           <div class="form-group">
             <label>Description:</label>
-            <textarea id="description" name="description" ng-model="post.text" class="form-control" placeholder="description" ng-readonly="{{!state.user_is_author || !state.edit_state}}" rows="10"></textarea>
+            <textarea id="description" name="description" ng-model="post.text" class="form-control" placeholder="Description" rows="10"></textarea>
 
-          </div>
-          <div class="checkbox">
-            <label>
-              <input type="checkbox">Commercial</label>
           </div>
           <br>
           <div>
-            <button ng-show="{{state.user_is_author && state.edit_state || state.add_new}}" class="btn  btn-primary btn-group-xs" ng-click="updatePost()">Save</button>
-            <button ng-show="{{state.user_is_author && state.edit_state && !state.add_new}}" class="btn  btn-primary btn-group-xs" ng-click="deletePost()">Delete</button>
+            <button class="btn  btn-primary btn-group-xs" ng-disabled="post.text==''" ng-click="savePost()">Post</button>
           </div>
         </div>
       </form>
       <br>
       <br>
-      <div class="container" ng-if="!state.user_is_author && !state.add_new">
-        <form class="form-inline">
 
-          <div class="form-group">
-            <label for="postRateArraySel">Rate this Post:</label>
-            <select class="form-control" ng-model="postRateValue" id="postRateArraySel" ng-disabled="{{state.user_is_author}}" ng-options="getRating(rate) for rate in Rates">
-            </select>
-          </div>
-          <div>
-            <button class="btn  btn-primary btn-group-xs" ng-click="updateRating()">Rate</button>
-          </div>
 
-        </form>
-      </div>
-      <br>
-
-      <div class="container" ng-if="!state.add_new">
-        <div class="box" ng-repeat-start="comment in post.comments">
-          <div class="profile">
-            <img src="user_imageurl" />
-            <a href="" ng-click="userProfile(comment.userid)">{{comment.username}}</a>
-            <p>&nbsp;On:&nbsp;{{comment.date}}</p>
-            <br>
-          </div>
-        </div>
-
-        <p ng-repeat-end>{{comment.text }}</p>
-      </div>
-
-      <div class="container" ng-if="!state.user_is_author && !state.add_new">
-        <form class="form-inline">
-          <div class="form-group">
-            <label>Comment:</label>
-            <textarea id="comment" name="comment" ng-model="post.new_comment" class="form-control" placeholder="comment"></textarea>
-            <button class="btn  btn-primary btn-group-xs" ng-click="saveComment()">Save</button>
-          </div>
-        </form>
-      </div>
     </div>
 </div>
