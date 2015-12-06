@@ -1,3 +1,4 @@
+
 <section class="feed">
   <div id="mainfeed" class="main-feed center" ng-controller="permalinkController">
     <div class="box">
@@ -7,7 +8,7 @@
       </div>
 
       <div class="profile">
-        <img src="{{post.user.imageurl}}" style="background: url('/images/ajax-loader.gif'); background-position: center; background-repeat: no-repeat">
+        <img src="{{localUsers[post.username].imageurl}}" class="profileImg">
         <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
         <span class="permalinks">
 
@@ -45,16 +46,18 @@
       <br>
 
       <div ng-if="!state.add_new">
-        <div class="box" ng-repeat-start="comment in post.comments">
+        <div class="box" ng-repeat="comment in post.comments">
           <div class="profile">
-            <img src="user_imageurl" />
+            <pre>{{comment | json}}</pre>
+            <img src="{{localUsers[comment.username].imageurl}}" class="profileImg" />
             <a href="" ng-click="userProfile(comment.userid)">{{comment.username}}</a>
-            <p>&nbsp;On:&nbsp;{{comment.date}}</p>
+            <p ng-show="comment.date">On:&nbsp;{{comment.date}}</p>
             <br>
+            <p >{{comment.text }}</p>
           </div>
         </div>
 
-        <p ng-repeat-end>{{comment.text }}</p>
+
       </div>
 
       <div ng-if="!state.user_is_author && !state.add_new">

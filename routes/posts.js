@@ -3,7 +3,7 @@ var router = express.Router();
 
 var middleware = require('../middleware');
 var checkAdmin = middleware.checkAdmin;
-
+var Q = require("q");
 
 var models = {};
 models.Users = require('mongoose').model('Users');
@@ -42,73 +42,62 @@ router.get('/', function(req, res){
 
 
 
+/*var updateHashTag = function(tagname, time_inserted) {
+  // Create our deferred object, which we will use in our promise chain
+    var deferred = Q.defer();
+    // Find a single department and return in
+    models.Hashtags.findOneAndUpdate({name: tagname}, {last_used: time_inserted, count: {$inc: 1}}, 
+      {'upsert': true}, function(err, hashtag){
+        if (err){deferred.reject(err);}
+        else {
+          deferred.resolve(hashtag);
+        }
+      });
+    // Return the promise that we want to use in our chain
+    return deferred.promise;
+}*/
+
 /* The posts page shows a single post. */
 /* Create Post, update hashtags */
 router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
-    var inputPost = req.body.post;
-    if(!inputPost){
-      res.status(400).send({error: 'Post is required'});
-    }
-    if(typeof inputPost.group == "object"){inputPost.group = inputPost.group._id}
-    if(typeof inputPost.interest == "object"){inputPost.interest = inputPost.interest._id}
-    if(typeof inputPost.post_type == "object"){inputPost.post_type = inputPost.post_type._id}
-    {inputPost.userid = req.session.user._id}
-    models.GroupMembers.findOne({user: req.session.user._id, group: inputPost.group}, function(err, usergroup) {
+  models.GroupMembers.findOne({user: req.session.user._id, group: req.body.post.group}, function(err, usergroup) {
       if (err) {
         return res.send(err);
       }
       if (!usergroup){
         return res.status(403).send({error: 'Group access for this user is unauthorized'});
       } else {
-        var post = new models.Posts(inputPost); //create new
-        if(req.session.user.accounttype == 2 || !inputPost.username || !inputPost.userid)
-        {
-          post.username = req.session.user.username;
-          post.userid = req.session.user.userid;
-        }
-        else{
-          post.username = inputPost.username;
-          post.userid = inputPost.userid;
-        }
-        var hashtags = [];
+        var post = new models.Posts(req.body.post); //create new
+        post.username = req.session.user.username;
+        post.userid = req.session.user._id;
         var time_inserted = Date.now();
-        var hashTagPromise = new Promise(function(resolveHT, reject){
-          if(!inputPost.hashtags || inputPost.hashtags.length == 0){
-            resolveHT([]);
-          }
-          for (tag in inputPost.hashtags){
-            var count = 0;
-            console.log(inputPost.hashtags[tag]);
-            var tagid = models.Hashtags.findOneAndUpdate({name: inputPost.hashtags[tag]}, {last_used: time_inserted, $inc: {count: 1}}, {'upsert': true, 'new': true}).exec(function(err, tagDoc){
-                if(err){
-                  reject(err);
-                }
-                console.log(tagDoc);
-                hashtags.push(tagDoc.name)
-                count += 1;
-                console.log("hydrating hashtags:", count, inputPost.hashtags.length)
-                if(count == inputPost.hashtags.length){
-                  console.log('resolveHT!');
-                  resolveHT(hashtags);
-                }
+        var tasks = [];
+        for (var i = 0; i < req.body.hashtags.length; i++) {
+          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }}, 
+          {'upsert': true, 'new': true}));
+        }
+        Q.all(tasks)
+          .then(function(results) {
+            var hashtag_array = results.map(function(saved_tag){
+               var tag = {
+                name: saved_tag.name,
+                tag_id: saved_tag._id,
+               };
+               return tag;
             });
-          }
-        });
-        hashTagPromise.then(function(h){
-          console.log("got H: ", h);
-          post.hashtags = h;
-          post.save(function(err) {
+            post.hashtags = hashtag_array;
+            post.save(function(err) {
               if (err) {
+                console.log(err);
                   return res.send(err); //ERROR
               }
-              res.json({ message: 'Created post!', result: post});
-         });
-       }).catch(function(err){
-         console.log("error", err)
-         return res.send(err); //ERROR
-       });
+              return res.json({ message: 'Created post!', result: post});
+            });
+          }, function (err) {
+            console.log(err);
+          });
     }
   });
 });
@@ -176,7 +165,7 @@ var getPostRating = function (req, res, post){
 };
 
 
-/* Update Post */
+/* Update Post WARNING: DOES NOT WORK WITH Q YET!!!!*/
 router.put('/post', function(req, res){
   //Hashtags: For each new create new entry in hashtag schema
    models.Posts.findOne({ _id: req.body._id }, function(err, post) {
@@ -245,6 +234,7 @@ router.post('/post/rate', function(req, res){
   //check that a rating does not already exist this user and post id
   //if it does, just update the number
   //check that the user is a member of post's group first
+  console.log('HELLO?');
   if (req.body.rating.stars < 1 | req.body.rating.stars > 5){
     return res.status(403).send({error: "Rating is out of bounds!"});
   }
@@ -264,7 +254,7 @@ router.post('/post/rate', function(req, res){
         return res.status(403).send({error: 'Rating on this post is unauthorized for this user.'});
       }
         //check that a rating does not already exist this user and post id
-        models.PostRatings.findOne({postid: post._id, userid: req.session.user._id}, function(err, post_rating) {
+        models.PostRatings.findOne({postid: req.body.rating.postid, userid: req.session.user._id}, function(err, post_rating) {
           if(err){
             return res.send(err);
           }
@@ -277,7 +267,7 @@ router.post('/post/rate', function(req, res){
               if (err) {
                 return res.send(err);
               }
-              res.json({ message: 'New rating saved!' });
+              console.log('New rating saved!');
             });
           } else {
             //UPDATE OLD RATING
@@ -287,17 +277,21 @@ router.post('/post/rate', function(req, res){
                 if (err) {
                   return res.send(err);
                 }
-                res.json({ message: 'User rating for this post updated!' });
+                console.log('User rating for this post updated!');
              });
           }
 
           modifyPostRatingHelper(post, req.body.rating.stars, false);
+          if (post.numberofratings == 0){
+            post.numberofratings = 1;
+          }
           calculateAverageRating(post);
           post.save(function(err) {
             if (err) {
               return res.send(err);
             }
-            console.log('Post rating count updated!');
+            console.log('Post rating count updated!: ' + post.averagerating);
+            return res.json({averagerating: post.averagerating});
           });
         });
 
@@ -312,7 +306,9 @@ var calculateAverageRating = function(postObj){
               (postObj.threestarcount * 3) +
               (postObj.fourstarcount * 4) +
               (postObj.fivestarcount * 5);
-  postObj.averagerating = (total / numberofratings);
+console.log(postObj.numberofratings);
+  console.log((total / postObj.numberofratings));
+  postObj.averagerating = (total / postObj.numberofratings);
 };
 
 /* -1: subtract=true, +1: substract=false*/

@@ -6,7 +6,7 @@ crudApp.controller('postController', function ($scope, $http, $location, $timeou
 			if(isNaN(item[$scope.sortExpression]))
 				return item[$scope.sortExpression];
 			return parseInt(item[$scope.sortExpression]);
-		}
+	};
 
 	$scope.showMsg = false;
 
@@ -71,10 +71,10 @@ crudApp.controller('postController', function ($scope, $http, $location, $timeou
 	$scope.deletePost = function (id) {
 		$http({
 	 		method: 'DELETE',
-	 		url: '/posts/posts/' + id
+	 		url: '/posts/post/' + id
 	 	}).then(function successCallback(res) {
  			for (var i = 0; i < $scope.postList.length; i++) {
-	 			if ($scope.postList[i].id == id) {
+	 			if ($scope.postList[i]._id == id) {
 	 				$scope.postList.splice(i, 1);
 	 			}
  			};

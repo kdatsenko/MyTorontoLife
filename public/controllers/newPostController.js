@@ -32,7 +32,7 @@ var crudApp = angular.module('crudApp');
 
         short_text: '',
   date_posted: new Date,
-  hashtags: [],
+  hashtags: ['Cool', 'Wow'],
   external_urls: [],
   comments: [],
   interest: null,
@@ -70,12 +70,36 @@ var crudApp = angular.module('crudApp');
       }
   });
 
-$scope.submitPost = function(){
+/*$scope.submitPost = function(){
+  $scope.post.hashtags = ['Cool', 'Wow'];
   $http.post('/posts/addnew', {
     post: $scope.post
   }).success(function(data){
     $location.path('/permalink/'+data.result._id);
   });
-}
+}*/
+
+
+$scope.submitPost = function(){
+      console.log('HELLO?');
+      var hashtags = ['Cool', 'Wow'];
+      var data = {
+        post: $scope.post,
+        hashtags: hashtags
+      };
+      $http({
+        method: 'POST',
+        url: '/posts/addnew',
+        data: data
+      })
+      .then(function successCallback(response) {
+        $location.path('/permalink/'+ response.data.result._id);
+      },
+      function errorCallback(response) {
+        console.log(response);
+      });  
+};
+
+
 
 });

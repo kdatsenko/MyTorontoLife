@@ -56,7 +56,7 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 
 
  $scope.getUserProfile = function(user_name) {
-  alert('Go to the profile of: ' + user_name);
+  $scope.$emit('goto_profile', user_name);
 }
 
  $scope.getPostbyID = function(post_id) {
@@ -256,8 +256,6 @@ var formatDate = function(posts){
         return post;
       });
 };
-
-
 
  $scope.submitSearch = function(){
   //pass search data to top-level MainController, which will reload the view

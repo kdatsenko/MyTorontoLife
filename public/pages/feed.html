@@ -31,16 +31,29 @@
 
         <div id="mainfeed" class="main-feed center">
         <a name="feed"></a>
-        <div class="box" ng-repeat="post in Posts">
-          <div class="rating">
-            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        <div class="box" ng-repeat="post in Posts"> 
+          <div class="dashrating">
+            <!--<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>-->
+            <span ng-show="post.averagerating < 1">&#9734;</span>
+            <span ng-show="post.averagerating >= 1">&#9733;</span>
+
+            <span ng-show="post.averagerating < 1.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 1.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 2.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 2.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 3.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 3.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 4.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 4.5">&#9733;</span>
           </div>
 
           <div class="profile">
             <img src="{{post.userid.imageurl}}">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
             <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">
-
               <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
 
             </a> -

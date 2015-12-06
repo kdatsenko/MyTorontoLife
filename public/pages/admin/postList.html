@@ -27,7 +27,7 @@
   <div id="main" ng-controller="postController">
 
 <div>
-  <div>
+  <div style="display:flex">
     Sort by:
 
         <select ng-model="sortExpression">
@@ -37,6 +37,10 @@
       <option value="post_type">Type</option>
       <option value="short_text">Short Description</option>
     </select>
+
+    <div ng-show="showMsg" style="margin-left:20px">
+        {{msg}}
+      </div>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
