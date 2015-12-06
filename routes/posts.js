@@ -86,7 +86,7 @@ router.post('/addnew', function(req, res){
                   reject(err);
                 }
                 console.log(tagDoc);
-                hashtags.push({tag_id: tagDoc._id, name: tagDoc.name });
+                hashtags.push(tagDoc.name)
                 count += 1;
                 console.log("hydrating hashtags:", count, inputPost.hashtags.length)
                 if(count == inputPost.hashtags.length){
