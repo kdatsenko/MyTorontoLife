@@ -89,7 +89,10 @@ var postsSchema = new Schema({
 	username: {type: String, required: true},
 	userid: {type: ObjectId, required: true, ref: 'Users'},
 	date_posted: {type: Date, default: Date.now},
-	hashtags: [String],
+	hashtags: [
+    {tag_id: {type: ObjectId, ref: 'Hashtags'},
+        name: String}
+        ],
 	external_urls: [
 		{type: String}
 	],
