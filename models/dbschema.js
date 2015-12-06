@@ -110,7 +110,8 @@ var postsSchema = new Schema({
    comments: [
    	{userid: {type: ObjectId, required: true, ref: 'Users'},
      username: {type: String, required: true},
- 	 text: {type: String, required: true}}
+ 	 text: {type: String, required: true},
+ 		date: Date}
    ]
 });
 

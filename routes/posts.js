@@ -46,7 +46,7 @@ router.get('/', function(req, res){
   // Create our deferred object, which we will use in our promise chain
     var deferred = Q.defer();
     // Find a single department and return in
-    models.Hashtags.findOneAndUpdate({name: tagname}, {last_used: time_inserted, count: {$inc: 1}}, 
+    models.Hashtags.findOneAndUpdate({name: tagname}, {last_used: time_inserted, count: {$inc: 1}},
       {'upsert': true}, function(err, hashtag){
         if (err){deferred.reject(err);}
         else {
@@ -59,6 +59,8 @@ router.get('/', function(req, res){
 
 /* The posts page shows a single post. */
 /* Create Post, update hashtags */
+/* The posts page shows a single post. */
+/* Create Post, update hashtags */
 router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
@@ -69,13 +71,15 @@ router.post('/addnew', function(req, res){
       if (!usergroup){
         return res.status(403).send({error: 'Group access for this user is unauthorized'});
       } else {
-        var post = new models.Posts(req.body.post); //create new
+        var post_init = req.body.post;
+        post_init.hashtags = undefined;
+        var post = new models.Posts(post_init); //create new
         post.username = req.session.user.username;
         post.userid = req.session.user._id;
         var time_inserted = Date.now();
         var tasks = [];
         for (var i = 0; i < req.body.hashtags.length; i++) {
-          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }}, 
+          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }},
           {'upsert': true, 'new': true}));
         }
         Q.all(tasks)
@@ -211,13 +215,14 @@ router.post('/post/addcomment', function(req, res){
           var commentObj = {
             userid: req.session.user._id,
             username: req.session.user.username,
-            text: req.body.comment.text
+            text: req.body.comment.text,
+            date: new Date
           };
           //update the post comment array
           models.Posts.findByIdAndUpdate(
           req.body.comment.postid,
           {$push: {comments: commentObj}},
-          {safe: true, upsert: true},
+          {safe: true, upsert: true, new: true},
           function(err, comment) {
             if (err){
                return res.send(err);

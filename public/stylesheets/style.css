@@ -235,13 +235,17 @@ div.modal-backdrop{
   z-index: 100!important;
 }
 
- #tagul { 
-    display: block; 
+ #tagul {
+    display: block;
      padding: 0;
     margin: 0;
      margin-left:0;
     margin-right: 0;
-    max-height: 100px; 
-     overflow: auto; 
-      
+    max-height: 100px;
+     overflow: auto;
+
     }
+
+  img.profileImg{
+    background: url('/images/ajax-loader.gif'); background-position: center; background-repeat: no-repeat;
+  }
