@@ -105,9 +105,9 @@ router.post('/addnew', function(req, res) {
               group.private_type = false;
               group.save(function(err, group) {
                   if (err) {
-                      res.send(err); //ERROR
+                     return res.send(err); //ERROR
                   }
-                  res.status(200).send({message: 'Created group successfully'});
+                 return res.status(200).send({message: 'Created group successfully'});
               });
           } else {
             return res.status(401).send({error: "That group name is already taken."});
