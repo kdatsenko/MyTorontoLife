@@ -6,9 +6,7 @@
     <div ng-include="src='/angular_partials/userbox_groups.html'" class="box"></div>
   </div>
   <div id="mainfeed" class="main-feed center" ng-controller="permalinkController">
-    <ng-include src="'/angular_partials/post.html'">
-
-    </ng-include>
+    <pre>{{post | json}}</pre>
   </div>
 
   <div id="rightsidebar" class="actions right">
