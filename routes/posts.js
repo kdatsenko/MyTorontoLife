@@ -92,7 +92,6 @@ router.post('/addnew', function(req, res){
                return tag;
             });
             post.hashtags = hashtag_array;
-            post.short_text = 'dww';
             post.save(function(err) {
               if (err) {
                 console.log(err);
