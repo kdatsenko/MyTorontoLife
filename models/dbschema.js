@@ -78,21 +78,18 @@ var tagValidator = [
 var hashTags = new Schema({
 	name: {type: String, index: {unique: true}, lowercase: true, validate: tagValidator},
 	last_used: {type: Date, default: Date.now},
-	count: Number
+	count: {type: Number, default: 0}
 });
 
 var postsSchema = new Schema({
-  post_type: {type: ObjectId, required: true, ref: 'Types'},
+  post_type: {type: ObjectId, required: true, ref: 'PostTypes'},
 	group: {type: ObjectId, required: true, ref: 'Groups'},
 	text: {type: String, required: '{PATH} is required.'},
   short_text: {type: String, required: '{PATH} is required.'},
 	username: {type: String, required: true},
 	userid: {type: ObjectId, required: true, ref: 'Users'},
 	date_posted: {type: Date, default: Date.now},
-	hashtags: [
-		{tag_id: {type: ObjectId, ref: 'Hashtags'},
-			name: String}
-	],
+	hashtags: [String],
 	external_urls: [
 		{type: String}
 	],
@@ -179,7 +176,7 @@ groupsSchema.post('save', function(next) {
     console.log('eh: ' + eh);
     next();
   });
-});                  
+});
 
 
 var Interests = mongoose.model('Interests', interestSchema);

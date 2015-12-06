@@ -8,7 +8,7 @@ var checkAdmin = middleware.checkAdmin;
 var models = {};
 models.Users = require('mongoose').model('Users');
 models.GroupMembers = require('mongoose').model('GroupMembers');
-models.HashTags = require('mongoose').model('Hashtags');
+models.Hashtags = require('mongoose').model('Hashtags');
 models.Posts = require('mongoose').model('Posts');
 models.PostRatings = require('mongoose').model('PostRatings');
 
@@ -47,32 +47,68 @@ router.get('/', function(req, res){
 router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
-    models.GroupMembers.findOne({user: req.session.user._id, group: req.body.post.group}, function(err, usergroup) {
+    var inputPost = req.body.post;
+    if(!inputPost){
+      res.status(400).send({error: 'Post is required'});
+    }
+    if(typeof inputPost.group == "object"){inputPost.group = inputPost.group._id}
+    if(typeof inputPost.interest == "object"){inputPost.interest = inputPost.interest._id}
+    if(typeof inputPost.post_type == "object"){inputPost.post_type = inputPost.post_type._id}
+    {inputPost.userid = req.session.user._id}
+    models.GroupMembers.findOne({user: req.session.user._id, group: inputPost.group}, function(err, usergroup) {
       if (err) {
         return res.send(err);
       }
       if (!usergroup){
         return res.status(403).send({error: 'Group access for this user is unauthorized'});
       } else {
-        var post = new models.Posts(req.body.post); //create new
-        post.username = req.session.user.username;
-        post.userid = req.session.user.userid;
+        var post = new models.Posts(inputPost); //create new
+        if(req.session.user.accounttype == 2 || !inputPost.username || !inputPost.userid)
+        {
+          post.username = req.session.user.username;
+          post.userid = req.session.user.userid;
+        }
+        else{
+          post.username = inputPost.username;
+          post.userid = inputPost.userid;
+        }
         var hashtags = [];
         var time_inserted = Date.now();
-        for (tag in input.hashtags){
-          //promise with exec() for asynch behaviour
-          var tagid = models.Hashtags.findOneAndUpdate({name: tag}, {last_used: time_inserted, count: {$inc: 1}}, {'upsert': true}).exec();
-          hashtags.push({tag_id: tagid, name: tag});
-        }
-        post.hashtags = hashtags;
-        post.save(function(err) {
-            if (err) {
-                return res.send(err); //ERROR
-            }
-            res.json({ message: 'Created post!', result: post});
-
+        var hashTagPromise = new Promise(function(resolveHT, reject){
+          if(!inputPost.hashtags || inputPost.hashtags.length == 0){
+            resolveHT([]);
+          }
+          for (tag in inputPost.hashtags){
+            var count = 0;
+            console.log(inputPost.hashtags[tag]);
+            var tagid = models.Hashtags.findOneAndUpdate({name: inputPost.hashtags[tag]}, {last_used: time_inserted, $inc: {count: 1}}, {'upsert': true, 'new': true}).exec(function(err, tagDoc){
+                if(err){
+                  reject(err);
+                }
+                console.log(tagDoc);
+                hashtags.push(tagDoc.name)
+                count += 1;
+                console.log("hydrating hashtags:", count, inputPost.hashtags.length)
+                if(count == inputPost.hashtags.length){
+                  console.log('resolveHT!');
+                  resolveHT(hashtags);
+                }
+            });
+          }
+        });
+        hashTagPromise.then(function(h){
+          console.log("got H: ", h);
+          post.hashtags = h;
+          post.save(function(err) {
+              if (err) {
+                  return res.send(err); //ERROR
+              }
+              res.json({ message: 'Created post!', result: post});
+         });
+       }).catch(function(err){
+         console.log("error", err)
+         return res.send(err); //ERROR
        });
-
     }
   });
 });

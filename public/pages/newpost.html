@@ -26,7 +26,7 @@ div.inset{
             <!-- post type -->
             <div class="form-group">
               <label for="postTypeArraySel">Type:</label>
-                <select ng-model="postTypeValue" id="postTypeArraySel" ng-options="type.name for type in postTypes">
+                <select ng-model="post.post_type" id="postTypeArraySel" ng-options="type.name for type in postTypes">
                 <!--    <option value="">[select type] </option> -->
               </select>
               <!--  <label for="postTypeResult"> Selected type:</label>
@@ -36,7 +36,7 @@ div.inset{
             <!-- group  -->
             <div class="form-group">
               <label for="postGroupArraySel">Group:</label>
-              <select ng-model="postGroupValue" id="postGroupArraySel" ng-options="getGroup(group) for group in Groups">
+              <select ng-model="post.group" id="postGroupArraySel" ng-options="group.name for group in Groups">
               </select>
 
             </div>
@@ -48,19 +48,31 @@ div.inset{
               </select> -->
 
               <label ng-repeat="interest in Interests" style="display: block">
-                <input type="checkbox" checklist-model="post.Interests" checklist-value="interest.id"> {{interest.name}}
+                <input type="radio" ng-model="post.interest" ng-value="interest"> {{interest.name}}
               </label>
             </div>
           </div>
           <div class="form-group">
             <label>Description:</label>
-            <textarea id="description" name="description" ng-model="post.text" class="form-control" placeholder="Description" rows="10"></textarea>
+            <textarea id="description" name="description" ng-model="post.text" class="form-control" placeholder="Post Content" rows="10"></textarea>
 
+          </div>
+          <label for="postGroupArraySel">Tags:</label>
+          <div class="form-group inset">
+            <a ng-repeat="tag in post.hashtags" style="margin:.3em" href="/tags/{{tag}}">
+              #{{tag}}
+            </a>
           </div>
           <br>
           <div>
-            <button class="btn  btn-primary btn-group-xs" ng-disabled="post.text==''" ng-click="savePost()">Post</button>
+            <button class="btn  btn-primary btn-group-xs" ng-disabled="post.text=='' || post.post_type == null || post.group == null" ng-click="submitPost()">Post</button>
           </div>
+          <ul>
+            <li ng-if="post.post_type == null">Post type is required</li>
+            <li ng-if="post.group == null">Group is required</li>
+            <li ng-if="post.interest == null">An interest are required</li>
+            <li ng-if="post.text == ''">Please provide some text for your post</li>
+          </ul>
         </div>
       </form>
       <br>
