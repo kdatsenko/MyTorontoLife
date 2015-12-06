@@ -30,7 +30,7 @@
         Sort by:
           <select ng-model="sortExpression">
           <option value="name">Name</option>
-          <option value="group">Description</option>
+          <option value="short_description">Short Description</option>
         </select>
 
         <div ng-show="showMsg" style="margin-left:20px">
@@ -52,14 +52,14 @@
                   <input placeholder="Search name" ng-model="search.name" />
                 </td>
                 <td>
-                  <input placeholder="Search description" ng-model="search.description" />
+                  <input placeholder="Search description" ng-model="search.short_description" />
                 </td>
               </tr>
             </tbody>
             <tbody>
               <tr ng-repeat="group in groupList | orderBy:mySortFunction | filter:search">
                 <td>{{group.name}}</td>
-                <td>{{group.description}}</td>
+                <td>{{group.short_description}}</td>
                 <td class="btn-like">
                   <a ng-click='deleteGroup(group._id)'>
                     <strong style="margin-left:10px">(DELETE)</strong>
@@ -72,13 +72,13 @@
           <form id="addGroup">
             Add a group:
             </br></br>
-            <input type="text" placeholder="Enter group name" name="group" ng-model="group"></br></br>
-            <select ng-model="privateType">
+            <input type="text" placeholder="Enter group name" name="group" ng-model="group.name"></br></br>
+            <select ng-model="group.privateType">
               <option value="true">True</option>
               <option value="false">False</option>
             </select></br></br>
-            <textarea ng-model="description" name="description" placeholder="Description" class="descr" maxlength="500"></textarea></br></br>
-            <input type="submit" value="submit" ng-click="submitGroup()">
+            <textarea ng-model="group.short_description" name="description" placeholder="Description" class="descr" maxlength="500"></textarea></br></br>
+            <input type="submit" value="submit" ng-click="submitGroup(group)">
          </form>
     </div>
 </div>

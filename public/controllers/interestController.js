@@ -6,7 +6,7 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 			if(isNaN(item[$scope.sortExpression]))
 				return item[$scope.sortExpression];
 			return parseInt(item[$scope.sortExpression]);
-		}
+	};
 
 	$scope.showMsg = false;
 
@@ -20,8 +20,8 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 		console.log(res.data.error);
 	});
 
-	$scope.submitInterest = function () {
-		if ($scope.interest == undefined) {
+	$scope.submitInterest = function (interest) {
+		if ($scope.interest.name == undefined) {
 			$scope.showMsg = true;
 			$scope.msg = "Please fill the blank";
 			$timeout(function() {
@@ -31,10 +31,18 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 			$http({
 				method: 'POST',
 				url: '/interests/addnew',
-				data: JSON.stringify({
-					name: $scope.interest
-				})
+				data: interest
 			}).then(function successCallback(res) {
+				$http({
+					method:'GET',
+					url: '/interests'
+				}).then(function successCallback(res) {
+					$scope.interestList = res.data;
+
+				}, function errorCallback(res) {
+					console.log(res.data.error);
+				});
+
 				$scope.showMsg = true;
 				$scope.msg = res.data.message;
 				$timeout(function() {

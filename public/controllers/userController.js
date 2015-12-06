@@ -6,21 +6,62 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 			if(isNaN(item[$scope.sortExpression]))
 				return item[$scope.sortExpression];
 			return parseInt(item[$scope.sortExpression]);
-		}
+	};
 
+	$scope.showMsg = false;
+
+	$http({
+		method:'GET',
+		url: '/users'
+	}).then(function successCallback(res) {
+		$scope.userList = res.data;
+
+	}, function errorCallback(res) {
+		console.log(res.data.error);
+	});
+
+	 $scope.getUser = function (username) {
+	 	$location.path('/profile/' + username);
+	 };
+
+
+	$scope.assignAdmin = function (email) {
 		$http({
-			method:'GET',
-			url: '/users'
+			method: 'PUT',
+			url: 'users/user/assignadmin/' + email
 		}).then(function successCallback(res) {
-			$scope.userList = res.data;
+			$scope.showMsg = true;
+			$scope.msg = res.data.message;
+			$timeout(function() {
+				$scope.showMsg = false;
+			}, 3000);
+		}), function errorCallback(res) {
+			$scope.showMsg = true;
+			$scope.msg = res.data.error;
+			$timeout(function() {
+				$scope.showMsg = false;
+			}, 3000);
+		};
+	};
 
-		}, function errorCallback(res) {
-			console.log(res.data.error);
-		});
-
-		 $scope.getUser = function (username) {
-		 	$location.path('/profile/' + username);
-		 };
+	$scope.unassignAdmin = function (email) {
+		$http({
+			method: 'PUT',
+			url: 'users/user/revokeadmin/' + email
+		}).then(function successCallback(res) {
+			$scope.showMsg = true;
+			$scope.msg = res.data.message;
+			$timeout(function() {
+				$scope.showMsg = false;
+			}, 3000);
+		}), function errorCallback(res) {
+			$scope.showMsg = true;
+			$scope.msg = res.data.error;
+			$timeout(function() {
+				$scope.showMsg = false;
+			}, 3000);
+		};
+	};
 
 
 	 $scope.deleteUser = function (id) {
@@ -42,7 +83,7 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 
 	 	}, function errorCallback(res) {
 	 		$scope.showMsg = true;
-			$scope.msg = res.data.error;
+			$scope.msg = res.data.message;
 			$timeout(function() {
 				$scope.showMsg = false;
 			}, 3000);

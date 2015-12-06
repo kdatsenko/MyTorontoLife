@@ -92,7 +92,11 @@ router.get('/group', function(req, res) {
 
 /* Create a new group */
 router.post('/addnew', function(req, res) {
-  var group = new models.Group(req.body.group); //create new
+  // var group = new models.Groups({
+  //     name: req.body.group,
+  //     privateType: req.body.privateType,
+  //     short_description: req.body.short_description
+  //     }); //create new
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
               group.group_creator = req.session.user._id; //this user
@@ -239,11 +243,13 @@ router.delete('/group/:id', function(req, res) {
   }
   models.Groups.findById(req.params.id, function(err, group){
       if (err) {return res.send(err);}
+      console.log(JSON.stringify(group));
       if (!group) {
         return res.json({message: 'Group not found'});
       }
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
+        
       }
       group.remove(function(err, group) {
       if (err) {

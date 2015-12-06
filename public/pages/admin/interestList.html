@@ -29,10 +29,8 @@
   <div style="display:flex">
     Sort by: 
         <select ng-model="sortExpression">
-			<option value="ser">Name</option>
-			<option value="group">Description</option>
+			<option value="name">Name</option>
 		</select>
-
     <div ng-show="showMsg" style="margin-left:20px">
         {{msg}}
       </div>
@@ -42,7 +40,6 @@
           <thead class="thead-inverse">
             <tr>
               <th>Name</th>
-              <th>Option</th>
             </tr>
           </thead>
           <tbody>
@@ -55,24 +52,16 @@
           <tbody>
             <tr ng-repeat="interest in interestList | orderBy:mySortFunction | filter:search">
               <td>{{interest.name}}</td>
-              <td class="btn-like">
-                <a ng-click='deleteInterest(interest.name)'>
-                  <strong style="margin-left:10px">(DELETE)</strong>
-                </a>
-            </td>
             </tr>
           </tbody>
       </table>
 
       <form id="addInterest">
         Add an interest:
-        <input type="text" placeholder="Enter interest" name="interest" ng-model="interest">
-        <input type="submit" value="submit" ng-click="submitInterest()">
+        <input type="text" placeholder="Enter interest" name="interest" ng-model="interest.name">
+        <input type="submit" value="submit" ng-click="submitInterest(interest)">
       </form>
 
-      <div ng-show="showMsg">
-        {{msg}}
-      </div>
     </div>
   </div>
 </div>
