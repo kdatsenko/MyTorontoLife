@@ -92,15 +92,18 @@ router.get('/group', function(req, res) {
 
 /* Create a new group */
 router.post('/addnew', function(req, res) {
-  var group = new models.Groups({
+  var group = {
       name: req.body.name,
       private_type: false,
-      // group_creator: req.session.user_id,
       description: req.body.short_description
-      }); //create new
+      };
+  console.log(group);
+
   models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
+              var group = new models.Groups(req.body.group); //create new 
               group.group_creator = req.session.user._id; //this user
+              group.private_type = false;
               group.save(function(err, group) {
                   if (err) {
                       res.send(err); //ERROR

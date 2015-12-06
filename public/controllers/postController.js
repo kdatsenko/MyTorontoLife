@@ -14,7 +14,6 @@ crudApp.controller('postController', function ($scope, $http, $location, $timeou
 		method:'GET',
 		url: '/posts'
 	}).then(function successCallback(res) {
-    console.log(res.data);
 		$scope.postList = res.data;
 
 	}, function errorCallback(res) {
