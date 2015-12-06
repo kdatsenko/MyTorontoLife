@@ -2,6 +2,7 @@ var crudApp = angular.module('crudApp');
 
 crudApp.controller('permalinkController', function($scope, $location, $http, sharedService) {
   $scope.post = {};
+
   String.prototype.trimLeft = function(charlist) {
     if (charlist === undefined)
       charlist = "\s";
@@ -13,6 +14,10 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
     console.log(post);
     if(post){
       $scope.post = post.data;
+      $http.get('/users/profile?username='+post.data.username).then(function(user){
+        $scope.post.user = user.data;
+        console.log(user);
+      });
     }
   },
   function errorCallback(response, status, headers, config) {
