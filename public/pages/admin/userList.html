@@ -25,12 +25,16 @@
     </nav>
 
   <div id="main" ng-controller="userController">
-  <div>
+  <div style="display:flex">
     Sort by:
         <select ng-model="sortExpression">
       <option value="username">Username</option>
       <option value="email">Useremail</option>
     </select>
+
+    <div ng-show="showMsg" style="margin-left:20px">
+        {{msg}}
+      </div>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -63,9 +67,5 @@
             </tr>
           </tbody>
         </table>
-
-        <div ng-show="showMsg">
-        {{msg}}
-      </div>
 </div>
   </div>

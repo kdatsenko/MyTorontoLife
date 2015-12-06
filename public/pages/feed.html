@@ -54,7 +54,6 @@
             <img src="{{post.userid.imageurl}}">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
             <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">
-
               <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
 
             </a> -

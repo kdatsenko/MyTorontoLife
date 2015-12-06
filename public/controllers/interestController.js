@@ -10,24 +10,15 @@ crudApp.controller('interestController', function ($scope, $http, $location, $ti
 
 	$scope.showMsg = false;
 
-	 $scope.interestList = [
-      {_id: "aaaa", name: "fishing"},
-      {_id: "bbbb" , name: "cats"},
-      {_id: "cccc", name: "dogs"},
-      {_id: "dddd", name: "real estate"},
-      {_id: "565b5911afaf8bac3202966c", name: "Food"}
-    ];
+	$http({
+		method:'GET',
+		url: '/interests'
+	}).then(function successCallback(res) {
+		$scope.interestList = res.data;
 
-
-	// $http({
-	// 	method:'GET',
-	// 	url: '/interests'
-	// }).then(function successCallback(res) {
-	// 	$scope.interestList = res.data.interests;
-
-	// }, function errorCallback(res) {
-	// 	console.log(res.data.error);
-	// });
+	}, function errorCallback(res) {
+		console.log(res.data.error);
+	});
 
 	$scope.submitInterest = function () {
 		if ($scope.interest == undefined) {

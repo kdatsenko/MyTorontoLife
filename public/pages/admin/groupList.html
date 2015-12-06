@@ -26,12 +26,16 @@
     </nav>
 
   <div id="main" ng-controller="groupController">
-       <div>
+       <div style="display:flex">
         Sort by:
           <select ng-model="sortExpression">
           <option value="name">Name</option>
           <option value="group">Description</option>
         </select>
+
+        <div ng-show="showMsg" style="margin-left:20px">
+        {{msg}}
+      </div>
       </div>
 
       <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -57,7 +61,7 @@
                 <td>{{group.name}}</td>
                 <td>{{group.description}}</td>
                 <td class="btn-like">
-                  <a ng-click='deleteGroup(group.name)'>
+                  <a ng-click='deleteGroup(group._id)'>
                     <strong style="margin-left:10px">(DELETE)</strong>
                   </a>
               </td>
@@ -76,9 +80,5 @@
             <textarea ng-model="description" name="description" placeholder="Description" class="descr" maxlength="500"></textarea></br></br>
             <input type="submit" value="submit" ng-click="submitGroup()">
          </form>
-
-          <div ng-show="showMsg">
-            {{msg}}
-          </div>
     </div>
 </div>

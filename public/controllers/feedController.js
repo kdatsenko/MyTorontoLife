@@ -249,6 +249,13 @@ var getGroupPosts = function(group_id){
     });
  };
 
+var formatDate = function(posts){
+  posts.map(function(post){
+        var post = post;
+        post.date_posted = moment(new Date(2014, 9, 18, 0, 0, 0));
+        return post;
+      });
+};
 
  $scope.submitSearch = function(){
   //pass search data to top-level MainController, which will reload the view

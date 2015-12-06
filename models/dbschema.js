@@ -97,7 +97,7 @@ var postsSchema = new Schema({
 		{type: String}
 	],
 
-  interest: {type: Schema.ObjectId, ref: 'Interests'},
+  interest: {type: Schema.ObjectId, required: true, ref: 'Interests'},
    fivestarcount: {type: Number, default: 0},
    fourstarcount: {type: Number, default: 0},
    threestarcount: {type: Number, default: 0},
@@ -157,6 +157,7 @@ groupsSchema.pre('remove', function(next) {
         posts[i].remove();
       }
   });
+  next();
 });
 
 /*postsSchema.pre('remove', function(next) {

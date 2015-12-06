@@ -239,11 +239,13 @@ router.delete('/group/:id', function(req, res) {
   }
   models.Groups.findById(req.params.id, function(err, group){
       if (err) {return res.send(err);}
+      console.log(JSON.stringify(group));
       if (!group) {
         return res.json({message: 'Group not found'});
       }
       if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0) & group.group_creator != req.session.user._id){ //Action only allowed for Admins.
         return res.status(403).send({error: 'Unauthorized account type'});
+        
       }
       group.remove(function(err, group) {
       if (err) {
