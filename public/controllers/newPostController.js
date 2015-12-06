@@ -72,9 +72,9 @@ var crudApp = angular.module('crudApp');
 
 $scope.submitPost = function(){
   $http.post('/posts/addnew', {
-    data: {post: $scope.post}
+    post: $scope.post
   }).success(function(data){
-    $location.path('/permalink/'+data.post._id);
+    $location.path('/permalink/'+data.result._id);
   });
 }
 

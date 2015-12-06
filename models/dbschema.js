@@ -78,7 +78,7 @@ var tagValidator = [
 var hashTags = new Schema({
 	name: {type: String, index: {unique: true}, lowercase: true, validate: tagValidator},
 	last_used: {type: Date, default: Date.now},
-	count: Number
+	count: {type: Number, default: 0}
 });
 
 var postsSchema = new Schema({
@@ -178,7 +178,7 @@ groupsSchema.post('save', function(next) {
     console.log('eh: ' + eh);
     next();
   });
-});                  
+});
 
 
 var Interests = mongoose.model('Interests', interestSchema);
