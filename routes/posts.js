@@ -80,9 +80,13 @@ router.post('/addnew', function(req, res){
           }
           for (tag in inputPost.hashtags){
             var count = 0;
-            var tagid = models.Hashtags.findOneAndUpdate({name: tag}, {last_used: time_inserted, $inc: {count: 1}}, {'upsert': true}).exec(function(err, tagDoc){
-                reject(err);
-                hashtags.push(tagDoc);
+            console.log(inputPost.hashtags[tag]);
+            var tagid = models.Hashtags.findOneAndUpdate({name: inputPost.hashtags[tag]}, {last_used: time_inserted, $inc: {count: 1}}, {'upsert': true, 'new': true}).exec(function(err, tagDoc){
+                if(err){
+                  reject(err);
+                }
+                console.log(tagDoc);
+                hashtags.push({tag_id: tagDoc._id, name: tagDoc.name });
                 count += 1;
                 console.log("hydrating hashtags:", count, inputPost.hashtags.length)
                 if(count == inputPost.hashtags.length){

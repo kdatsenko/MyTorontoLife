@@ -5,7 +5,7 @@ var crudApp = angular.module('crudApp');
 /**
  * Controller for login page template.
  */
- crudApp.controller('newPostController', function ($scope, $http)  {
+ crudApp.controller('newPostController', function ($scope, $http, $location)  {
 
 
 		 $scope.postTypes = [];
@@ -53,7 +53,7 @@ var crudApp = angular.module('crudApp');
             $scope.post.hashtags.push(words[i].slice(1));
         }
       }
-      if(words.length > 50){
+      if(words && words.length > 50){
         $scope.post.short_text = "";
         var i = 0;
         while(i < 50) {
