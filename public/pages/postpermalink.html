@@ -48,7 +48,6 @@
       <div ng-if="!state.add_new">
         <div class="box" ng-repeat="comment in post.comments">
           <div class="profile">
-            <pre>{{comment | json}}</pre>
             <img src="{{localUsers[comment.username].imageurl}}" class="profileImg" />
             <a href="" ng-click="userProfile(comment.userid)">{{comment.username}}</a>
             <p ng-show="comment.date">On:&nbsp;{{comment.date}}</p>
