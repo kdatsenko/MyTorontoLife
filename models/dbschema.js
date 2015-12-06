@@ -52,7 +52,7 @@ var nameValidator = [
 
 var groupsSchema = new Schema({
 	name: {type: String, unique: true, required: '{PATH} is required.', validate: nameValidator},
-	private_type: {type: Boolean, default: true},//True = private, False public
+	private_type: {type: Boolean, default: false},//True = private, False public
   group_creator: {type: ObjectId, required: true, ref: 'Users'},
 	description: {type: String, default: ''}
 });

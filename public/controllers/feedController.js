@@ -19,7 +19,7 @@ crudApp.controller('feedController', function($scope, $location, $http, sharedSe
 
 
 
-         $scope.Interests = [
+  $scope.Interests = [
       {_id: "aaaa", name: "fishing"},
       {_id: "bbbb" , name: "cats"},
       {_id: "cccc", name: "dogs"},
@@ -61,11 +61,13 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 
  $scope.getPostbyID = function(post_id) {
   //alert('Go to the post with ID: ' + post_id);
+    $scope.$emit('leaving_dashboard');
     var route = '/permalink/:' + post_id;
     $location.path(route);
 }
 
  $scope.createNewPost = function(post_type) {
+  $scope.$emit('leaving_dashboard');
   $location.path('/create_post');
  }
 

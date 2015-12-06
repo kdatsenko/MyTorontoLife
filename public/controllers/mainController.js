@@ -83,6 +83,11 @@ var crudApp = angular.module('crudApp');
 		$scope.getPostPage(postid);
 	});*/
 
+	$scope.$on("leaving_dashboard", function(event){
+		resetStateVariables();
+		$scope.state.main_dashboard = false;
+	});
+
 
   $scope.showHero = true;
 

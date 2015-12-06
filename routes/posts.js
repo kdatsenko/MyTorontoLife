@@ -59,6 +59,8 @@ router.get('/', function(req, res){
 
 /* The posts page shows a single post. */
 /* Create Post, update hashtags */
+/* The posts page shows a single post. */
+/* Create Post, update hashtags */
 router.post('/addnew', function(req, res){
 //for each new hashtag, create new entry in the hashtag schema
     //if member is a user of that group, or an admin, then they can create the post
@@ -75,7 +77,7 @@ router.post('/addnew', function(req, res){
         var time_inserted = Date.now();
         var tasks = [];
         for (var i = 0; i < req.body.hashtags.length; i++) {
-          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }},
+          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }}, 
           {'upsert': true, 'new': true}));
         }
         Q.all(tasks)
@@ -88,6 +90,7 @@ router.post('/addnew', function(req, res){
                return tag;
             });
             post.hashtags = hashtag_array;
+            post.short_text = 'dww';
             post.save(function(err) {
               if (err) {
                 console.log(err);
