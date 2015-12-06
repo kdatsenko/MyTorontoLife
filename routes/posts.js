@@ -71,13 +71,15 @@ router.post('/addnew', function(req, res){
       if (!usergroup){
         return res.status(403).send({error: 'Group access for this user is unauthorized'});
       } else {
-        var post = new models.Posts(req.body.post); //create new
+        var post_init = req.body.post;
+        post_init.hashtags = undefined;
+        var post = new models.Posts(post_init); //create new
         post.username = req.session.user.username;
         post.userid = req.session.user._id;
         var time_inserted = Date.now();
         var tasks = [];
         for (var i = 0; i < req.body.hashtags.length; i++) {
-          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }}, 
+          tasks.push(models.Hashtags.findOneAndUpdate({name: req.body.hashtags[i]}, {last_used: time_inserted, $inc:{ count : 1 }},
           {'upsert': true, 'new': true}));
         }
         Q.all(tasks)
