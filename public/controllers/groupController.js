@@ -7,7 +7,7 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 			if(isNaN(item[$scope.sortExpression]))
 				return item[$scope.sortExpression];
 			return parseInt(item[$scope.sortExpression]);
-		}
+	};
 
 	$scope.showMsg = false;
 
@@ -21,8 +21,8 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 		console.log(res.data.error);
 	});
 
-	$scope.submitGroup = function () {
-		if ($scope.group == undefined || $scope.privateType == undefined || $scope.description == undefined) {
+	$scope.submitGroup = function (group) {
+		if ($scope.group.name == undefined || $scope.group.privateType == undefined || $scope.group.short_description == undefined) {
 			$scope.showMsg = true;
 			$scope.msg = "Please fill the blank";
 			$timeout(function() {
@@ -33,12 +33,17 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 			$http({
 				method: 'POST',
 				url: 'groups/addnew',
-				data: JSON.stringify({
-					name: $scope.group,
-					private_type: $scope.privateType,
-					description: $scope.description
-				})
+				data: group
 			}).then(function successCallback(res) {
+				$http({
+					method:'GET',
+					url: '/groups'
+				}).then(function successCallback(res) {
+					$scope.groupList = res.data;
+
+				}, function errorCallback(res) {
+					console.log(res.data.error);
+				});
 				$scope.showMsg = true;
 				$scope.msg = res.data.message;
 				$timeout(function() {

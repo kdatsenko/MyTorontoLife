@@ -6,7 +6,7 @@ crudApp.controller('postController', function ($scope, $http, $location, $timeou
 			if(isNaN(item[$scope.sortExpression]))
 				return item[$scope.sortExpression];
 			return parseInt(item[$scope.sortExpression]);
-		}
+	};
 
 	$scope.showMsg = false;
 
