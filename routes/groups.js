@@ -98,11 +98,23 @@ router.post('/addnew', function(req, res) {
       description: 'long, not short'
       }; */
 
-  models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
+  /*models.Groups.findOne({name: group.name}, function(err, found_group) { //name should be unique
           if (!found_group) { //There couldn't be found an Existing Group with this name
               var group = new models.Groups(req.body.group); //create new 
               group.group_creator = req.session.user._id; //this user
-              group.private_type = false;
+              group.private_type = false;*/
+  models.Groups.findOne({name: req.body.group.name}, function(err, found_group) { //name should be unique
+          if (!found_group) { //There couldn't be found an Existing Group with this name
+            var group = new models.Groups(req.body.group); //create new 
+            group.group_creator = req.session.user._id; //this user
+            group.private_type = false;
+            console.log(JSON.stringify(group));
+              /*var group = new models.Groups({
+                    name: req.body.name,
+                    private_type: false,
+                    description: req.body.short_description,
+                    group_creator: req.session.user._id
+                  }); //create new */
               group.save(function(err, group) {
                   if (err) {
                      return res.send(err); //ERROR

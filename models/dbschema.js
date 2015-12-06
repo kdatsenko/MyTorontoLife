@@ -171,15 +171,15 @@ postsSchema.pre('save', function (next) {
   next();
 });
 
-groupsSchema.post('save', function(next) {
-  var group_membership = new models.GroupMembers({user: this.group_creator, group: this._id});
+groupsSchema.post('save', function () {
+  var group_membership = new GroupMembers({user: this.group_creator, group: this._id});
   group_membership.save(function(err, eh) {
     if (err) {
       console.log(err);
     }
     console.log('eh: ' + eh);
-    next();
   });
+  //next();
 });
 
 
