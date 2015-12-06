@@ -102,6 +102,7 @@ router.post('/addnew', function(req, res) {
           if (!found_group) { //There couldn't be found an Existing Group with this name
               var group = new models.Groups(req.body.group); //create new 
               group.group_creator = req.session.user._id; //this user
+              group.private_type = false;
               group.save(function(err, group) {
                   if (err) {
                       res.send(err); //ERROR
