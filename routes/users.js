@@ -101,6 +101,57 @@ var changePasswordAdmin = function (user, res){
   });
 };
 
+/* Update this user's record to Admin status */
+router.put('/user/assignadmin', function(req, res){
+  if (!checkAdmin(req, res, 0) & !checkAdmin(req, res, 1)){ //Action allowed only for Admins.
+    return res.status(403).send({error: 'Unauthorized account type'});
+  }  
+  models.Users.findOne({ email: req.body._id }, function(err, user) {
+      if (err){ return res.send(err); }
+      if (!user){
+        return res.status(404).send({error: "User not found"});
+      }
+      if (user.accounttype == 0 | user.accounttype == 1){
+        return res.status(400).send({error: "Bad request"});
+      }
+      user.accounttype = 1; //Make user an Admin
+      // save the user
+      user.save(function(err) {
+        if (err) {
+          return res.send(err);
+        }
+        res.json({ message: "User " + user.username + " assigned to admin!" });
+      });
+
+  });
+
+});
+
+ /* Update this user's record to Regular Fries */
+ router.put('/user/revokeadmin', function(req, res){
+  if (!checkAdmin(req, res, 0) & !checkAdmin(req, res, 1)){ //Action only allowed for Super Admins
+    return res.status(403).send({error: 'Unauthorized account type'});
+  }  
+  models.User.findOne({ email: req.body._id}, function(err, user) {
+      if (err){ return res.send(err); }
+      if (!user){
+        return res.status(404).send({error: "User not found"});
+      }
+      if (user.accounttype == 0){
+        return res.status(401).send({error: "Forbidden: deleting super admin"});
+      }
+      user.accounttype = 2; //Make user a simple user
+      // save the user
+      user.save(function(err) {
+        if (err) {
+          return res.send(err);
+        }
+        res.json({ message: "User " + user.username + " admin privilege revoked!" });
+      });
+
+  });
+});
+
 //Can expect a old password confirmation check
 var changePasswordRegular = function (user, res){
   //Action allowed only for Admins
@@ -249,6 +300,8 @@ router.delete('/profile/:id', function(req, res) {
       if (err) {return res.send(err);}
       if (!user) {
         return res.json({message: 'User not found'});
+      } else if (user.accounttype == 0) {
+        return res.json({message: 'Deletion of Super Admin account not allowed.'});
       }
       user.remove(function(err, user_rem) {
       if (err) {
