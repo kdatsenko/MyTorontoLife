@@ -22,4 +22,15 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
     console.log(response);
 
   });
+
+  $scope.currentRating = 0;
+
+  $scope.ratePost = function(value){
+    if($scope.currentRating > 0){
+      $scope.currentRating = 0;
+      return;
+    }
+    console.log("Rate "+$scope.postId+" at "+ value);
+    $scope.currentRating = value;
+  }
 });
