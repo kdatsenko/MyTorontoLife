@@ -103,8 +103,7 @@ section.feed {
   section.feed .center {
     position: absolute;
     left: 25%;
-    right: 30%;
-    height: 1000px; }
+    right: 30%;}
   section.feed .right {
     top: 40px;
     position: fixed;
@@ -186,7 +185,7 @@ div.box {
       }
 
 div.box.loading {
-  content: "loading";s
+  content: "loading";
   height: 400px; }
 
 div.box {
