@@ -26,7 +26,7 @@ div.inset{
             <!-- post type -->
             <div class="form-group">
               <label for="postTypeArraySel">Type:</label>
-              <select ng-model="postTypeValue" id="postTypeArraySel" ng-options="getpostType(type) for type in postTypes">
+                <select ng-model="postTypeValue" id="postTypeArraySel" ng-options="type.name for type in postTypes">
                 <!--    <option value="">[select type] </option> -->
               </select>
               <!--  <label for="postTypeResult"> Selected type:</label>

@@ -31,7 +31,7 @@
 
         <div id="mainfeed" class="main-feed center">
         <a name="feed"></a>
-        <div class="box" ng-repeat="post in Posts"> 
+        <div class="box" ng-repeat="post in Posts">
           <div class="rating">
             <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
           </div>
@@ -40,10 +40,10 @@
             <img src="{{post.userid.imageurl}}">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
             <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">
-              
+
               <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
 
-            </a> - 
+            </a> -
             <a href="" ng-click="onInterestClick(post.interest._id)">{{post.interest.name}}</a>
             </span>
             <br>
@@ -52,19 +52,19 @@
             </span>
             <br>
             <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
-          </div>  
+          </div>
           <div ng-bind-html="posts.html">
 
           </div>
 
           <p>{{post.short_text}}</p>
-         <!-- 
+         <!--
               <div class="ratings"></div>
               <p></p>
               <ul><li>Comment</li><li>Share</li></ul>
 
          -->
-        
+
         </div>
 
       </div>
@@ -79,7 +79,7 @@
               <div ng-init="limit = 150; moreShown = false">
                   {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
                   <a ng-show="group.description.length > limit && !moreShown"
-                    href ng-click="limit=limit=300; moreShown = true">  
+                    href ng-click="limit=limit=300; moreShown = true">
                     More
                   </a>
                   <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
@@ -108,8 +108,7 @@
         <div class="box">
           <h1>Create a post</h1>
           <ul>
-            <li  ng-click="createNewPost( 'New Announcement')">New Announcement</li>
-            <li ng-click="createNewPost( 'New question')">New question</li>
+            <li ng-click="createNewPost()">New Post</li>
           </ul>
         </div>
 
@@ -120,7 +119,7 @@
           <ul id="tagul">
             <li style=" text-align: left;" ng-repeat="tag in tags"><a href="" ng-click="onTagClick(tag.name)"><span>{{tag.name}}</span></a><span> x {{tag.count}}</span></li>
           </ul>
-        </div>       
+        </div>
     <!--    <ul class="box footerlinks">
           <li><a href="#">Tag Index</a></li>
           <!--<li><a href="#">About</a></li>
@@ -129,13 +128,13 @@
           <li><a href="#">Email Policy</a></li>
           <li><a href="#">Data Attribution</a></li>
         </ul> -->
-     
+
       </div>
 
 
 
     </section>
-    
+
 <!--=======
 <script type="text/javascript" src="/controllers/feedController.js"></script>
 <section class="feed" ng-controller="feedController">
