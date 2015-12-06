@@ -32,5 +32,27 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
     }
     console.log("Rate "+$scope.postId+" at "+ value);
     $scope.currentRating = value;
+
+    var data = {
+        rating: {
+        stars: value,
+        postid: $scope.post._id,
+        groupid: $scope.post.group._id
+      }
+    };
+
+    $http({
+      method: 'POST',
+      url: '/posts/post/rate',
+      data: data
+    })
+    .then(function successCallback(response) {
+            console.log("Rated "+$scope.postId+" for "+ value);
+            $scope.post.averagerating = response.data.averagerating;
+          },
+          function errorCallback(response) {
+            console.log(response)
+          });  
+
   }
 });

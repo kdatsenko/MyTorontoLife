@@ -234,6 +234,7 @@ router.post('/post/rate', function(req, res){
   //check that a rating does not already exist this user and post id
   //if it does, just update the number
   //check that the user is a member of post's group first
+  console.log('HELLO?');
   if (req.body.rating.stars < 1 | req.body.rating.stars > 5){
     return res.status(403).send({error: "Rating is out of bounds!"});
   }
@@ -253,7 +254,7 @@ router.post('/post/rate', function(req, res){
         return res.status(403).send({error: 'Rating on this post is unauthorized for this user.'});
       }
         //check that a rating does not already exist this user and post id
-        models.PostRatings.findOne({postid: post._id, userid: req.session.user._id}, function(err, post_rating) {
+        models.PostRatings.findOne({postid: req.body.rating.postid, userid: req.session.user._id}, function(err, post_rating) {
           if(err){
             return res.send(err);
           }
@@ -266,7 +267,7 @@ router.post('/post/rate', function(req, res){
               if (err) {
                 return res.send(err);
               }
-              res.json({ message: 'New rating saved!' });
+              console.log('New rating saved!');
             });
           } else {
             //UPDATE OLD RATING
@@ -276,17 +277,21 @@ router.post('/post/rate', function(req, res){
                 if (err) {
                   return res.send(err);
                 }
-                res.json({ message: 'User rating for this post updated!' });
+                console.log('User rating for this post updated!');
              });
           }
 
           modifyPostRatingHelper(post, req.body.rating.stars, false);
+          if (post.numberofratings == 0){
+            post.numberofratings = 1;
+          }
           calculateAverageRating(post);
           post.save(function(err) {
             if (err) {
               return res.send(err);
             }
-            console.log('Post rating count updated!');
+            console.log('Post rating count updated!: ' + post.averagerating);
+            return res.json({averagerating: post.averagerating});
           });
         });
 
@@ -301,7 +306,9 @@ var calculateAverageRating = function(postObj){
               (postObj.threestarcount * 3) +
               (postObj.fourstarcount * 4) +
               (postObj.fivestarcount * 5);
-  postObj.averagerating = (total / numberofratings);
+console.log(postObj.numberofratings);
+  console.log((total / postObj.numberofratings));
+  postObj.averagerating = (total / postObj.numberofratings);
 };
 
 /* -1: subtract=true, +1: substract=false*/

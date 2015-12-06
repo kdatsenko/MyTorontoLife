@@ -245,7 +245,7 @@ var posts = [
    threestarcount: 0,
    twostarcount: 0,
    onestarcount: 0,
-   numberofratings: 0,
+   numberofratings: 2,
    averagerating: 5
  },
 
@@ -275,7 +275,7 @@ var posts = [
    threestarcount: 1,
    twostarcount: 0,
    onestarcount: 0,
-   numberofratings: 0,
+   numberofratings: 2,
    averagerating: 4
  },
 
@@ -315,7 +315,7 @@ var posts = [
    threestarcount: 0,
    twostarcount: 1,
    onestarcount: 1,
-   numberofratings: 0,
+   numberofratings: 2,
    averagerating: 1.5
 
  }];
