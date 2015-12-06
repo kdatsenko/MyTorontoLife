@@ -14,6 +14,7 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 		method:'GET',
 		url: '/users'
 	}).then(function successCallback(res) {
+		console.log(res.data);
 		$scope.userList = res.data;
 
 	}, function errorCallback(res) {
@@ -30,6 +31,16 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 			method: 'PUT',
 			url: 'users/user/assignadmin/' + email
 		}).then(function successCallback(res) {
+			$http({
+				method:'GET',
+				url: '/users'
+			}).then(function successCallback(res) {
+				console.log(res.data);
+				$scope.userList = res.data;
+
+			}, function errorCallback(res) {
+				console.log(res.data.error);
+			});
 			$scope.showMsg = true;
 			$scope.msg = res.data.message;
 			$timeout(function() {
@@ -49,6 +60,16 @@ crudApp.controller('userController', function ($scope, $http, $location, $timeou
 			method: 'PUT',
 			url: 'users/user/revokeadmin/' + email
 		}).then(function successCallback(res) {
+			$http({
+				method:'GET',
+				url: '/users'
+			}).then(function successCallback(res) {
+				console.log(res.data);
+				$scope.userList = res.data;
+
+			}, function errorCallback(res) {
+				console.log(res.data.error);
+			});
 			$scope.showMsg = true;
 			$scope.msg = res.data.message;
 			$timeout(function() {

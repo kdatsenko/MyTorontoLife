@@ -221,7 +221,7 @@ router.post('/fileupload', function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Users.find({}, '_id email username', function(err, users) {
+  models.Users.find({}, '_id email username accounttype', function(err, users) {
     if (err) {
       return res.send(err);
     }
