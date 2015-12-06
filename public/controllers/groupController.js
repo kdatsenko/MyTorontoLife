@@ -15,6 +15,7 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 		method:'GET',
 		url: '/groups'
 	}).then(function successCallback(res) {
+		console.log(res.data);
 		$scope.groupList = res.data;
 
 	}, function errorCallback(res) {
@@ -22,14 +23,13 @@ crudApp.controller('groupController', function ($scope, $http, $location, $timeo
 	});
 
 	$scope.submitGroup = function (group) {
-		if ($scope.group.name == undefined || $scope.group.privateType == undefined || $scope.group.short_description == undefined) {
+		if ($scope.group.name == undefined || $scope.group.short_description == undefined) {
 			$scope.showMsg = true;
 			$scope.msg = "Please fill the blank";
 			$timeout(function() {
 				$scope.showMsg = false;
 			}, 3000);
 		} else {
-
 			$http({
 				method: 'POST',
 				url: 'groups/addnew',

@@ -1,14 +1,73 @@
 <section class="feed">
-
-  <div id="leftsidebar"class="quick-links left">
-    <div ng-include="src='/angular_partials/userbox_profile.html'" class="box"></div>
-    <div ng-include="src='/angular_partials/userbox_interests.html'" class="box"></div>
-    <div ng-include="src='/angular_partials/userbox_groups.html'" class="box"></div>
-  </div>
   <div id="mainfeed" class="main-feed center" ng-controller="permalinkController">
-    <ng-include src="'/angular_partials/post.html'">
+    <div class="box">
+      <div class="rating">
+        <span ng-repeat="i in [5, 4, 3, 2, 1]" ng-if="post.averagerating < i">☆</span>
+        <span ng-repeat="i in [1, 2, 3, 4, 5]" ng-if="post.averagerating >= i">&#x2605;</span>
+      </div>
 
-    </ng-include>
+      <div class="profile">
+        <img src="{{post.userid.imageurl}}">
+        <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
+        <span class="permalinks">
+
+          <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time> -
+        <a href="" ng-click="onInterestClick(post.interest._id)">{{post.interest.name}}</a>
+        </span>
+        <br>
+        <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
+          <a href=""> #{{ tag.name }} </a>
+        </span>
+        <br>
+        <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
+      </div>
+      <div ng-bind-html="posts.html">
+
+      </div>
+
+      <p>{{post.text}}</p>
+    </div>
+      <div ng-if="!state.user_is_author && !state.add_new">
+
+          <div style="display:block; margin: auto; width: 200px;">
+            <label for="postRateArraySel" style="padding-top: 3px;">Rate this Post:</label>
+            <div style="display: inline;">
+              <div class="rating">
+                <span ng-click="ratePost(i)" ng-repeat="i in [5, 4, 3, 2, 1]" ng-if="currentRating < i">☆</span>
+                <span ng-click="ratePost(0)" ng-repeat="i in [1, 2, 3, 4, 5]" ng-if="currentRating >= i">&#x2605;</span>
+              </div>
+            </div>
+
+          </div>
+
+
+      </div>
+      <br>
+
+      <div ng-if="!state.add_new">
+        <div class="box" ng-repeat-start="comment in post.comments">
+          <div class="profile">
+            <img src="user_imageurl" />
+            <a href="" ng-click="userProfile(comment.userid)">{{comment.username}}</a>
+            <p>&nbsp;On:&nbsp;{{comment.date}}</p>
+            <br>
+          </div>
+        </div>
+
+        <p ng-repeat-end>{{comment.text }}</p>
+      </div>
+
+      <div ng-if="!state.user_is_author && !state.add_new">
+        <form class="form-inline">
+          <div class="form-group">
+            <label>Comment:</label>
+            <textarea id="comment" name="comment" ng-model="post.new_comment" class="form-control" placeholder="comment"></textarea>
+            <button class="btn  btn-primary btn-group-xs" ng-click="saveComment()">Save</button>
+          </div>
+        </form>
+      </div>
+
+
   </div>
 
   <div id="rightsidebar" class="actions right">

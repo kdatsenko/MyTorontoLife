@@ -2,24 +2,17 @@ var crudApp = angular.module('crudApp');
 
 crudApp.controller('permalinkController', function($scope, $location, $http, sharedService) {
   $scope.post = {};
-  $http.get('/posts/post?id='+$location.$$path.split('/')[2]).then(function(post){
+  String.prototype.trimLeft = function(charlist) {
+    if (charlist === undefined)
+      charlist = "\s";
+
+    return this.replace(new RegExp("^[" + charlist + "]+"), "");
+  };
+  $scope.postId = $location.$$path.split('/')[2].trimLeft(':')
+  $http.get('/posts/post?id='+$scope.postId).then(function(post){
     console.log(post);
     if(post){
       $scope.post = post.data;
-    }
-    else {
-      $scope.post = {_id: "aaaa5",
-       username: "Chris" ,
-       short_text: 'hey',
-        userid: {
-         imageurl: "https://www.gravatar.com/avatar/89e0e971f58af7f776b880d41e2dde43?size=50" },
-       date_posted: 'Sun Nov 29 2015 14:59:13 GMT-0500 (Eastern Standard Time)',
-
-       interestname : 'Cooking',
-       groupname: 'Toronto',
-       averagerating: 3.5,
-        hashtags: ['great', 'cool', 'iheartmyTO']
-      }
     }
   },
   function errorCallback(response, status, headers, config) {
@@ -29,4 +22,38 @@ crudApp.controller('permalinkController', function($scope, $location, $http, sha
     console.log(response);
 
   });
+
+  $scope.currentRating = 0;
+
+  $scope.ratePost = function(value){
+    if($scope.currentRating > 0){
+      $scope.currentRating = 0;
+      return;
+    }
+    console.log("Rate "+$scope.postId+" at "+ value);
+    $scope.currentRating = value;
+
+    var data = {
+        rating: {
+        stars: value,
+        postid: $scope.post._id,
+        groupid: $scope.post.group._id
+      }
+    };
+
+    $http({
+      method: 'POST',
+      url: '/posts/post/rate',
+      data: data
+    })
+    .then(function successCallback(response) {
+            console.log("Rated "+$scope.postId+" for "+ value);
+            $scope.post.averagerating = response.data.averagerating;
+          },
+          function errorCallback(response) {
+            console.log(response)
+            $scope.currentRating = 0;
+          });  
+
+  }
 });

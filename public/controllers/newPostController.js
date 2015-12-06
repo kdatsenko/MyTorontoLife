@@ -5,7 +5,7 @@ var crudApp = angular.module('crudApp');
 /**
  * Controller for login page template.
  */
- crudApp.controller('newPostController', function ($scope, $http)  {
+ crudApp.controller('newPostController', function ($scope, $http, $location)  {
 
 
 		 $scope.postTypes = [];
@@ -15,7 +15,7 @@ var crudApp = angular.module('crudApp');
     });
 
  		 $scope.Groups = [];
-    $http.get('/groups').success(function(data){
+    $http.get('/users/user/groups').success(function(data){
       console.log('Groups', data);
       $scope.Groups = data;
     });
@@ -32,80 +32,74 @@ var crudApp = angular.module('crudApp');
 
         short_text: '',
   date_posted: new Date,
-  hashtags: [],
+  hashtags: ['Cool', 'Wow'],
   external_urls: [],
   comments: [],
-  interest: { name: 'Food', _id: '565b5911afaf8bac3202966c' },
+  interest: null,
   userid: angular.element(document.querySelector('[ng-controller=mainController]')).scope().state.userid,
   username: angular.element(document.querySelector('[ng-controller=mainController]')).scope().state.username,
   text: '',
-  group:{  name: 'Toronto', _id: '565b5911afaf8bac32029661'},
-  post_type: { name: 'Announcement', _id: '65b5911afaf8bac32029672' },
-  _id: '565b5911afaf8bac32029669',
+  group: null,
+  post_type: null,
    new_comment: ''
     }
 
- // $scope.state = {
- //        edit_state: true,
- //        add_new: false,
- //        admin: true,
- //        super_admin: true,
- //        profile_is_admin: true,
- //         user_is_author : false ,
- //         users_post_rating : 5
- //
- //      };
+    $scope.$watch('post.text', function() {
+      $scope.post.hashtags = [];
+      var words = $scope.post.text.match(/\S+/g);
+      for (var i in words) {
+        if (words[i].slice(0, 1) == "#")
+        {
+            $scope.post.hashtags.push(words[i].slice(1));
+        }
+      }
+      if(words && words.length > 50){
+        $scope.post.short_text = "";
+        var i = 0;
+        while(i < 50) {
+          if (words[i].slice(0, 1) == "#")
+          {
+              $scope.post.short_text += words[i] + " ";
+          }
+          i+=1;
+        }
+        $scope.post.short_text += "...";
+      }
+      else {
+        $scope.post.short_text = $scope.post.text;
+      }
+  });
+
+/*$scope.submitPost = function(){
+  $scope.post.hashtags = ['Cool', 'Wow'];
+  $http.post('/posts/addnew', {
+    post: $scope.post
+  }).success(function(data){
+    $location.path('/permalink/'+data.result._id);
+  });
+}*/
 
 
-
-    // optPostType = $.grep($scope.postTypes , function(e){ return e._id === $scope.post.post_type._id; });
-    //
-    // if (optPostType.length > 0) {
-    //     $scope.postTypeValue  = optPostType[0]
-    // }
-    // optGroup = $.grep($scope.Groups , function(e){ return e._id === $scope.post.group._id; });
-    //
-    // if (optGroup.length > 0) {
-    //
-    //     $scope.postGroupValue  =  optGroup[0]
-    // }
-    //  optInterest = $.grep($scope.Interests , function(e){ return e._id === $scope.post.interest._id; });
-    //
-    // if (optInterest.length > 0) {
-    //     $scope.postInterestValue  = optInterest[0]
-    // }
-    //
-    //   optInterest = $.grep($scope.Interests , function(e){ return e._id === $scope.post.interest._id; });
-    //
-    // if (optInterest.length > 0) {
-    //     $scope.postInterestValue  = optInterest[0]
-    // }
-    //
-    //  optRate = $.grep($scope.Rates , function(e){ return e._id === $scope.state.users_post_rating.toString(); });
-    //
-    // if (optRate.length > 0) {
-    //     $scope.postRateValue  = optRate[0]
-    // }
+$scope.submitPost = function(){
+      console.log('HELLO?');
+      var hashtags = ['Cool', 'Wow'];
+      var data = {
+        post: $scope.post,
+        hashtags: hashtags
+      };
+      $http({
+        method: 'POST',
+        url: '/posts/addnew',
+        data: data
+      })
+      .then(function successCallback(response) {
+        $location.path('/permalink/'+ response.data.result._id);
+      },
+      function errorCallback(response) {
+        console.log(response);
+      });  
+};
 
 
-
-
-	// 		 $scope.getRating = function(rate)
-  //   {
-  //     return rate.name;
-  //   };
-  //
-	//  $scope.getpostType = function(type)
-  //   {
-  //     return type.name;
-  //   };
-	// $scope.getGroup = function(group)
-  //   {
-  //     return group.name;
-  //   };
-  //   	$scope.getInterest = function(interest)
-  //   {
-  //     return interest.name;
-  //   };
 
 });
