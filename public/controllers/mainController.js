@@ -73,11 +73,13 @@ var crudApp = angular.module('crudApp');
 		$scope.getPostByInterest(interestid);
 	});
 
-	/*$scope.$on("goto_profile", function(event, username){
+	$scope.$on("goto_profile", function(event, username){
+		console.log('USERNAME: ');
+		console.log(username);
 		$scope.getUserProfile(username);
 	});
 
-	$scope.$on("goto_post", function(event, postid){
+	/*$scope.$on("goto_post", function(event, postid){
 		$scope.getPostPage(postid);
 	});*/
 

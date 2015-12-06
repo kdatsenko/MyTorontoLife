@@ -204,6 +204,15 @@ div.box:hover {
 .footerlinks li:hover a {
   text-decoration: underline; }
 
+.dashrating {
+  unicode-bidi: bidi-override;
+  direction: ltr;
+  display: inline-block;
+  float: right;
+  padding: .2em .5em;
+
+}
+
   .rating {
     unicode-bidi: bidi-override;
     direction: rtl;

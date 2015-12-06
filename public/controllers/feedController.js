@@ -56,7 +56,7 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 
 
  $scope.getUserProfile = function(user_name) {
-  alert('Go to the profile of: ' + user_name);
+  $scope.$emit('goto_profile', user_name);
 }
 
  $scope.getPostbyID = function(post_id) {
@@ -248,15 +248,6 @@ var getGroupPosts = function(group_id){
       console.log(response);
     });
  };
-
-var formatDate = function(posts){
-  posts.map(function(post){
-        var post = post;
-        post.date_posted = moment(new Date(2014, 9, 18, 0, 0, 0));
-        return post;
-      });
-};
-
 
 
  $scope.submitSearch = function(){
