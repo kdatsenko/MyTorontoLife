@@ -32,7 +32,7 @@ var crudApp = angular.module('crudApp');
 
         short_text: '',
   date_posted: new Date,
-  hashtags: ['Cool', 'Wow'],
+  hashtags: [],
   external_urls: [],
   comments: [],
   interest: null,
@@ -82,6 +82,8 @@ var crudApp = angular.module('crudApp');
 
 $scope.submitPost = function(){
       console.log('HELLO?');
+      $scope.post.hashtags = [];
+      console.log($scope.post.hashtags);
       var hashtags = ['Cool', 'Wow'];
       var data = {
         post: $scope.post,
