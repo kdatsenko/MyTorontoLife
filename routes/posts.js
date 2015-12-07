@@ -373,6 +373,32 @@ router.delete('/post/:id', function(req, res) {
   });
 });
 
+router.get('/search', function(req, res){
+  if(!req.query.q){
+    req.query.q = "";
+  }
+  models.Posts.find({"text": { "$regex": req.query.q, "$options": "i" }})
+  .populate({
+    path: 'userid',
+    select: 'imageurl'
+  })
+  .populate({
+    path: 'interest',
+    select: 'name'
+  })
+  .populate({
+    path: 'group',
+    select: 'name'
+  })
+  .sort({ date_posted: -1 })
+  .limit(100)
+  .exec(function(err, posts){
+    if(err){
+      res.sendError(err);
+    }
+    res.sendData(posts)
+  })
+})
 
 
 module.exports = router;

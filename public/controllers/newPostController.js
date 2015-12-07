@@ -53,21 +53,6 @@ var crudApp = angular.module('crudApp');
             $scope.post.hashtags.push(words[i].slice(1));
         }
       }
-      if(words && words.length > 50){
-        $scope.post.short_text = "";
-        var i = 0;
-        while(i < 50) {
-          if (words[i].slice(0, 1) == "#")
-          {
-              $scope.post.short_text += words[i] + " ";
-          }
-          i+=1;
-        }
-        $scope.post.short_text += "...";
-      }
-      else {
-        $scope.post.short_text = $scope.post.text;
-      }
   });
 
 /*$scope.submitPost = function(){
@@ -86,7 +71,7 @@ $scope.submitPost = function(){
       for (var i = 0; i < $scope.post.hashtags.length; i++){
         hashtags.push('' + $scope.post.hashtags[i] + '');
       }
-      
+
       console.log($scope.post.hashtags);
       var hashtags = ['Cool', 'Wow'];
       var data = {
@@ -104,7 +89,7 @@ $scope.submitPost = function(){
       },
       function errorCallback(response) {
         console.log(response);
-      });  
+      });
 };
 
 

@@ -8,11 +8,11 @@
 
     <section class="hero" ng-if="showHero">
     <div class="bg"></div>
-    <div class="content">
+    <div class="content" ng-controller="searchController">
         <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
-        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
+        <h2>To get started you can search for something, pick a group or just scroll down!</h2>
         <form ng-submit="submitSearch()">
-          <input type="text" ng-model="search.tag" placeholder="Search for a Neighbourhood, Topic or Address"/>
+          <input type="text" ng-model="search_text" placeholder="Search posts"/>
         </form>
 
 
@@ -31,7 +31,7 @@
 
         <div id="mainfeed" class="main-feed center">
         <a name="feed"></a>
-        <div class="box" ng-repeat="post in Posts"> 
+        <div class="box" ng-repeat="post in Posts track by $index">
           <div class="dashrating">
             <!--<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>-->
             <span ng-show="post.averagerating < 1">&#9734;</span>
@@ -51,7 +51,7 @@
           </div>
 
           <div class="profile">
-            <img src="{{post.userid.imageurl}}">
+            <img src="{{post.userid.imageurl}}" class="profileImg">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
             <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">
               <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
@@ -60,7 +60,7 @@
             <a href="" ng-click="onInterestClick(post.interest._id)">{{post.interest.name}}</a>
             </span>
             <br>
-            <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
+            <span ng-repeat="tag in post.hashtags track by $index" ng-click="onTagClick(tag.name)" >
               <a href=""> #{{ tag.name }} </a>
             </span>
             <br>
@@ -71,6 +71,12 @@
           </div>
 
           <p>{{post.short_text}}</p>
+          <br>
+          <ul>
+            <li ng-click="getPostbyID(post._id)">Comment</li>
+            <li ng-click="getPostbyID(post._id)">Rate</li>
+            <li ng-click="getPostbyID(post._id)">Full Post</li>
+          </ul>
          <!--
               <div class="ratings"></div>
               <p></p>
@@ -176,3 +182,7 @@
     <!--</div>
 </section>
 >>>>>>> chris/chris-->
+<script>
+jQuery(window).resize(function(){
+  jQuery('#mainfeed.main-feed.center').css('min-height', window.innerHeight+"px")
+});jQuery('#mainfeed.main-feed.center').css('min-height', window.innerHeight+"px");</script>

@@ -166,20 +166,46 @@ groupsSchema.pre('remove', function(next) {
 });*/
 
 postsSchema.pre('save', function (next) {
-  this.short_text = this.text.substring(0, 200);
-  console.log('this.short_text: '  + this.short_text);
+  this.short_text = "";
+	var postLengthWords = 50;
+	// average english word length is 5.1 so 7 should be safe.
+	var postLengthChars = postLengthWords * 7;
+
+	var words = this.text.match(/\S+/g);
+
+	if(this.text.length < postLengthChars){
+		// Re-join the string with spaces to ensure whitespace is clean.
+		this.short_text = words.join(' ');
+	}
+	else if(words[0].length > postLengthChars){
+		this.short_text = words[i].substring(0, postLengthChars-3) + "...";
+	}
+	else{
+		var i = 1;
+		this.short_text = words[0];
+		while(this.short_text.length+words[i].length < postLengthChars && i < words.length-1 && i < postLengthWords){
+				this.short_text += " "+words[i];
+				i+= 1;
+		}
+		if(this.short_text.length + words[i].length < postLengthChars){
+				this.short_text += words[i].replace(/\W+/g, " ") + "..."
+		} else {
+			this.short_text += "..."
+		}
+
+	}
   next();
 });
 
-groupsSchema.post('save', function(next) {
-  var group_membership = new models.GroupMembers({user: this.group_creator, group: this._id});
+groupsSchema.post('save', function () {
+  var group_membership = new GroupMembers({user: this.group_creator, group: this._id});
   group_membership.save(function(err, eh) {
     if (err) {
       console.log(err);
     }
     console.log('eh: ' + eh);
-    next();
   });
+  //next();
 });
 
 

@@ -1,3 +1,4 @@
+/* the following line is for handling feeds with less posts than count fit in the window */
 crudApp.controller('feedController', function($scope, $location, $http, sharedService) {
 
 // angular.element(document.querySelector('[ng-controller=mainController]')).scope().showNavBar = true;
