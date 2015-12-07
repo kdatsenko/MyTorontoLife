@@ -35,8 +35,8 @@
 			<button id="change-image-button" class='btn btn-primary' data-toggle="modal" data-target="#image-upload-modal" ng-if="editing">Change Profile Image</button>
 		</div>
 	</div>
-	<div class="row">
-		<div class="col-md-3">
+	<div class="row" style="background: white">
+		<div class="col-md-3" style="background: white">
 			<h2 style="text-align:center">Groups</h2>
 
 			<md-content layout-padding layout="column" ng-if="editing">
@@ -130,7 +130,8 @@
 			<div class="interest" ng-repeat="int in user.interests">
 				<div class="well row">
 					<div class="col-md-3">
-						<span class="glyphicon glyphicon-star interest-star" aria-hidden="true"></span>
+						<!-- <span class="glyphicon glyphicon-star interest-star" aria-hidden="true"></span> -->
+						<i class="fa fa-star interest-star" aria-hidden="true"></i>
 					</div>
 					<div class="col-md-9">
 						<h3>&nbsp;{{int.name}}</h3>
