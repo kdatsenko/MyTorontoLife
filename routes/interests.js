@@ -30,7 +30,7 @@ router.post('/addnew', function(req, res){
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){ //check for admin rights
      return res.status(403).send({error: 'Unauthorized account type'});
   }
-  var interest = new models.Interests(req.body.interest); //create new
+  var interest = new models.Interests({name: req.body.name}); //create new
   models.Interests.findOne({name: interest.name}, function(err, found_interest) { //name should be unique
           if (err){
             return res.send(err);

@@ -102,11 +102,11 @@ var changePasswordAdmin = function (user, res){
 };
 
 /* Update this user's record to Admin status */
-router.put('/user/assignadmin', function(req, res){
+router.put('/user/assignadmin/:email', function(req, res){
   if (!checkAdmin(req, res, 0) & !checkAdmin(req, res, 1)){ //Action allowed only for Admins.
     return res.status(403).send({error: 'Unauthorized account type'});
   }  
-  models.Users.findOne({ email: req.body._id }, function(err, user) {
+  models.Users.findOne({ email: req.params.email }, function(err, user) {
       if (err){ return res.send(err); }
       if (!user){
         return res.status(404).send({error: "User not found"});
@@ -128,11 +128,11 @@ router.put('/user/assignadmin', function(req, res){
 });
 
  /* Update this user's record to Regular Fries */
- router.put('/user/revokeadmin', function(req, res){
+ router.put('/user/revokeadmin/:email', function(req, res){
   if (!checkAdmin(req, res, 0) & !checkAdmin(req, res, 1)){ //Action only allowed for Super Admins
     return res.status(403).send({error: 'Unauthorized account type'});
   }  
-  models.User.findOne({ email: req.body._id}, function(err, user) {
+  models.Users.findOne({ email: req.params.email}, function(err, user) {
       if (err){ return res.send(err); }
       if (!user){
         return res.status(404).send({error: "User not found"});
@@ -221,7 +221,7 @@ router.post('/fileupload', function(req, res) {
   if (!checkAdmin(req, res, 1) & !checkAdmin(req, res, 0)){
     return res.status(403).send({error: 'Unauthorized account type'});
   }
-  models.Users.find({}, '_id email username', function(err, users) {
+  models.Users.find({}, '_id email username accounttype', function(err, users) {
     if (err) {
       return res.send(err);
     }

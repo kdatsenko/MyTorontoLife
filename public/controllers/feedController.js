@@ -1,3 +1,4 @@
+/* the following line is for handling feeds with less posts than count fit in the window */
 crudApp.controller('feedController', function($scope, $location, $http, sharedService) {
 
 // angular.element(document.querySelector('[ng-controller=mainController]')).scope().showNavBar = true;
@@ -19,7 +20,7 @@ crudApp.controller('feedController', function($scope, $location, $http, sharedSe
 
 
 
-         $scope.Interests = [
+  $scope.Interests = [
       {_id: "aaaa", name: "fishing"},
       {_id: "bbbb" , name: "cats"},
       {_id: "cccc", name: "dogs"},
@@ -56,17 +57,19 @@ Also, should smartly recommend the "Add myself to this group based on whether th
 
 
  $scope.getUserProfile = function(user_name) {
-  alert('Go to the profile of: ' + user_name);
+  $scope.$emit('goto_profile', user_name);
 }
 
  $scope.getPostbyID = function(post_id) {
   //alert('Go to the post with ID: ' + post_id);
+    $scope.$emit('leaving_dashboard');
     var route = '/permalink/:' + post_id;
     $location.path(route);
 }
 
  $scope.createNewPost = function(post_type) {
-  alert(post_type);
+  $scope.$emit('leaving_dashboard');
+  $location.path('/create_post');
  }
 
  var getPostsByInterest = function(interest_id) {
@@ -256,8 +259,6 @@ var formatDate = function(posts){
         return post;
       });
 };
-
-
 
  $scope.submitSearch = function(){
   //pass search data to top-level MainController, which will reload the view

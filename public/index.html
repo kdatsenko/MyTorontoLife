@@ -10,8 +10,10 @@
 	<link rel="stylesheet" href="/vendor/bootstrap-3.3.6/css/bootstrap.min.css">
 	<link rel="stylesheet" href="/vendor/font-awesome-4.5.0/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/stylesheets/bootstrap-social.css">
+	<link rel="stylesheet" href="/vendor/angular-material.min.css">
 	<link href='https://fonts.googleapis.com/css?family=Ek+Mukta:200,400,800' rel='stylesheet' type='text/css'>
 	<link rel="stylesheet" href="stylesheets/style.css">
+
 
 
 	<!-- JS files -->
@@ -37,6 +39,7 @@
 	<script src="controllers/permalinkController.js"></script>
 	<script src="controllers/profileController.js"></script>
 	<script src="controllers/tagsListController.js"></script>
+	<script src="controllers/searchController.js"></script>
 	<script src="controllers/userController.js"></script>
 	<script src="controllers/loginbarController.js"></script>
 	<!-- load momentJS (required for angular-moment) -->
@@ -50,7 +53,7 @@
 <div id="main">
        <section class="feed">
         <div id="leftsidebar"class="quick-links left" ng-if="showNavBar">
-          <div class="box">
+          <div class="box pad">
             <h1>{{state.username}}</h1>
             <a href="" ng-if="state.is_logged" ng-click="getUserProfile(state.username)">My Profile</a>
             <br>

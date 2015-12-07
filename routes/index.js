@@ -32,9 +32,9 @@ api.use('/users', require('./users'));
 router.use('/admin', [middleware.installHelpers,middleware.sendAngularHtml(),admin]);
 router.use([middleware.installHelpers,
             login,
+            middleware.setupCORS,
             middleware.verifyUser,
             middleware.sendAngularHtml(),
-            middleware.setupCORS,
             api,
             middleware.sendAngularHtml()]);
 

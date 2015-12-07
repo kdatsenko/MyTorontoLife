@@ -52,7 +52,7 @@ var nameValidator = [
 
 var groupsSchema = new Schema({
 	name: {type: String, unique: true, required: '{PATH} is required.', validate: nameValidator},
-	private_type: {type: Boolean, default: true},//True = private, False public
+	private_type: {type: Boolean, default: false},//True = private, False public
   group_creator: {type: ObjectId, required: true, ref: 'Users'},
 	description: {type: String, default: ''}
 });
@@ -78,11 +78,11 @@ var tagValidator = [
 var hashTags = new Schema({
 	name: {type: String, index: {unique: true}, lowercase: true, validate: tagValidator},
 	last_used: {type: Date, default: Date.now},
-	count: Number
+	count: {type: Number, default: 0}
 });
 
 var postsSchema = new Schema({
-  post_type: {type: ObjectId, required: true, ref: 'Types'},
+  post_type: {type: ObjectId, required: true, ref: 'PostTypes'},
 	group: {type: ObjectId, required: true, ref: 'Groups'},
 	text: {type: String, required: '{PATH} is required.'},
   short_text: {type: String, required: '{PATH} is required.'},
@@ -90,14 +90,14 @@ var postsSchema = new Schema({
 	userid: {type: ObjectId, required: true, ref: 'Users'},
 	date_posted: {type: Date, default: Date.now},
 	hashtags: [
-		{tag_id: {type: ObjectId, ref: 'Hashtags'},
-			name: String}
-	],
+    {tag_id: {type: ObjectId, ref: 'Hashtags'},
+        name: String}
+        ],
 	external_urls: [
 		{type: String}
 	],
 
-  interest: {type: Schema.ObjectId, ref: 'Interests'},
+  interest: {type: Schema.ObjectId, required: true, ref: 'Interests'},
    fivestarcount: {type: Number, default: 0},
    fourstarcount: {type: Number, default: 0},
    threestarcount: {type: Number, default: 0},
@@ -110,7 +110,8 @@ var postsSchema = new Schema({
    comments: [
    	{userid: {type: ObjectId, required: true, ref: 'Users'},
      username: {type: String, required: true},
- 	 text: {type: String, required: true}}
+ 	 text: {type: String, required: true},
+ 		date: Date}
    ]
 });
 
@@ -157,6 +158,7 @@ groupsSchema.pre('remove', function(next) {
         posts[i].remove();
       }
   });
+  next();
 });
 
 /*postsSchema.pre('remove', function(next) {
@@ -164,21 +166,47 @@ groupsSchema.pre('remove', function(next) {
 });*/
 
 postsSchema.pre('save', function (next) {
-  this.short_text = this.text.substring(0, 200);
-  console.log('this.short_text: '  + this.short_text);
+  this.short_text = "";
+	var postLengthWords = 50;
+	// average english word length is 5.1 so 7 should be safe.
+	var postLengthChars = postLengthWords * 7;
+
+	var words = this.text.match(/\S+/g);
+
+	if(this.text.length < postLengthChars){
+		// Re-join the string with spaces to ensure whitespace is clean.
+		this.short_text = words.join(' ');
+	}
+	else if(words[0].length > postLengthChars){
+		this.short_text = words[i].substring(0, postLengthChars-3) + "...";
+	}
+	else{
+		var i = 1;
+		this.short_text = words[0];
+		while(this.short_text.length+words[i].length < postLengthChars && i < words.length-1 && i < postLengthWords){
+				this.short_text += " "+words[i];
+				i+= 1;
+		}
+		if(this.short_text.length + words[i].length < postLengthChars){
+				this.short_text += words[i].replace(/\W+/g, " ") + "..."
+		} else {
+			this.short_text += "..."
+		}
+
+	}
   next();
 });
 
-groupsSchema.post('save', function(next) {
-  var group_membership = new models.GroupMembers({user: this.group_creator, group: this._id});
+groupsSchema.post('save', function () {
+  var group_membership = new GroupMembers({user: this.group_creator, group: this._id});
   group_membership.save(function(err, eh) {
     if (err) {
       console.log(err);
     }
     console.log('eh: ' + eh);
-    next();
   });
-});                  
+  //next();
+});
 
 
 var Interests = mongoose.model('Interests', interestSchema);

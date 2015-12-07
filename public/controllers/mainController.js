@@ -73,13 +73,20 @@ var crudApp = angular.module('crudApp');
 		$scope.getPostByInterest(interestid);
 	});
 
-	/*$scope.$on("goto_profile", function(event, username){
+	$scope.$on("goto_profile", function(event, username){
+		console.log('USERNAME: ');
+		console.log(username);
 		$scope.getUserProfile(username);
 	});
 
-	$scope.$on("goto_post", function(event, postid){
+	/*$scope.$on("goto_post", function(event, postid){
 		$scope.getPostPage(postid);
 	});*/
+
+	$scope.$on("leaving_dashboard", function(event){
+		resetStateVariables();
+		$scope.state.main_dashboard = false;
+	});
 
 
   $scope.showHero = true;
@@ -140,8 +147,8 @@ var resetStateVariables = function () {
  $scope.getUserProfile = function(user_name) {
  	resetStateVariables();
  	$scope.state.main_dashboard = false;
- 	sharedService.setData({username : user_name});
- 	$location.path('/profile');
+ 	//sharedService.setData({username : user_name});
+ 	$location.path('/profile/' + user_name);
  /* Navigate to User Profile page with this username. */
 };
 

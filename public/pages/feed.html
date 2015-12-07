@@ -8,11 +8,11 @@
 
     <section class="hero" ng-if="showHero">
     <div class="bg"></div>
-    <div class="content">
+    <div class="content" ng-controller="searchController">
         <h1>Your source for news, events, real estate info and lifestyle tips in Toronto</h1>
-        <h2>To get started you can search for something, pick a neghbourhood or just scroll down</h2>
+        <h2>To get started you can search for something, pick a group or just scroll down!</h2>
         <form ng-submit="submitSearch()">
-          <input type="text" ng-model="search.tag" placeholder="Search for a Neighbourhood, Topic or Address"/>
+          <input type="text" ng-model="search_text" placeholder="Search posts"/>
         </form>
 
 
@@ -31,40 +31,59 @@
 
         <div id="mainfeed" class="main-feed center">
         <a name="feed"></a>
-        <div class="box" ng-repeat="post in Posts"> 
-          <div class="rating">
-            <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+        <div class="box" ng-repeat="post in Posts track by $index">
+          <div class="dashrating">
+            <!--<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>-->
+            <span ng-show="post.averagerating < 1">&#9734;</span>
+            <span ng-show="post.averagerating >= 1">&#9733;</span>
+
+            <span ng-show="post.averagerating < 1.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 1.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 2.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 2.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 3.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 3.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 4.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 4.5">&#9733;</span>
           </div>
 
           <div class="profile">
-            <img src="{{post.userid.imageurl}}">
+            <img src="{{post.userid.imageurl}}" class="profileImg">
             <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
             <span class="permalinks"><a href="" ng-click="getPostbyID(post._id)">
-              
               <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
 
-            </a> - 
+            </a> -
             <a href="" ng-click="onInterestClick(post.interest._id)">{{post.interest.name}}</a>
             </span>
             <br>
-            <span ng-repeat="tag in post.hashtags" ng-click="onTagClick(tag.name)" >
+            <span ng-repeat="tag in post.hashtags track by $index" ng-click="onTagClick(tag.name)" >
               <a href=""> #{{ tag.name }} </a>
             </span>
             <br>
             <a a href="" ng-click="onGroupClick(post.group._id)">{{post.group.name}}</a><br>
-          </div>  
+          </div>
           <div ng-bind-html="posts.html">
 
           </div>
 
           <p>{{post.short_text}}</p>
-         <!-- 
+          <br>
+          <ul>
+            <li ng-click="getPostbyID(post._id)">Comment</li>
+            <li ng-click="getPostbyID(post._id)">Rate</li>
+            <li ng-click="getPostbyID(post._id)">Full Post</li>
+          </ul>
+         <!--
               <div class="ratings"></div>
               <p></p>
               <ul><li>Comment</li><li>Share</li></ul>
 
          -->
-        
+
         </div>
 
       </div>
@@ -79,7 +98,7 @@
               <div ng-init="limit = 150; moreShown = false">
                   {{group.description | limitTo: limit}}{{group.description.length > limit ? '...' : ''}}
                   <a ng-show="group.description.length > limit && !moreShown"
-                    href ng-click="limit=limit=300; moreShown = true">  
+                    href ng-click="limit=limit=300; moreShown = true">
                     More
                   </a>
                   <a ng-show="moreShown" href ng-click="limit=150; moreShown =    false"> Less </a>
@@ -103,13 +122,13 @@
 
         <div class="box" ng-show="state.is_showing_interest || state.is_searching">
           <h1>Showing Results for:{{search_tag}}</h1>
+          <ul><li ng-click="getMainDashBoard()">End Search</li></ul>
         </div>
 
         <div class="box">
           <h1>Create a post</h1>
           <ul>
-            <li  ng-click="createNewPost( 'New Announcement')">New Announcement</li>
-            <li ng-click="createNewPost( 'New question')">New question</li>
+            <li ng-click="createNewPost()">New Post</li>
           </ul>
         </div>
 
@@ -120,7 +139,7 @@
           <ul id="tagul">
             <li style=" text-align: left;" ng-repeat="tag in tags"><a href="" ng-click="onTagClick(tag.name)"><span>{{tag.name}}</span></a><span> x {{tag.count}}</span></li>
           </ul>
-        </div>       
+        </div>
     <!--    <ul class="box footerlinks">
           <li><a href="#">Tag Index</a></li>
           <!--<li><a href="#">About</a></li>
@@ -129,13 +148,13 @@
           <li><a href="#">Email Policy</a></li>
           <li><a href="#">Data Attribution</a></li>
         </ul> -->
-     
+
       </div>
 
 
 
     </section>
-    
+
 <!--=======
 <script type="text/javascript" src="/controllers/feedController.js"></script>
 <section class="feed" ng-controller="feedController">
@@ -164,3 +183,7 @@
     <!--</div>
 </section>
 >>>>>>> chris/chris-->
+<script>
+jQuery(window).resize(function(){
+  jQuery('#mainfeed.main-feed.center').css('min-height', window.innerHeight+"px")
+});jQuery('#mainfeed.main-feed.center').css('min-height', window.innerHeight+"px");</script>

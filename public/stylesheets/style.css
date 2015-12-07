@@ -103,8 +103,7 @@ section.feed {
   section.feed .center {
     position: absolute;
     left: 25%;
-    right: 30%;
-    height: 1000px; }
+    right: 30%;}
   section.feed .right {
     top: 40px;
     position: fixed;
@@ -160,7 +159,9 @@ div.box {
       box-sizing: border-box;
       text-align: center;
       border: 1px solid #eee; }
-
+div.box.pad{
+  padding:.8em;
+}
  #kitteh ul {
     width: 100%;
     padding: 0;
@@ -186,7 +187,7 @@ div.box {
       }
 
 div.box.loading {
-  content: "loading";s
+  content: "loading";
   height: 400px; }
 
 div.box {
@@ -203,6 +204,15 @@ div.box:hover {
     text-decoration: none; }
 .footerlinks li:hover a {
   text-decoration: underline; }
+
+.dashrating {
+  unicode-bidi: bidi-override;
+  direction: ltr;
+  display: inline-block;
+  float: right;
+  padding: .2em .5em;
+
+}
 
   .rating {
     unicode-bidi: bidi-override;
@@ -226,13 +236,17 @@ div.modal-backdrop{
   z-index: 100!important;
 }
 
- #tagul { 
-    display: block; 
+ #tagul {
+    display: block;
      padding: 0;
     margin: 0;
      margin-left:0;
     margin-right: 0;
-    max-height: 100px; 
-     overflow: auto; 
-      
+    max-height: 100px;
+     overflow: auto;
+
     }
+
+  img.profileImg{
+    background: url('/images/ajax-loader.gif'); background-position: center; background-repeat: no-repeat;
+  }

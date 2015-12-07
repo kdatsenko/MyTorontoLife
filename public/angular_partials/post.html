@@ -3,22 +3,45 @@
     Post loading...
   </div>
   <div ng-show="post">
-  <div class="rating">
-    <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
-  </div>
+  <div class="dashrating">
+            <!--<span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>-->
+            <span ng-show="post.averagerating < 1">&#9734;</span>
+            <span ng-show="post.averagerating >= 1">&#9733;</span>
 
-<div class="profile">
-  <img src="{{post.userid.imageurl}}">
-  <a a href="" ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
-  <span class="permalinks"><a href="/permalink/{{post._id}}" >{{post.date_posted}}</a> - {{post.interest.name}}
-  </span>
-  <a a href="" ng-click="">{{post.group.name}}</a><br>
-</div>
-<div ng-bind-html="posts.html">
+            <span ng-show="post.averagerating < 1.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 1.5">&#9733;</span>
 
-</div>
+            <span ng-show="post.averagerating < 2.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 2.5">&#9733;</span>
 
-<p>{{post.short_text}}</p>
+            <span ng-show="post.averagerating < 3.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 3.5">&#9733;</span>
+
+            <span ng-show="post.averagerating < 4.5">&#9734;</span>
+            <span ng-show="post.averagerating >= 4.5">&#9733;</span>
+          </div>
+
+          <div class="profile">
+            <img src="{{post.userid.imageurl}}">
+            <a ng-click="getUserProfile(post.username)">{{post.username}}</a><br>
+            <span class="permalinks"><a href="/permalink/{{post._id}}">
+              <time title="{{ post.date_posted | amDateFormat: 'dddd, MMMM Do YYYY, h:mm a' }}">{{ post.date_posted | amCalendar }}</time>
+
+            </a> -
+            <a>{{post.interest.name}}</a>
+            </span>
+            <br>
+            <span ng-repeat="tag in post.hashtags">
+              <a> #{{ tag.name }} </a>
+            </span>
+            <br>
+            <a>{{post.group.name}}</a><br>
+          </div>
+          <div ng-bind-html="posts.html">
+
+          </div>
+
+          <p>{{post.short_text}}</p>
 <!--
     <div class="ratings"></div>
     <p></p>

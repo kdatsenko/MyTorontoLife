@@ -27,16 +27,20 @@
   <div id="main" ng-controller="postController">
 
 <div>
-  <div>
+  <div style="display:flex">
     Sort by:
 
         <select ng-model="sortExpression">
       <option value="username">Username</option>
-      <option value="groupname">Group name</option>
+      <option value="group.name">Group name</option>
       <option value="date_posted">Date Post</option>
-      <option value="post_type">Type</option>
+      <option value="post_type.name">Type</option>
       <option value="short_text">Short Description</option>
     </select>
+
+    <div ng-show="showMsg" style="margin-left:20px">
+        {{msg}}
+      </div>
     </div>
 
     <table class="table table-bordered table-condensed table-responsive table-sm">
@@ -56,13 +60,13 @@
                 <input placeholder="Search name" ng-model="search.username" />
               </td>
               <td>
-                <input placeholder="Search group" ng-model="search.groupname" />
+                <input placeholder="Search group" ng-model="search.group.name" />
               </td>
               <td>
                 <input placeholder="Search date post" ng-model="search.date_posted" />
               </td>
                <td>
-                <input placeholder="Search type" ng-model="search.post_type" />
+                <input placeholder="Search type" ng-model="search.post_type.name" />
               </td>
               <td>
                 <input placeholder="Search short description" ng-model="search.short_text" />
@@ -72,9 +76,9 @@
           <tbody>
             <tr ng-repeat="post in postList | orderBy:mySortFunction | filter:search">
               <td>{{post.username}}</td>
-              <td>{{post.groupname}}</td>
+              <td>{{post.group.name}}</td>
               <td>{{post.date_posted}}</td>
-              <td>{{post.post_type}}</td>
+              <td>{{post.post_type.name}}</td>
               <td>{{post.short_text}}</td>
               <td class="btn-like">
                 <a ng-click='deletePost(post._id)'>
