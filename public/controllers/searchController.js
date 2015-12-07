@@ -15,6 +15,8 @@ crudApp.controller('searchController', function ($scope, $http)  {
   $scope.search_results = {};
 
   $scope.$watch("search_text", function(){
+    $mainScope = angular.element(document.querySelector('[ng-controller="mainController"]')).scope();
+    $feedScope = angular.element(document.querySelector('[ng-controller="feedController"]')).scope();
         if($scope.search_text != ""){
           $mainScope.state.is_searching = true;
           $feedScope.search_tag = $scope.search_text;
@@ -23,6 +25,8 @@ crudApp.controller('searchController', function ($scope, $http)  {
               for(var i in $feedScope.Posts){
                 $feedScope.Posts[i].userid.imgurl = $feedScope.Posts[i].imageurl;
               }
+              setTimeout($feedScope.$apply, 50);
+
           });
         }
         else{
