@@ -19,6 +19,9 @@ var app = express();
 var mongoose = require('mongoose');
 var dbName = 'A5DB';
 var connectionString = 'mongodb://localhost:27017/' + dbName;
+if(process.env.MONGO_URI){
+  connectionString = process.env.MONGO_URI;
+}
 mongoose.connect(connectionString, require('./tests/initialize-database'));
 
 
