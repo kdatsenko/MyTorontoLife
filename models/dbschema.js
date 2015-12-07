@@ -14,7 +14,7 @@ var interestSchema = new Schema({
 var userSchema   = new Schema({
   email: {type: String, unique: true}, //unique
   password: String,
-  accounttype: Number, //0 for Super Admin, 1 for Admin, 2 for user
+  accounttype: {type: Number, default: 2}, //0 for Super Admin, 1 for Admin, 2 for user
   loggedin: Boolean,
   last_seen: {type: Date, default: Date.now},
   username: {type: String, required: '{PATH} is required.', unique: true},
