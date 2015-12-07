@@ -91,6 +91,7 @@ router.post('/addnew', function(req, res){
                };
                return tag;
             });
+            post.short_text = post.text;
             post.hashtags = hashtag_array;
             post.save(function(err) {
               if (err) {
