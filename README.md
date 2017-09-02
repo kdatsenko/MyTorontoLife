@@ -9,7 +9,7 @@ My Project Contributions:
 - Designed and implemented Angular UI Architecture (nested controllers)
 - Designed entire backend and implemented all related database functionalities 
   - DB Schema, identified and implemented all database related queries (MongoDB, Mongoose)
-- Designed Rest API and partially implemented Rest API calls (JSON)
+- Designed Rest API and partially implemented Rest API calls
 
 How it works:
 ---
