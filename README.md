@@ -3,6 +3,14 @@
 https://polar-reef-5864.herokuapp.com/  
 Social Network and Smart Recommendation System for Toronto Residents. The site allow users to receive their daily information feed configured based on their interests, groups and information rated highly by users who share same interests. (Mongo, Node.js, AngularJS)
 
+My Project Contributions: 
+---
+- Designed and prototyped UI
+- Designed and implemented Angular UI Architecture (nested controllers)
+- Designed entire backend and implemented all related database functionalities 
+  - DB Schema, identified and implemented all database related queries (MongoDB, Mongoose)
+- Designed Rest API and partially implemented Rest API calls (JSON)
+
 How it works:
 ---
 *Profile*: Users create their profile, set up their interests and add themselves to existing
@@ -27,4 +35,5 @@ On the main dashboard a user has the option to change newsfeed content by:
 *Administration*: Users with Admin status can manage users profiles, view/add interests,
 view/add/delete groups, view/delete any post, promote other users to admin, or revoke
 admin status (except for Super Administrator).
+
 
