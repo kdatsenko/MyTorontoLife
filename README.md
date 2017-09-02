@@ -22,7 +22,7 @@ interest in order to facilitate a search for it in the feed.
 
 *Search and Recommendation System:* 
 
-User default newsfeed is build based on the following recommendation algorithm:  
+User default newsfeed is built based on the following recommendation algorithm:  
 Display top 100 posts highly rated (a rating of 4 or 5) by users who have interests and
 groups that intersect with this user, created less than a year ago, and have not been
 seen by the user yet (e.g. not rated by this user). In case of empty result, display feed
